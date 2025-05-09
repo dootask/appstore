@@ -1,0 +1,67 @@
+{
+  "app": {
+    "all": "전체",
+    "detail": "앱 상세",
+    "err_list": "앱 목록을 가져오는데 실패했습니다",
+    "error": "오류",
+    "install": "설치",
+    "installed": "설치됨",
+    "installing": "설치 중",
+    "loading": "로딩 중",
+    "noApps": "앱 없음",
+    "no_document": "문서 없음",
+    "no_log": "로그 없음",
+    "not_installed": "미설치",
+    "page": "페이지",
+    "search": "앱 검색",
+    "totalItems": "총 {{count}}개",
+    "uninstall": "제거",
+    "uninstalling": "제거 중"
+  },
+  "common": {
+    "cancel": "취소",
+    "confirm": "확인",
+    "document": "문서",
+    "open_community": "오픈소스 커뮤니티",
+    "title": "앱 스토어",
+    "website": "공식 웹사이트"
+  },
+  "install": {
+    "app_config": "앱 설정",
+    "basic_info": "기본 정보",
+    "cpu_limit": "CPU 제한 (코어)",
+    "cpu_limit_placeholder": "0으로 설정하면 제한 해제",
+    "errors": {
+      "cpu_invalid": "CPU 제한은 0 이상이어야 합니다",
+      "cpu_required": "CPU 제한을 입력하세요",
+      "field_required": "{{field}}을(를) 입력하세요",
+      "memory_invalid": "메모리 제한 형식이 올바르지 않습니다. 정수 또는 단위(MB/GB)를 입력하세요",
+      "memory_required": "메모리 제한을 입력하세요",
+      "version_required": "버전을 선택하세요"
+    },
+    "install_app": "앱 설치",
+    "install_failed": "설치 실패",
+    "install_starting": "설치를 시작합니다...",
+    "install_success": "설치 성공",
+    "latest_version": "최신 버전",
+    "memory_limit": "메모리 제한 (MB/GB)",
+    "memory_limit_placeholder": "예: 512MB, 1GB, 0으로 설정하면 제한 해제",
+    "name": "이름",
+    "resource_limit": "리소스 제한",
+    "select_version": "버전 선택",
+    "version": "버전"
+  },
+  "label": {
+    "detail": "상세",
+    "log": "로그"
+  },
+  "uninstall": {
+    "description": "「{{app}}」 앱을 제거하시겠습니까？",
+    "error": "제거 실패",
+    "error_description": "「{{app}}」 앱 제거 실패：{{error}}",
+    "success": "제거 성공",
+    "success_description": "「{{app}}」 앱이 제거되었습니다",
+    "title": "앱 제거",
+    "unknown_error": "알 수 없는 오류"
+  }
+}

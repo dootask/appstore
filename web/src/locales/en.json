@@ -1,0 +1,67 @@
+{
+  "app": {
+    "all": "All",
+    "detail": "App Details",
+    "err_list": "Failed to get app list",
+    "error": "Error",
+    "install": "Install",
+    "installed": "Installed",
+    "installing": "Installing",
+    "loading": "Loading",
+    "noApps": "No Apps",
+    "no_document": "No Documentation",
+    "no_log": "No Logs",
+    "not_installed": "Not Installed",
+    "page": "Page",
+    "search": "Search Apps",
+    "totalItems": "Total {{count}} items",
+    "uninstall": "Uninstall",
+    "uninstalling": "Uninstalling"
+  },
+  "common": {
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "document": "Documentation",
+    "open_community": "Open Source Community",
+    "title": "App Store",
+    "website": "Official Website"
+  },
+  "install": {
+    "app_config": "App Configuration",
+    "basic_info": "Basic Information",
+    "cpu_limit": "CPU Limit (cores)",
+    "cpu_limit_placeholder": "Set to 0 to disable limit",
+    "errors": {
+      "cpu_invalid": "CPU limit must be greater than or equal to 0",
+      "cpu_required": "Please enter CPU limit",
+      "field_required": "Please enter {{field}}",
+      "memory_invalid": "Invalid memory format, please enter an integer or with unit (MB/GB)",
+      "memory_required": "Please enter memory limit",
+      "version_required": "Please select a version"
+    },
+    "install_app": "Install App",
+    "install_failed": "Installation Failed",
+    "install_starting": "Starting installation...",
+    "install_success": "Installation Successful",
+    "latest_version": "Latest Version",
+    "memory_limit": "Memory Limit (MB/GB)",
+    "memory_limit_placeholder": "Example: 512MB, 1GB, set to 0 to disable limit",
+    "name": "Name",
+    "resource_limit": "Resource Limits",
+    "select_version": "Select Version",
+    "version": "Version"
+  },
+  "label": {
+    "detail": "Details",
+    "log": "Logs"
+  },
+  "uninstall": {
+    "description": "Are you sure you want to uninstall the app «{{app}}»?",
+    "error": "Uninstall Failed",
+    "error_description": "Failed to uninstall app «{{app}}»: {{error}}",
+    "success": "Uninstall Success",
+    "success_description": "The app «{{app}}» has been uninstalled successfully",
+    "title": "Uninstall App",
+    "unknown_error": "Unknown Error"
+  }
+}

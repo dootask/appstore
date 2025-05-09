@@ -1,0 +1,193 @@
+import type {AppItem, AppStatus} from "@/types/app"
+import type {AppLogRef} from "@/components/app-log.tsx"
+import {Button} from "@/components/ui/button"
+import {ScrollArea} from "@/components/ui/scroll-area.tsx";
+import {ExternalLink, Loader2, LoaderCircle, RefreshCw} from "lucide-react"
+import {useTranslation} from "react-i18next";
+import {requestAPI} from "@dootask/tools";
+import {useEffect, useState, useRef} from "react";
+import {Skeleton} from "./ui/skeleton";
+import ReactMarkdown from "react-markdown"
+import "@/styles/github-markdown-light.css"
+import {Tabs, TabsContent, TabsList, TabsTrigger} from "./ui/tabs";
+import {AppLog} from "@/components/app-log.tsx";
+import { eventOn } from "@/lib/events";
+
+interface AppDetailProps {
+  app: AppItem
+  onOperation: (app: AppItem) => void
+}
+
+export function AppDetail({app, onOperation}: AppDetailProps) {
+  const {t} = useTranslation()
+  const [loading, setLoading] = useState(true)
+  const [activeTab, setActiveTab] = useState("detail")
+  const [isRefreshing, setIsRefreshing] = useState(false)
+  const appLogRef = useRef<AppLogRef>(null)
+
+  useEffect(() => {
+    requestAPI({
+      url: 'apps/info',
+      data: {
+        app_name: app.name
+      }
+    }).then(({data}) => {
+      if (data && data.name === app.name) {
+        Object.assign(app, {info: data.info})
+      }
+    }).catch((err) => {
+      console.error(err)
+    }).finally(() => {
+      setLoading(false)
+    })
+  }, [app]);
+
+  useEffect(() => {
+    const off = eventOn("install-success", (app_name: unknown) => {
+      if (app_name === app.name) {
+        handleRefresh()
+      }
+    })
+    return () => {
+      off()
+    }
+  }, [])
+
+  const handleRefresh = () => {
+    setActiveTab('log')
+    appLogRef.current?.fetchLogs()
+  }
+
+  return (
+    <div className="p-6 flex-1 h-0 flex flex-col">
+      {/* 顶部信息区 */}
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-1 items-start gap-4 mr-4">
+          <img src={app.info.icon} alt={app.info.name} className="w-16 h-16 rounded-lg object-cover"/>
+          <div className="min-h-16 flex flex-col justify-center">
+            <div className="text-2xl font-bold mb-1">{app.info.name}</div>
+            <div className="text-gray-500 text-sm mb-1">{app.info.description}</div>
+          </div>
+        </div>
+        <div className="flex flex-col items-end gap-3 min-w-[120px]">
+          {(() => {
+            const statusConfig: Record<AppStatus, { className: string; loading: boolean; text: string }> = {
+              installing: {
+                className: "bg-blue-100 text-blue-700 hover:bg-blue-200",
+                loading: true,
+                text: 'installing'
+              },
+              installed: {
+                className: "bg-yellow-100 text-yellow-700 hover:bg-yellow-200",
+                loading: false,
+                text: 'uninstall'
+              },
+              uninstalling: {
+                className: "bg-orange-100 text-orange-700 hover:bg-orange-200",
+                loading: true,
+                text: 'uninstalling'
+              },
+              not_installed: {
+                className: "bg-green-100 text-green-700 hover:bg-green-200",
+                loading: false,
+                text: 'install'
+              },
+              error: {
+                className: "bg-gray-100 text-gray-700 hover:bg-gray-200",
+                loading: false,
+                text: 'error'
+              }
+            }
+
+            const config = statusConfig[app.local.status as AppStatus] || statusConfig.not_installed
+
+            return (
+              <Button
+                className={`${config.className} rounded-lg px-6 py-2 font-semibold cursor-pointer`}
+                onClick={() => {
+                  if (config.loading) {
+                    handleRefresh()
+                  } else {
+                    onOperation(app)
+                  }
+                }}
+              >
+                {config.loading && (
+                  <Loader2 className="animate-spin"/>
+                )}
+                {t('app.' + config.text)}
+              </Button>
+            )
+          })()}
+          <div className="flex flex-wrap justify-end gap-2 mt-2">
+            {app.info.website && (
+              <a href={app.info.website} target="_blank" rel="noopener noreferrer" className="text-xs text-gray-500 hover:text-blue-600 flex items-center gap-1">
+                {t('common.website')} <ExternalLink size={14}/>
+              </a>
+            )}
+            {app.info.document && (
+              <a href={app.info.document} target="_blank" rel="noopener noreferrer" className="text-xs text-gray-500 hover:text-blue-600 flex items-center gap-1">
+                {t('common.document')} <ExternalLink size={14}/>
+              </a>
+            )}
+            {app.info.github && (
+              <a href={app.info.github} target="_blank" rel="noopener noreferrer" className="text-xs text-gray-500 hover:text-blue-600 flex items-center gap-1">
+                {t('common.open_community')} <ExternalLink size={14}/>
+              </a>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* 分割线 */}
+      <div className="border-b border-gray-200 mb-3"/>
+
+      {/* 详情、日志 */}
+      <Tabs defaultValue="detail" value={activeTab} className="flex-1 flex flex-col h-0" onValueChange={setActiveTab}>
+        <div className="flex items-center mb-4 gap-2">
+          <TabsList>
+            <TabsTrigger className="px-4" value="detail">{t('label.detail')}</TabsTrigger>
+            <TabsTrigger className="px-4" value="log">
+              <div className="flex items-center gap-2">
+                <div>{t('label.log')}</div>
+                {activeTab === 'log' && (
+                  <div className=" text-gray-500 hover:text-gray-700 -mr-0.5 cursor-pointer" onClick={handleRefresh}>
+                    {isRefreshing ? <LoaderCircle className="!w-3.5 !h-3.5 animate-spin"/> : <RefreshCw className="!w-3.5 !h-3.5"/>}
+                  </div>
+                )}
+              </div>
+            </TabsTrigger>
+          </TabsList>
+        </div>
+        <TabsContent value="detail" className="flex-1 h-0">
+          {/* 详情内容 */}
+          <ScrollArea className="h-full">
+            {loading ? (
+              <div className="flex flex-col gap-3">
+                <Skeleton className="h-4 w-[80%]"/>
+                <Skeleton className="h-4 w-[70%]"/>
+                <Skeleton className="h-4 w-[40%]"/>
+              </div>
+            ) : (
+              app.document ? (
+                <div className="flex w-full">
+                  <div className="flex-1 w-0 prose select-text app-markdown-body">
+                    <ReactMarkdown>{app.document}</ReactMarkdown>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-sm text-gray-500 mb-4">
+                  {t('app.no_document')}
+                </div>
+              )
+            )}
+          </ScrollArea>
+        </TabsContent>
+        <TabsContent value="log" className="flex-1 h-0">
+          {/* 日志内容 */}
+          <AppLog ref={appLogRef} app={app} onLoading={setIsRefreshing}/>
+        </TabsContent>
+      </Tabs>
+    </div>
+  )
+}

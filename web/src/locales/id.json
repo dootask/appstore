@@ -1,0 +1,67 @@
+{
+  "app": {
+    "all": "Semua",
+    "detail": "Detail Aplikasi",
+    "err_list": "Gagal mendapatkan daftar aplikasi",
+    "error": "Kesalahan",
+    "install": "Instal",
+    "installed": "Terinstal",
+    "installing": "Menginstal",
+    "loading": "Memuat",
+    "noApps": "Tidak ada aplikasi",
+    "no_document": "Tidak ada dokumentasi",
+    "no_log": "Tidak ada log",
+    "not_installed": "Belum terinstal",
+    "page": "Halaman",
+    "search": "Cari aplikasi",
+    "totalItems": "Total {{count}} item",
+    "uninstall": "Hapus Instalasi",
+    "uninstalling": "Menghapus Instalasi"
+  },
+  "common": {
+    "cancel": "Batal",
+    "confirm": "Konfirmasi",
+    "document": "Dokumentasi",
+    "open_community": "Komunitas Open Source",
+    "title": "Toko Aplikasi",
+    "website": "Situs Resmi"
+  },
+  "install": {
+    "app_config": "Konfigurasi Aplikasi",
+    "basic_info": "Informasi Dasar",
+    "cpu_limit": "Batas CPU (inti)",
+    "cpu_limit_placeholder": "Atur ke 0 untuk menonaktifkan batas",
+    "errors": {
+      "cpu_invalid": "Batas CPU harus lebih besar atau sama dengan 0",
+      "cpu_required": "Silakan masukkan batas CPU",
+      "field_required": "Silakan masukkan {{field}}",
+      "memory_invalid": "Format memori tidak valid, silakan masukkan bilangan bulat atau dengan satuan (MB/GB)",
+      "memory_required": "Silakan masukkan batas memori",
+      "version_required": "Silakan pilih versi"
+    },
+    "install_app": "Instal Aplikasi",
+    "install_failed": "Instalasi Gagal",
+    "install_starting": "Memulai instalasi...",
+    "install_success": "Instalasi Berhasil",
+    "latest_version": "Versi Terbaru",
+    "memory_limit": "Batasan Memori (MB/GB)",
+    "memory_limit_placeholder": "Contoh: 512MB, 1GB, atur 0 untuk menonaktifkan batasan",
+    "name": "Nama",
+    "resource_limit": "Batasan Sumber Daya",
+    "select_version": "Pilih Versi",
+    "version": "Versi"
+  },
+  "label": {
+    "detail": "Detail",
+    "log": "Log"
+  },
+  "uninstall": {
+    "description": "Apakah Anda yakin ingin menghapus aplikasi «{{app}}»?",
+    "error": "Penghapusan Gagal",
+    "error_description": "Gagal menghapus aplikasi «{{app}}»: {{error}}",
+    "success": "Penghapusan Berhasil",
+    "success_description": "Aplikasi «{{app}}» telah berhasil dihapus",
+    "title": "Hapus Aplikasi",
+    "unknown_error": "Kesalahan Tidak Diketahui"
+  }
+}

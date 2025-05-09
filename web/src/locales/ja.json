@@ -1,0 +1,67 @@
+{
+  "app": {
+    "all": "すべて",
+    "detail": "アプリ詳細",
+    "err_list": "アプリリストの取得に失敗しました",
+    "error": "エラー",
+    "install": "インストール",
+    "installed": "インストール済み",
+    "installing": "インストール中",
+    "loading": "読み込み中",
+    "noApps": "アプリなし",
+    "no_document": "ドキュメントなし",
+    "no_log": "ログなし",
+    "not_installed": "未インストール",
+    "page": "ページ",
+    "search": "アプリを検索",
+    "totalItems": "合計{{count}}件",
+    "uninstall": "アンインストール",
+    "uninstalling": "アンインストール中"
+  },
+  "common": {
+    "cancel": "キャンセル",
+    "confirm": "確認",
+    "document": "ドキュメント",
+    "open_community": "オープンソースコミュニティ",
+    "title": "アプリストア",
+    "website": "公式サイト"
+  },
+  "install": {
+    "app_config": "アプリ設定",
+    "basic_info": "基本情報",
+    "cpu_limit": "CPU制限（コア数）",
+    "cpu_limit_placeholder": "0に設定すると制限を無効化",
+    "errors": {
+      "cpu_invalid": "CPU制限は0以上である必要があります",
+      "cpu_required": "CPU制限を入力してください",
+      "field_required": "{{field}}を入力してください",
+      "memory_invalid": "メモリ制限の形式が正しくありません。整数または単位（MB/GB）を付けて入力してください",
+      "memory_required": "メモリ制限を入力してください",
+      "version_required": "バージョンを選択してください"
+    },
+    "install_app": "アプリをインストール",
+    "install_failed": "インストール失敗",
+    "install_starting": "インストールを開始しています...",
+    "install_success": "インストール成功",
+    "latest_version": "最新バージョン",
+    "memory_limit": "メモリ制限（MB/GB）",
+    "memory_limit_placeholder": "例：512MB、1GB、0に設定すると制限を無効化",
+    "name": "名前",
+    "resource_limit": "リソース制限",
+    "select_version": "バージョンを選択",
+    "version": "バージョン"
+  },
+  "label": {
+    "detail": "詳細",
+    "log": "ログ"
+  },
+  "uninstall": {
+    "description": "「{{app}}」 アプリをアンインストールしますか？",
+    "error": "アンインストール失敗",
+    "error_description": "「{{app}}」 アプリのアンインストールに失敗しました：{{error}}",
+    "success": "アンインストール成功",
+    "success_description": "「{{app}}」 アプリがアンインストールされました",
+    "title": "アプリをアンインストール",
+    "unknown_error": "不明なエラー"
+  }
+}

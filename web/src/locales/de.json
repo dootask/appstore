@@ -1,0 +1,67 @@
+{
+  "app": {
+    "all": "Alle",
+    "detail": "App-Details",
+    "err_list": "Fehler beim Abrufen der App-Liste",
+    "error": "Fehler",
+    "install": "Installieren",
+    "installed": "Installiert",
+    "installing": "Installation läuft",
+    "loading": "Lädt",
+    "noApps": "Keine Apps",
+    "no_document": "Keine Dokumentation",
+    "no_log": "Keine Logs",
+    "not_installed": "Nicht installiert",
+    "page": "Seite",
+    "search": "Apps suchen",
+    "totalItems": "Insgesamt {{count}} Einträge",
+    "uninstall": "Deinstallieren",
+    "uninstalling": "Deinstallation läuft"
+  },
+  "common": {
+    "cancel": "Abbrechen",
+    "confirm": "Bestätigen",
+    "document": "Dokumentation",
+    "open_community": "Open-Source-Community",
+    "title": "App Store",
+    "website": "Offizielle Website"
+  },
+  "install": {
+    "app_config": "App-Konfiguration",
+    "basic_info": "Grundinformationen",
+    "cpu_limit": "CPU-Limit (Kerne)",
+    "cpu_limit_placeholder": "Auf 0 setzen, um Limit zu deaktivieren",
+    "errors": {
+      "cpu_invalid": "CPU-Limit muss größer oder gleich 0 sein",
+      "cpu_required": "Bitte CPU-Limit eingeben",
+      "field_required": "Bitte {{field}} eingeben",
+      "memory_invalid": "Ungültiges Speicherformat, bitte eine Ganzzahl oder mit Einheit (MB/GB) eingeben",
+      "memory_required": "Bitte Speicherlimit eingeben",
+      "version_required": "Bitte Version auswählen"
+    },
+    "install_app": "App installieren",
+    "install_failed": "Installation fehlgeschlagen",
+    "install_starting": "Installation wird gestartet...",
+    "install_success": "Installation erfolgreich",
+    "latest_version": "Neueste Version",
+    "memory_limit": "Speicherlimit (MB/GB)",
+    "memory_limit_placeholder": "Beispiel: 512MB, 1GB, auf 0 setzen, um Limit zu deaktivieren",
+    "name": "Name",
+    "resource_limit": "Ressourcenlimits",
+    "select_version": "Version auswählen",
+    "version": "Version"
+  },
+  "label": {
+    "detail": "Details",
+    "log": "Logs"
+  },
+  "uninstall": {
+    "description": "Sind Sie sicher, dass Sie die App «{{app}}» deinstallieren möchten?",
+    "error": "Deinstallation fehlgeschlagen",
+    "error_description": "Fehler beim Deinstallieren der App «{{app}}»: {{error}}",
+    "success": "Deinstallation erfolgreich",
+    "success_description": "Die App «{{app}}» wurde erfolgreich deinstalliert",
+    "title": "App deinstallieren",
+    "unknown_error": "Unbekannter Fehler"
+  }
+}

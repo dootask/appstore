@@ -1,0 +1,67 @@
+{
+  "app": {
+    "all": "全部",
+    "detail": "應用詳情",
+    "err_list": "獲取應用列表失敗",
+    "error": "錯誤",
+    "install": "安裝",
+    "installed": "已安裝",
+    "installing": "安裝中",
+    "loading": "載入中",
+    "noApps": "暫無應用",
+    "no_document": "沒有相關文檔",
+    "no_log": "沒有相關日誌",
+    "not_installed": "未安裝",
+    "page": "頁",
+    "search": "搜索應用",
+    "totalItems": "共{{count}}條",
+    "uninstall": "卸載",
+    "uninstalling": "卸載中"
+  },
+  "common": {
+    "cancel": "取消",
+    "confirm": "確認",
+    "document": "文檔說明",
+    "open_community": "開源社區",
+    "title": "應用商店",
+    "website": "官方網站"
+  },
+  "install": {
+    "app_config": "應用配置",
+    "basic_info": "基本信息",
+    "cpu_limit": "CPU限制（核心數）",
+    "cpu_limit_placeholder": "設置為0則不限制",
+    "errors": {
+      "cpu_invalid": "CPU限制必須大於或等於0",
+      "cpu_required": "請輸入CPU限制",
+      "field_required": "請輸入{{field}}",
+      "memory_invalid": "內存格式不正確，請輸入整數或帶單位（MB/GB）",
+      "memory_required": "請輸入內存限制",
+      "version_required": "請選擇版本"
+    },
+    "install_app": "安裝應用",
+    "install_failed": "安裝失敗",
+    "install_starting": "開始安裝...",
+    "install_success": "安裝成功",
+    "latest_version": "最新版本",
+    "memory_limit": "內存限制（MB/GB）",
+    "memory_limit_placeholder": "示例：512MB、1GB，限制為 0 則關閉限制",
+    "name": "名稱",
+    "resource_limit": "資源限制",
+    "select_version": "選擇版本",
+    "version": "版本"
+  },
+  "label": {
+    "detail": "詳情",
+    "log": "日誌"
+  },
+  "uninstall": {
+    "description": "確定要卸載應用「{{app}}」嗎？",
+    "error": "卸載失敗",
+    "error_description": "卸載應用「{{app}}」失敗：{{error}}",
+    "success": "卸載成功",
+    "success_description": "應用「{{app}}」已成功卸載",
+    "title": "卸載應用",
+    "unknown_error": "未知錯誤"
+  }
+}

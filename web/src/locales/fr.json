@@ -1,0 +1,67 @@
+{
+  "app": {
+    "all": "Tous",
+    "detail": "Détails de l'application",
+    "err_list": "Échec de la récupération de la liste des applications",
+    "error": "Erreur",
+    "install": "Installer",
+    "installed": "Installé",
+    "installing": "Installation en cours",
+    "loading": "Chargement",
+    "noApps": "Aucune application",
+    "no_document": "Pas de documentation",
+    "no_log": "Pas de logs",
+    "not_installed": "Non installé",
+    "page": "Page",
+    "search": "Rechercher des applications",
+    "totalItems": "Total {{count}} éléments",
+    "uninstall": "Désinstaller",
+    "uninstalling": "Désinstallation en cours"
+  },
+  "common": {
+    "cancel": "Annuler",
+    "confirm": "Confirmer",
+    "document": "Documentation",
+    "open_community": "Communauté Open Source",
+    "title": "Boutique d'Applications",
+    "website": "Site Officiel"
+  },
+  "install": {
+    "app_config": "Configuration de l'application",
+    "basic_info": "Informations de base",
+    "cpu_limit": "Limite CPU (cœurs)",
+    "cpu_limit_placeholder": "Mettre à 0 pour désactiver la limite",
+    "errors": {
+      "cpu_invalid": "La limite CPU doit être supérieure ou égale à 0",
+      "cpu_required": "Veuillez saisir la limite CPU",
+      "field_required": "Veuillez saisir {{field}}",
+      "memory_invalid": "Format de mémoire invalide, veuillez saisir un entier ou avec unité (MB/GB)",
+      "memory_required": "Veuillez saisir la limite de mémoire",
+      "version_required": "Veuillez sélectionner une version"
+    },
+    "install_app": "Installer l'application",
+    "install_failed": "Échec de l'installation",
+    "install_starting": "Démarrage de l'installation...",
+    "install_success": "Installation réussie",
+    "latest_version": "Dernière version",
+    "memory_limit": "Limite mémoire (MB/GB)",
+    "memory_limit_placeholder": "Exemple : 512MB, 1GB, mettre à 0 pour désactiver la limite",
+    "name": "Nom",
+    "resource_limit": "Limites de ressources",
+    "select_version": "Sélectionner la version",
+    "version": "Version"
+  },
+  "label": {
+    "detail": "Détails",
+    "log": "Logs"
+  },
+  "uninstall": {
+    "description": "Êtes-vous sûr de vouloir désinstaller l'application « {{app}} » ?",
+    "error": "Échec de la désinstallation",
+    "error_description": "Échec de la désinstallation de l'application « {{app}} » : {{error}}",
+    "success": "Désinstallation réussie",
+    "success_description": "L'application « {{app}} » a été désinstallée avec succès",
+    "title": "Désinstaller l'application",
+    "unknown_error": "Erreur inconnue"
+  }
+}

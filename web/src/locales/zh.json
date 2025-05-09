@@ -1,0 +1,67 @@
+{
+  "app": {
+    "all": "全部",
+    "detail": "应用详情",
+    "err_list": "获取应用列表失败",
+    "error": "错误",
+    "install": "安装",
+    "installed": "已安装",
+    "installing": "安装中",
+    "loading": "加载中",
+    "noApps": "暂无应用",
+    "no_document": "没有相关文档",
+    "no_log": "没有相关日志",
+    "not_installed": "未安装",
+    "page": "页",
+    "search": "搜索应用",
+    "totalItems": "共{{count}}条",
+    "uninstall": "卸载",
+    "uninstalling": "卸载中"
+  },
+  "common": {
+    "cancel": "取消",
+    "confirm": "确认",
+    "document": "文档说明",
+    "open_community": "开源社区",
+    "title": "应用商店",
+    "website": "官方网站"
+  },
+  "install": {
+    "app_config": "应用配置",
+    "basic_info": "基本信息",
+    "cpu_limit": "CPU限制（核心数）",
+    "cpu_limit_placeholder": "限制为 0 则关闭限制",
+    "errors": {
+      "cpu_invalid": "CPU限制必须大于等于0",
+      "cpu_required": "请输入CPU限制",
+      "field_required": "请输入{{field}}",
+      "memory_invalid": "内存限制格式不正确，请输入整数或带单位（MB/GB）",
+      "memory_required": "请输入内存限制",
+      "version_required": "请选择版本"
+    },
+    "install_app": "安装应用",
+    "install_failed": "安装失败",
+    "install_starting": "开始安装...",
+    "install_success": "安装成功",
+    "latest_version": "最新版本",
+    "memory_limit": "内存限制（MB/GB）",
+    "memory_limit_placeholder": "示例：512MB、1GB，限制为 0 则关闭限制",
+    "name": "名称",
+    "resource_limit": "资源限制",
+    "select_version": "选择版本",
+    "version": "版本"
+  },
+  "label": {
+    "detail": "详情",
+    "log": "日志"
+  },
+  "uninstall": {
+    "description": "确定卸载应用「{{app}}」吗？",
+    "error": "卸载失败",
+    "error_description": "应用「{{app}}」卸载失败：{{error}}",
+    "success": "卸载成功",
+    "success_description": "应用「{{app}}」已卸载成功",
+    "title": "卸载应用",
+    "unknown_error": "未知错误"
+  }
+}
