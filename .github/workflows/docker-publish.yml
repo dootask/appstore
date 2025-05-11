@@ -33,15 +33,6 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Extract metadata for Docker
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: kuaifan/dootask-appstore
-          tags: |
-            type=raw,value=latest
-            type=ref,event=tag,prefix=v,format=raw
-
       - name: Login to DockerHub
         uses: docker/login-action@v3
         with:
@@ -55,4 +46,6 @@ jobs:
           file: ./Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: kuaifan/dootask-appstore:${{ steps.meta.outputs.version }} 
+          tags: |
+            kuaifan/dootask-appstore:latest
+            kuaifan/dootask-appstore:${{ github.ref_name }} 

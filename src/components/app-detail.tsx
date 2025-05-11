@@ -33,7 +33,7 @@ export function AppDetail({app, onOperation}: AppDetailProps) {
       }
     }).then(({data}) => {
       if (data && data.name === app.name) {
-        Object.assign(app, {info: data.info})
+        Object.assign(app, data)
       }
     }).catch((err) => {
       console.error(err)

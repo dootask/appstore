@@ -20,17 +20,17 @@ FROM node:22 AS builder
 # 设置工作目录
 WORKDIR /app
 
-# 复制 web 目录下的 package.json 和 package-lock.json（如果存在）
-COPY web/package*.json ./
+# 复制 package.json 和 package-lock.json（如果存在）
+COPY package*.json ./
 
 # 安装依赖
 RUN npm install
 
-# 复制 web 目录下的源代码
-COPY web/ .
+# 复制源代码
+COPY . .
 
 # 构建项目
-ENV VITE_BASE_PATH=/web/
+ENV VITE_BASE_PATH=/appstore/web/
 RUN npm run build
 
 # =============================================================
