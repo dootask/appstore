@@ -8,7 +8,7 @@ import { ScrollArea } from "./ui/scroll-area"
 import { useTranslation } from "react-i18next"
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
-import { nextZIndex, requestAPI } from "@dootask/tools";
+import { requestAPI } from "@dootask/tools";
 import { eventEmit } from "@/lib/events";
 import { Alert } from "@/components/custom/prompt";
 import { useAppStore } from "@/lib/store"
@@ -148,6 +148,7 @@ export function AppInstall({appName, onClose}: AppInstallProps) {
                     <div className="sm:col-span-3">
                       <FormControl>
                         <Select
+                          {...field}
                           options={[
                             { id: 'latest', name: t('install.latest_version') },
                             ...app.versions.map(version => ({

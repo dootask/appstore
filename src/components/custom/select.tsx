@@ -17,12 +17,7 @@ export interface SelectProps {
   placeholder?: string
 }
 
-export default function Select({ 
-  options, 
-  defaultValue, 
-  onChange, 
-  placeholder = '' 
-}: SelectProps) {
+export default function Select({options, defaultValue, onChange, placeholder = '', ...props}: SelectProps) {
   const [selected, setSelected] = useState<SelectOption>(options.find(option => option.id === defaultValue) || {id: '', name: ''})
 
   const handleChange = (value: SelectOption) => {
@@ -33,12 +28,12 @@ export default function Select({
   return (
     <Listbox value={selected} onChange={handleChange}>
       <div className="relative">
-        <ListboxButton className="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left text-gray-900 transition-[color,box-shadow] sm:text-sm/6 outline-none border-input border focus:border-ring focus:ring-ring/50 focus:ring-[3px]">
-        {selected.name ? (
-          <span className="col-start-1 row-start-1 truncate pr-6">{selected.name}</span>
-        ) : (
-          <span className="col-start-1 row-start-1 truncate pr-6 text-gray-500">{placeholder}</span>
-        )}
+        <ListboxButton className="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left text-gray-900 transition-[color,box-shadow] sm:text-sm/6 outline-none border-input border focus:border-ring focus:ring-ring/50 focus:ring-[3px]"  {...props}>
+          {selected.name ? (
+            <span className="col-start-1 row-start-1 truncate pr-6">{selected.name}</span>
+          ) : (
+            <span className="col-start-1 row-start-1 truncate pr-6 text-gray-500">{placeholder}</span>
+          )}
           <ChevronUpDownIcon
             aria-hidden="true"
             className="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4"
@@ -56,7 +51,6 @@ export default function Select({
               className="group relative cursor-default py-2 pr-9 pl-3 text-gray-800 select-none data-focus:bg-gray-100 data-focus:outline-hidden"
             >
               <span className="block truncate font-normal group-data-selected:font-medium">{option.name}</span>
-
               <span className="absolute inset-y-0 right-0 flex items-center pr-4 text-gray-600 group-not-data-selected:hidden">
                 <CheckIcon aria-hidden="true" className="size-5"/>
               </span>
