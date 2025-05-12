@@ -31,6 +31,10 @@ function App() {
   const timerRef = useRef<NodeJS.Timeout>(null)
 
   useEffect(() => {
+    // 设置主题
+    if (props.themeName === 'dark') {
+      document.body.classList.add('doo-dark')
+    }
     // 设置语言
     i18n.changeLanguage(props.languageName)
     // 获取应用列表数据
@@ -292,10 +296,10 @@ function App() {
         direction={"right"}
         onOpenChange={(open) => !open && setSelectedApp(null)}>
         {selectedApp && (
-          <div className="fixed top-0 right-0 left-0 bottom-0 bg-black/40 animate-fade-in pointer-events-auto" style={{zIndex: detailZIndex}} onClick={() => setSelectedApp(null)}></div>
+          <div className="fixed top-0 right-0 left-0 bottom-0 bg-black/40 animate-fade-in pointer-events-auto doo-dark:bg-white/40" style={{zIndex: detailZIndex}} onClick={() => setSelectedApp(null)}></div>
         )}
         {preInstallApp && !!selectedApp && (
-          <div className="fixed top-0 right-0 left-0 bottom-0 bg-black/40 animate-fade-in pointer-events-auto" style={{zIndex: installZIndex}}></div>
+          <div className="fixed top-0 right-0 left-0 bottom-0 bg-black/40 animate-fade-in pointer-events-auto doo-dark:bg-white/40" style={{zIndex: installZIndex}}></div>
         )}
         <DrawerContent style={{zIndex: detailZIndex}} className="rounded-l-xl !w-[1000px] !max-w-[90vw]">
           <DrawerHeader>
