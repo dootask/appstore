@@ -14,7 +14,7 @@
     "not_installed": "未インストール",
     "page": "ページ",
     "search": "アプリを検索",
-    "totalItems": "合計{{count}}件",
+    "totalItems": "合計{{count}}個のアプリ",
     "uninstall": "アンインストール",
     "uninstalling": "アンインストール中"
   },

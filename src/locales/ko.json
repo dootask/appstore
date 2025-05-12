@@ -14,7 +14,7 @@
     "not_installed": "미설치",
     "page": "페이지",
     "search": "앱 검색",
-    "totalItems": "총 {{count}}개",
+    "totalItems": "총 {{count}}개의 앱",
     "uninstall": "제거",
     "uninstalling": "제거 중"
   },

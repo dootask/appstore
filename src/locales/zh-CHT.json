@@ -14,7 +14,7 @@
     "not_installed": "未安裝",
     "page": "頁",
     "search": "搜索應用",
-    "totalItems": "共{{count}}條",
+    "totalItems": "共{{count}}個",
     "uninstall": "卸載",
     "uninstalling": "卸載中"
   },

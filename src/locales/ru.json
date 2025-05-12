@@ -14,7 +14,7 @@
     "not_installed": "Не установлено",
     "page": "Страница",
     "search": "Поиск приложений",
-    "totalItems": "Всего {{count}} элементов",
+    "totalItems": "Всего {{count}} приложений",
     "uninstall": "Удалить",
     "uninstalling": "Удаление"
   },
