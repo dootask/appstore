@@ -1,13 +1,13 @@
-import {requestAPI} from "@dootask/tools";
-import {useEffect, useState, useRef, forwardRef, useImperativeHandle} from "react";
-import {Skeleton} from "./ui/skeleton";
-import {useTranslation} from "react-i18next";
-import {ScrollArea} from "./ui/scroll-area";
-import type {AppItem} from "@/types/app.ts";
-import { Notice } from "./common";
+import { requestAPI } from "@dootask/tools";
+import { useEffect, useState, useRef, forwardRef, useImperativeHandle } from "react";
+import { Skeleton } from "./ui/skeleton";
+import { useTranslation } from "react-i18next";
+import { ScrollArea } from "./ui/scroll-area";
+import type { AppItem } from "@/types/app.ts";
+import { useAppStore } from "@/lib/store.ts";
 
 interface AppLogProps {
-  app: AppItem
+  appName: string
   onLoading?: (loading: boolean) => void
 }
 
@@ -15,14 +15,20 @@ export interface AppLogRef {
   fetchLogs: (isQueue?: boolean) => Promise<void>
 }
 
-export const AppLog = forwardRef<AppLogRef, AppLogProps>(({app, onLoading}, ref) => {
+export const AppLog = forwardRef<AppLogRef, AppLogProps>(({appName, onLoading}, ref) => {
   const {t} = useTranslation()
+  const {updateOrAddApp, apps} = useAppStore();
+  const app = apps.find(app => app.name === appName)
   const [loading, setLoading] = useState(true)
   const [logDetail, setLogDetail] = useState("")
   const bottomRef = useRef<HTMLDivElement>(null)
   const isRequestingRef = useRef(false)
   const [lastRequestTime, setLastRequestTime] = useState(0)
   const timerRef = useRef<NodeJS.Timeout>(null)
+
+  if (!app) {
+    return <div>App not found</div>
+  }
 
   const fetchLogs = async (isQueue = true) => {
     if (isRequestingRef.current) return
@@ -39,30 +45,7 @@ export const AppLog = forwardRef<AppLogRef, AppLogProps>(({app, onLoading}, ref)
         }
       })
       if (data && data.name === app.name) {
-        // 如果状态发生变化，则通知用户
-        if (data.config.status !== app.config.status) {
-          if (data.config.status === 'installing') {
-            Notice({
-              type: "info",
-              title: t('install.title'),
-              description: t('install.install_starting', {app: app.info.name}),
-            })
-          } else if (data.config.status === 'installed') {
-            Notice({
-              type: "success",
-              title: t('install.title'),
-              description: t('install.install_success', {app: app.info.name}),
-            })
-          } else if (data.config.status === 'error') {
-            Notice({
-              type: "error",
-              title: t('install.title'),
-              description: t('install.install_failed', {app: app.info.name})
-            })
-          }
-        }
-        // 更新应用状态
-        Object.assign(app, {config: data.config})
+        updateOrAddApp({name: data.name, config: data.config} as AppItem);
         setLogDetail(data.log)
       }
     } catch (err) {

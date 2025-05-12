@@ -1,27 +1,33 @@
-import type {AppItem} from "@/types/app"
-import {zodResolver} from "@hookform/resolvers/zod"
-import {useForm} from "react-hook-form"
-import {z} from "zod"
-import {Button} from "@/components/ui/button"
-import {Input} from "@/components/ui/input"
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select"
-import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form"
-import {ScrollArea} from "./ui/scroll-area"
-import {useTranslation} from "react-i18next"
-import {Loader2} from "lucide-react";
-import {useState} from "react";
-import {nextZIndex, requestAPI} from "@dootask/tools";
-import {eventEmit} from "@/lib/events";
-import {Alert} from "@/components/common";
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { ScrollArea } from "./ui/scroll-area"
+import { useTranslation } from "react-i18next"
+import { Loader2 } from "lucide-react";
+import { useState } from "react";
+import { nextZIndex, requestAPI } from "@dootask/tools";
+import { eventEmit } from "@/lib/events";
+import { Alert } from "@/components/common";
+import { useAppStore } from "@/lib/store"
 
 interface AppInstallProps {
-  app: AppItem
+  appName: string
   onClose?: () => void
 }
 
-export function AppInstall({app, onClose}: AppInstallProps) {
+export function AppInstall({appName, onClose}: AppInstallProps) {
   const {t} = useTranslation()
   const [installing, setInstalling] = useState(false)
+  const {apps} = useAppStore();
+  const app = apps.find(app => app.name === appName)
+
+  if (!app) {
+    return <div>App not found</div>
+  }
 
   const formSchema = z.object({
     name: z.string(),
@@ -56,6 +62,7 @@ export function AppInstall({app, onClose}: AppInstallProps) {
 
   type FormValues = z.infer<typeof formSchema>
 
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -94,7 +101,7 @@ export function AppInstall({app, onClose}: AppInstallProps) {
         app_name: app.name,
       }),
     }).then(() => {
-      eventEmit("install-success", app.name)
+      eventEmit("refreshDetail", app.name)
       onClose?.()
     }).catch((error) => {
       Alert({

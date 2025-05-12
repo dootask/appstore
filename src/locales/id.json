@@ -62,6 +62,7 @@
     "success": "Penghapusan Berhasil",
     "success_description": "Aplikasi «{{app}}» telah berhasil dihapus",
     "title": "Hapus Aplikasi",
-    "unknown_error": "Kesalahan Tidak Diketahui"
+    "unknown_error": "Kesalahan Tidak Diketahui",
+    "uninstall_starting": "Memulai penghapusan aplikasi «{{app}}»..."
   }
 }

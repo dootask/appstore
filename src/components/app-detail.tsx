@@ -1,59 +1,63 @@
-import type {AppItem, AppStatus} from "@/types/app"
-import type {AppLogRef} from "@/components/app-log.tsx"
-import {Button} from "@/components/ui/button"
-import {ScrollArea} from "@/components/ui/scroll-area.tsx";
-import {ExternalLink, Loader2, LoaderCircle, RefreshCw} from "lucide-react"
-import {useTranslation} from "react-i18next";
-import {requestAPI} from "@dootask/tools";
-import {useEffect, useState, useRef} from "react";
-import {Skeleton} from "./ui/skeleton";
+import type { AppItem, AppStatus } from "@/types/app"
+import type { AppLogRef } from "@/components/app-log.tsx"
+import { Button } from "@/components/ui/button"
+import { ScrollArea } from "@/components/ui/scroll-area.tsx";
+import { ExternalLink, Loader2, LoaderCircle, RefreshCw } from "lucide-react"
+import { useTranslation } from "react-i18next";
+import { requestAPI } from "@dootask/tools";
+import { useEffect, useState, useRef } from "react";
+import { Skeleton } from "./ui/skeleton";
 import ReactMarkdown from "react-markdown"
-import {Prism as SyntaxHighlighter} from "react-syntax-highlighter"
-import {oneLight as SyntaxStyle} from 'react-syntax-highlighter/dist/esm/styles/prism'
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
+import { oneLight as SyntaxStyle } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import "@/styles/github-markdown-light.css"
-import {Tabs, TabsContent, TabsList, TabsTrigger} from "./ui/tabs";
-import {AppLog} from "@/components/app-log.tsx";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
+import { AppLog } from "@/components/app-log.tsx";
 import { eventOn } from "@/lib/events";
+import { useAppStore } from "@/lib/store.ts";
 
 interface AppDetailProps {
-  app: AppItem
+  appName: string
   onOperation: (app: AppItem) => void
 }
 
-export function AppDetail({app, onOperation}: AppDetailProps) {
+export function AppDetail({appName, onOperation}: AppDetailProps) {
   const {t} = useTranslation()
+  const {updateOrAddApp, apps} = useAppStore();
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState("detail")
   const [isRefreshing, setIsRefreshing] = useState(false)
   const appLogRef = useRef<AppLogRef>(null)
+  const app = apps.find(app => app.name === appName)
+
+  if (!app) {
+    return <div>App not found</div>
+  }
 
   useEffect(() => {
     requestAPI({
       url: 'apps/info',
       data: {
-        app_name: app.name
+        app_name: appName
       }
     }).then(({data}) => {
-      if (data && data.name === app.name) {
-        Object.assign(app, data)
+      if (data && data.name === appName) {
+        updateOrAddApp(data)
       }
     }).catch((err) => {
       console.error(err)
     }).finally(() => {
       setLoading(false)
     })
-  }, [app]);
-
-  useEffect(() => {
-    const off = eventOn("install-success", (app_name: unknown) => {
-      if (app_name === app.name) {
+    const off = eventOn("refreshDetail", (app_name: unknown) => {
+      if (app_name === appName) {
         handleRefresh()
       }
     })
     return () => {
       off()
     }
-  }, [])
+  }, [appName]);
 
   const handleRefresh = () => {
     setActiveTab('log')
@@ -177,23 +181,23 @@ export function AppDetail({app, onOperation}: AppDetailProps) {
                     <ReactMarkdown
                       children={app.document}
                       components={{
-                      code(props) {
-                        const {children, className, ...rest} = props
-                        const match = /language-(\w+)/.exec(className || '')
-                        return match ? (
-                          <SyntaxHighlighter
-                            PreTag="div"
-                            children={String(children).replace(/\n$/, '')}
-                            language={match[1]}
-                            style={SyntaxStyle}
-                          />
-                        ) : (
-                          <code {...rest} className={className}>
-                            {children}
-                          </code>
-                        )
-                      }
-                    }}
+                        code(props) {
+                          const {children, className, ...rest} = props
+                          const match = /language-(\w+)/.exec(className || '')
+                          return match ? (
+                            <SyntaxHighlighter
+                              PreTag="div"
+                              children={String(children).replace(/\n$/, '')}
+                              language={match[1]}
+                              style={SyntaxStyle}
+                            />
+                          ) : (
+                            <code {...rest} className={className}>
+                              {children}
+                            </code>
+                          )
+                        }
+                      }}
                     />
                   </div>
                 </div>
@@ -207,7 +211,7 @@ export function AppDetail({app, onOperation}: AppDetailProps) {
         </TabsContent>
         <TabsContent value="log" className="flex-1 h-0">
           {/* 日志内容 */}
-          <AppLog ref={appLogRef} app={app} onLoading={setIsRefreshing}/>
+          <AppLog ref={appLogRef} appName={appName} onLoading={setIsRefreshing}/>
         </TabsContent>
       </Tabs>
     </div>

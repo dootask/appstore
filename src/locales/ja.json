@@ -62,6 +62,7 @@
     "success": "アンインストール成功",
     "success_description": "「{{app}}」 アプリがアンインストールされました",
     "title": "アプリをアンインストール",
-    "unknown_error": "不明なエラー"
+    "unknown_error": "不明なエラー",
+    "uninstall_starting": "「{{app}}」 アプリのアンインストールを開始しています..."
   }
 }

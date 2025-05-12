@@ -62,6 +62,7 @@
     "success": "卸载成功",
     "success_description": "应用「{{app}}」已卸载成功",
     "title": "卸载应用",
-    "unknown_error": "未知错误"
+    "unknown_error": "未知错误",
+    "uninstall_starting": "应用「{{app}}」开始卸载..."
   }
 }

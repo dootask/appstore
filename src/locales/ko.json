@@ -62,6 +62,7 @@
     "success": "제거 성공",
     "success_description": "「{{app}}」 앱이 제거되었습니다",
     "title": "앱 제거",
-    "unknown_error": "알 수 없는 오류"
+    "unknown_error": "알 수 없는 오류",
+    "uninstall_starting": "「{{app}}」 앱 제거를 시작합니다..."
   }
 }

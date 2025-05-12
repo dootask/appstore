@@ -62,6 +62,7 @@
     "success": "Uninstall Success",
     "success_description": "The app «{{app}}» has been uninstalled successfully",
     "title": "Uninstall App",
-    "unknown_error": "Unknown Error"
+    "unknown_error": "Unknown Error",
+    "uninstall_starting": "Starting to uninstall app «{{app}}»..."
   }
 }

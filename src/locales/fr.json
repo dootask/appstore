@@ -62,6 +62,7 @@
     "success": "Désinstallation réussie",
     "success_description": "L'application « {{app}} » a été désinstallée avec succès",
     "title": "Désinstaller l'application",
-    "unknown_error": "Erreur inconnue"
+    "unknown_error": "Erreur inconnue",
+    "uninstall_starting": "Démarrage de la désinstallation de l'application « {{app}} »..."
   }
 }

@@ -1,28 +1,28 @@
 import i18n from "@/i18n";
-import {Drawer as DrawerPrimitive} from "vaul"
-import {useEffect, useRef, useState} from 'react'
-import {Button} from './components/ui/button'
-import {Drawer, DrawerClose, DrawerContent, DrawerHeader, DrawerTitle} from "./components/ui/drawer"
-import {useTranslation} from "react-i18next";
-import {props, requestAPI, backApp, nextZIndex, interceptBack} from "@dootask/tools";
-import {X, ChevronLeft, ChevronRight, LoaderCircle, RefreshCw} from "lucide-react";
-import {AppSearch} from './components/app-search';
-import {Tabs, TabsContent, TabsList, TabsTrigger} from './components/ui/tabs';
-import {AppCard} from './components/app-card';
-import type {AppItem} from "@/types/app.ts";
-import {AppDetail} from "./components/app-detail"
-import {beforeClose} from "@/lib/utils.ts";
-import {AppInstall} from './components/app-install.tsx';
-import CommonPortal, {Alert, Notice} from "./components/common/index.tsx";
+import { Drawer as DrawerPrimitive } from "vaul"
+import { useEffect, useRef, useState } from 'react'
+import { Button } from './components/ui/button'
+import { Drawer, DrawerClose, DrawerContent, DrawerHeader, DrawerTitle } from "./components/ui/drawer"
+import { useTranslation } from "react-i18next";
+import { props, backApp, nextZIndex, interceptBack, requestAPI } from "@dootask/tools";
+import { X, ChevronLeft, ChevronRight, LoaderCircle, RefreshCw } from "lucide-react";
+import { AppSearch } from './components/app-search';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from './components/ui/tabs';
+import { AppCard } from './components/app-card';
+import type { AppItem } from "@/types/app.ts";
+import { AppDetail } from "./components/app-detail"
+import { beforeClose } from "@/lib/utils.ts";
+import { AppInstall } from './components/app-install.tsx';
+import CommonPortal, { Alert, Notice } from "./components/common/index.tsx";
+import { useAppStore } from '@/lib/store';
 
 function App() {
   const {t} = useTranslation();
-  const [apps, setApps] = useState<AppItem[]>([]);
+  const {apps, loading, fetchApps} = useAppStore();
   const [selectedApp, setSelectedApp] = useState<AppItem | null>(null)
   const [preInstallApp, setPreInstallApp] = useState(false)
   const [detailZIndex, setDetailZIndex] = useState(1000);
   const [installZIndex, setInstallZIndex] = useState(1000);
-  const [loading, setLoading] = useState(false);
   const [filter, setFilter] = useState('all');
   const [category, setCategory] = useState('all');
   const [availableCategories, setAvailableCategories] = useState<string[]>(['all']);
@@ -43,9 +43,52 @@ function App() {
     const off = interceptBack(() => {
       return beforeClose();
     })
+    // 监听应用列表变化
+    const unsubscribe = useAppStore.subscribe(
+      ({apps}, {apps: prevApps}) => {
+        apps.forEach(app => {
+          const prevApp = prevApps.find(p => p.name === app.name);
+          if (prevApp && prevApp.config.status !== app.config.status) {
+            console.log(`应用 ${app.name} 状态从 ${prevApp.config.status} 变为 ${app.config.status}`);
+            if (app.config.status === 'installing') {
+              Notice({
+                type: "info",
+                title: t('install.title'),
+                description: t('install.install_starting', {app: app.info.name}),
+              })
+            } else if (app.config.status === 'installed') {
+              Notice({
+                type: "success",
+                title: t('install.title'),
+                description: t('install.install_success', {app: app.info.name}),
+              })
+            } else if (app.config.status === 'uninstalling') {
+              Notice({
+                type: "warning",
+                title: t('uninstall.title'),
+                description: t('uninstall.uninstall_starting', {app: app.info.name}),
+              })
+            } else if (app.config.status === 'not_installed') {
+              Notice({
+                type: "success",
+                title: t('uninstall.success'),
+                description: t('uninstall.success_description', {app: app.info.name}),
+              })
+            } else if (app.config.status === 'error' && prevApp.config.status === 'installing') {
+              Notice({
+                type: "error",
+                title: t('install.title'),
+                description: t('install.install_failed', {app: app.info.name})
+              })
+            }
+          }
+        });
+      }
+    );
     // 清理函数
     return () => {
       off();
+      unsubscribe();
     }
   }, [])
 
@@ -63,32 +106,6 @@ function App() {
       }
     }
   }, [apps])
-
-  const fetchApps = (silence: boolean = false) => {
-    if (!silence) {
-      setLoading(true);
-    }
-    requestAPI({
-      url: "apps/list",
-    }).then(({data}) => {
-      if (data) {
-        setApps(data);
-      }
-    }).catch(() => {
-      if (!silence) {
-        Alert({
-          type: "error",
-          title: t('common.title'),
-          description: t('app.err_list'),
-          showCancel: false,
-        })
-      }
-    }).finally(() => {
-      if (!silence) {
-        setLoading(false);
-      }
-    });
-  };
 
   // 提取应用标签并更新可用类别
   useEffect(() => {
@@ -147,11 +164,6 @@ function App() {
     setSearchKeyword(keyword);
   };
 
-  // 刷新应用列表
-  const handleRefresh = () => {
-    fetchApps();
-  };
-
   // 打开应用详情
   const handleOpenApp = (app: AppItem) => {
     setDetailZIndex(nextZIndex());
@@ -175,14 +187,8 @@ function App() {
               app_name: app.name
             }
           }).then(() => {
-            // 卸载成功后，关闭应用详情
-            Notice({
-              type: "success",
-              title: t('uninstall.success'),
-              description: t('uninstall.success_description', {app: app.info.name}),
-            })
+            // 卸载成功
             setSelectedApp(null);
-            fetchApps();
           }).catch((error) => {
             // 卸载失败
             Alert({
@@ -191,6 +197,9 @@ function App() {
               description: t('uninstall.error_description', {app: app.info.name, error: error.msg || t('uninstall.unknown_error')}),
               showCancel: false,
             })
+          }).finally(() => {
+            // 请求应用列表
+            fetchApps();
           })
         }
       })
@@ -210,7 +219,7 @@ function App() {
               <ChevronLeft className="min-md:hidden mr-4" onClick={backApp}/>
             )}
             <h1 className="text-2xl font-bold mr-2">{t('common.title')}</h1>
-            <Button variant="ghost" size="icon" className="rounded-full" onClick={handleRefresh}>
+            <Button variant="ghost" size="icon" className="rounded-full" onClick={() => fetchApps()}>
               {loading ? <LoaderCircle className="animate-spin"/> : <RefreshCw/>}
             </Button>
           </div>
@@ -246,7 +255,7 @@ function App() {
 
             {availableCategories.map((tabValue) => (
               <TabsContent key={tabValue} value={tabValue}>
-                {loading ? (
+                {loading && getFilteredApps().length === 0 ? (
                   <div className="text-center py-10">
                     <p>{t('app.loading')}</p>
                   </div>
@@ -319,7 +328,7 @@ function App() {
             </DrawerTitle>
           </DrawerHeader>
           {/* 应用详情 */}
-          {selectedApp && <AppDetail app={selectedApp} onOperation={handleOperation}/>}
+          {selectedApp && <AppDetail appName={selectedApp.name} onOperation={handleOperation}/>}
           {/* 安装应用 */}
           <DrawerPrimitive.NestedRoot
             modal={false}
@@ -339,7 +348,7 @@ function App() {
                   </DrawerClose>
                 </DrawerTitle>
               </DrawerHeader>
-              {preInstallApp && !!selectedApp && <AppInstall app={selectedApp} onClose={() => setPreInstallApp(false)}/>}
+              {preInstallApp && !!selectedApp && <AppInstall appName={selectedApp.name} onClose={() => setPreInstallApp(false)}/>}
             </DrawerContent>
           </DrawerPrimitive.NestedRoot>
         </DrawerContent>
