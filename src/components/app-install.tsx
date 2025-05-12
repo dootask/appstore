@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { ScrollArea } from "./ui/scroll-area"
 import { useTranslation } from "react-i18next"
@@ -13,6 +12,7 @@ import { nextZIndex, requestAPI } from "@dootask/tools";
 import { eventEmit } from "@/lib/events";
 import { Alert } from "@/components/custom/prompt";
 import { useAppStore } from "@/lib/store"
+import Select from "@/components/custom/select"
 
 interface AppInstallProps {
   appName: string
@@ -146,21 +146,20 @@ export function AppInstall({appName, onClose}: AppInstallProps) {
                   <FormItem className="grid grid-cols-1 gap-3 sm:grid-cols-4 sm:items-start">
                     <FormLabel className="sm:text-right min-h-9">{t('install.version')}</FormLabel>
                     <div className="sm:col-span-3">
-                      <Select onValueChange={field.onChange} defaultValue="latest">
-                        <FormControl>
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder={t('install.select_version')}/>
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent style={{zIndex: nextZIndex()}}>
-                          <SelectItem value="latest">{t('install.latest_version')}</SelectItem>
-                          {app.versions.map((version) => (
-                            <SelectItem key={version.version} value={version.version}>
-                              {version.version}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <FormControl>
+                        <Select
+                          options={[
+                            { id: 'latest', name: t('install.latest_version') },
+                            ...app.versions.map(version => ({
+                              id: version.version,
+                              name: version.version
+                            }))
+                          ]}
+                          defaultValue="latest"
+                          onChange={(value) => field.onChange(value.id)}
+                          placeholder={t('install.select_version')}
+                        />
+                      </FormControl>
                       <FormMessage/>
                     </div>
                   </FormItem>
@@ -185,20 +184,14 @@ export function AppInstall({appName, onClose}: AppInstallProps) {
                           <FormControl>
                             {field.type === "select" ? (
                               <Select
-                                onValueChange={formField.onChange}
+                                options={field.options?.map(option => ({
+                                  id: option.value,
+                                  name: option.label
+                                })) || []}
                                 defaultValue={field.default?.toString()}
-                              >
-                                <SelectTrigger className="w-full">
-                                  <SelectValue placeholder={field.placeholder || t('install.select_version')}/>
-                                </SelectTrigger>
-                                <SelectContent style={{zIndex: nextZIndex()}}>
-                                  {field.options?.map((option) => (
-                                    <SelectItem key={option.value} value={option.value}>
-                                      {option.label}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
+                                onChange={(value) => formField.onChange(value.id)}
+                                placeholder={field.placeholder}
+                              />
                             ) : (
                               <Input
                                 {...formField}
