@@ -47,9 +47,6 @@ export interface AppConfig {
 
 export interface AppVersion {
   version: string;
-  path: string;
-  base_dir: string;
-  compose_file: string;
 }
 
 export interface AppItem {

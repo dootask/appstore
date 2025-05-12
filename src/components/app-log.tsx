@@ -44,20 +44,20 @@ export const AppLog = forwardRef<AppLogRef, AppLogProps>(({app, onLoading}, ref)
           if (data.config.status === 'installing') {
             Notice({
               type: "info",
-              title: app.info.name,
-              description: t('install.install_starting'),
+              title: t('install.title'),
+              description: t('install.install_starting', {app: app.info.name}),
             })
           } else if (data.config.status === 'installed') {
             Notice({
               type: "success",
-              title: app.info.name,
-              description: t('install.install_success'),
+              title: t('install.title'),
+              description: t('install.install_success', {app: app.info.name}),
             })
           } else if (data.config.status === 'error') {
             Notice({
               type: "error",
-              title: app.info.name,
-              description: t('install.install_failed')
+              title: t('install.title'),
+              description: t('install.install_failed', {app: app.info.name})
             })
           }
         }

@@ -61,8 +61,8 @@ export function AppInstall({app, onClose}: AppInstallProps) {
     defaultValues: {
       name: app.info.name,
       version: app.versions[0]?.version || "",
-      cpuLimit: "0",
-      memoryLimit: "0",
+      cpuLimit: app.config.resources.cpu_limit || "0",
+      memoryLimit: app.config.resources.memory_limit || "0",
       ...Object.fromEntries(
         app.info.fields.map((field) => [field.name, field.default || ""])
       ),
@@ -272,7 +272,7 @@ export function AppInstall({app, onClose}: AppInstallProps) {
               {installing && (
                 <Loader2 className="animate-spin"/>
               )}
-              {t('install.install_app')}
+              {t('install.title')}
             </Button>
           </div>
         </form>
