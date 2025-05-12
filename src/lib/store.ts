@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import type { AppItem } from '@/types/app';
 import { requestAPI } from '@dootask/tools';
-import { Alert } from '@/components/common';
+import { Alert } from '@/components/custom/prompt';
 import i18n from '@/i18n';
 
 interface AppStoreState {

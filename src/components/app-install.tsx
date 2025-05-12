@@ -11,7 +11,7 @@ import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import { nextZIndex, requestAPI } from "@dootask/tools";
 import { eventEmit } from "@/lib/events";
-import { Alert } from "@/components/common";
+import { Alert } from "@/components/custom/prompt";
 import { useAppStore } from "@/lib/store"
 
 interface AppInstallProps {

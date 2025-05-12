@@ -10,7 +10,7 @@ export function Notice(props: NoticeProps) {
   eventEmit("notice", props)
 }
 
-export default function CommonPortal() {
+export default function PromptPortal() {
   return (
     <>
       <AlertPortal/>

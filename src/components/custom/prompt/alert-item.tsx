@@ -5,7 +5,7 @@ import {Dialog, DialogBackdrop, DialogPanel, DialogTitle} from '@headlessui/reac
 import {CheckIcon, ExclamationTriangleIcon, XMarkIcon} from '@heroicons/react/24/outline'
 import {Loader2} from 'lucide-react'
 import {useTranslation} from 'react-i18next'
-import type {AlertItem} from "@/components/common/alert.tsx";
+import type {AlertItem} from "@/components/custom/prompt/alert.tsx";
 
 export default function AlertItem({type, title, description, showCancel, showConfirm, zIndex, onConfirm, onCancel, afterClose}: AlertItem) {
   const {t} = useTranslation();
