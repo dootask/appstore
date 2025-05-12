@@ -94,7 +94,7 @@ export const AppLog = forwardRef<AppLogRef, AppLogProps>(({appName, onLoading}, 
 
   return (
     <ScrollArea className="h-full">
-      <div className="select-text">
+      <div className="px-6 pb-6 select-text">
         {loading && logDetail == "" ? (
           <div className="flex flex-col gap-3">
             <Skeleton className="h-4 w-[80%]"/>
@@ -108,8 +108,8 @@ export const AppLog = forwardRef<AppLogRef, AppLogProps>(({appName, onLoading}, 
             <div className="text-sm text-gray-500 mb-4">{t('app.no_log')}</div>
           )
         )}
+        <div ref={bottomRef}></div>
       </div>
-      <div ref={bottomRef}></div>
     </ScrollArea>
   )
 })

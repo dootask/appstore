@@ -65,9 +65,9 @@ export function AppDetail({appName, onOperation}: AppDetailProps) {
   }
 
   return (
-    <div className="p-6 flex-1 h-0 flex flex-col">
+    <div className="flex-1 h-0 flex flex-col">
       {/* 顶部信息区 */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="mx-6 mb-6 flex items-center justify-between">
         <div className="flex flex-1 items-start gap-4 mr-4">
           <img src={app.info.icon} alt={app.info.name} className="w-16 h-16 rounded-lg object-cover"/>
           <div className="min-h-16 flex flex-col justify-center">
@@ -146,11 +146,11 @@ export function AppDetail({appName, onOperation}: AppDetailProps) {
       </div>
 
       {/* 分割线 */}
-      <div className="border-b border-gray-200 mb-3"/>
+      <div className="mx-6 mb-3 border-b border-gray-200"/>
 
       {/* 详情、日志 */}
       <Tabs defaultValue="detail" value={activeTab} className="flex-1 flex flex-col h-0" onValueChange={setActiveTab}>
-        <div className="flex items-center mb-4 gap-2">
+        <div className="mx-6 mb-4 flex items-center gap-2">
           <TabsList>
             <TabsTrigger className="px-4" value="detail">{t('label.detail')}</TabsTrigger>
             <TabsTrigger className="px-4" value="log">
@@ -168,45 +168,47 @@ export function AppDetail({appName, onOperation}: AppDetailProps) {
         <TabsContent value="detail" className="flex-1 h-0">
           {/* 详情内容 */}
           <ScrollArea className="h-full">
-            {loading ? (
-              <div className="flex flex-col gap-3">
-                <Skeleton className="h-4 w-[80%]"/>
-                <Skeleton className="h-4 w-[70%]"/>
-                <Skeleton className="h-4 w-[40%]"/>
-              </div>
-            ) : (
-              app.document ? (
-                <div className="flex w-full">
-                  <div className="flex-1 w-0 prose select-text app-markdown-body">
-                    <ReactMarkdown
-                      children={app.document}
-                      components={{
-                        code(props) {
-                          const {children, className, ...rest} = props
-                          const match = /language-(\w+)/.exec(className || '')
-                          return match ? (
-                            <SyntaxHighlighter
-                              PreTag="div"
-                              children={String(children).replace(/\n$/, '')}
-                              language={match[1]}
-                              style={SyntaxStyle}
-                            />
-                          ) : (
-                            <code {...rest} className={className}>
-                              {children}
-                            </code>
-                          )
-                        }
-                      }}
-                    />
-                  </div>
+            <div className="px-6 pb-6 select-text">
+              {loading ? (
+                <div className="flex flex-col gap-3">
+                  <Skeleton className="h-4 w-[80%]"/>
+                  <Skeleton className="h-4 w-[70%]"/>
+                  <Skeleton className="h-4 w-[40%]"/>
                 </div>
               ) : (
-                <div className="text-sm text-gray-500 mb-4">
-                  {t('app.no_document')}
-                </div>
-              )
-            )}
+                app.document ? (
+                  <div className="flex w-full">
+                    <div className="flex-1 w-0 prose app-markdown-body">
+                      <ReactMarkdown
+                        children={app.document}
+                        components={{
+                          code(props) {
+                            const {children, className, ...rest} = props
+                            const match = /language-(\w+)/.exec(className || '')
+                            return match ? (
+                              <SyntaxHighlighter
+                                PreTag="div"
+                                children={String(children).replace(/\n$/, '')}
+                                language={match[1]}
+                                style={SyntaxStyle}
+                              />
+                            ) : (
+                              <code {...rest} className={className}>
+                                {children}
+                              </code>
+                            )
+                          }
+                        }}
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-sm text-gray-500 mb-4">
+                    {t('app.no_document')}
+                  </div>
+                )
+              )}
+            </div>
           </ScrollArea>
         </TabsContent>
         <TabsContent value="log" className="flex-1 h-0">

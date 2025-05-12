@@ -62,7 +62,6 @@ export function AppInstall({appName, onClose}: AppInstallProps) {
 
   type FormValues = z.infer<typeof formSchema>
 
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {

@@ -54,9 +54,9 @@ export default function NoticeItem({type, title, description, showClose, zIndex,
         style={{zIndex: zIndex}}
       >
         <div className="flex w-full flex-col items-center gap-y-3 sm:items-end">
-          {show && (
+          {/*{show && (
             <div role="app-store-close" role-index={zIndex} className="hidden" onClick={handleClose}></div>
-          )}
+          )}*/}
           <Transition show={show}>
             <div className="pointer-events-auto w-full mb-4 sm:mb-6 max-w-sm overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black/5 transition data-enter:transform data-enter:duration-300 data-enter:ease-out data-closed:opacity-0 data-closed:data-enter:-translate-y-full data-closed:data-enter:sm:translate-y-0 data-closed:data-enter:sm:translate-x-full data-leave:duration-200 data-leave:ease-in data-leave:-translate-y-full data-leave:sm:translate-y-0 data-leave:sm:translate-x-full doo-dark:bg-gray-300 doo-dark:shadow-none">
               <div className="p-4">
