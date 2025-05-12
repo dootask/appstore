@@ -32,7 +32,7 @@ export interface AppInfo {
   require_uninstalls: RequireUninstall[];
 }
 
-export interface AppLocal {
+export interface AppConfig {
   installed_at: string;
   installed_num: number;
   installed_version: string;
@@ -55,7 +55,7 @@ export interface AppVersion {
 export interface AppItem {
   name: string;
   info: AppInfo;
-  local: AppLocal;
+  config: AppConfig;
   versions: AppVersion[];
   document?: string
 }

@@ -17,8 +17,8 @@ export function AppCard({icon, title, description, status, category, onOpen}: Ap
   const {t} = useTranslation();
 
   return (
-    <Card 
-      className="flex flex-col overflow-hidden border px-2 py-5 cursor-pointer hover:bg-gray-50 transition-colors" 
+    <Card
+      className="flex flex-col overflow-hidden border px-2 py-3 cursor-pointer hover:bg-gray-50 transition-colors"
       onClick={onOpen}
     >
       <CardHeader className="p-4 pb-0">

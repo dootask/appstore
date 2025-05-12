@@ -40,20 +40,20 @@ export const AppLog = forwardRef<AppLogRef, AppLogProps>(({app, onLoading}, ref)
       })
       if (data && data.name === app.name) {
         // 如果状态发生变化，则通知用户
-        if (data.local.status !== app.local.status) {
-          if (data.local.status === 'installing') {
+        if (data.config.status !== app.config.status) {
+          if (data.config.status === 'installing') {
             Notice({
               type: "info",
               title: app.info.name,
               description: t('install.install_starting'),
             })
-          } else if (data.local.status === 'installed') {
+          } else if (data.config.status === 'installed') {
             Notice({
               type: "success",
               title: app.info.name,
               description: t('install.install_success'),
             })
-          } else if (data.local.status === 'error') {
+          } else if (data.config.status === 'error') {
             Notice({
               type: "error",
               title: app.info.name,
@@ -62,7 +62,7 @@ export const AppLog = forwardRef<AppLogRef, AppLogProps>(({app, onLoading}, ref)
           }
         }
         // 更新应用状态
-        Object.assign(app, {local: data.local})
+        Object.assign(app, {config: data.config})
         setLogDetail(data.log)
       }
     } catch (err) {
@@ -84,7 +84,7 @@ export const AppLog = forwardRef<AppLogRef, AppLogProps>(({app, onLoading}, ref)
   useEffect(() => {
     // 设置定时器
     timerRef.current = setInterval(() => {
-      const requiredTime = ['installing', 'uninstalling'].includes(app.local.status) ? 3000 : 15000
+      const requiredTime = ['installing', 'uninstalling'].includes(app.config.status) ? 3000 : 15000
       if (Date.now() - lastRequestTime > requiredTime) {
         fetchLogs(false)
       }

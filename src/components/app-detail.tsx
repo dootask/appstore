@@ -99,7 +99,7 @@ export function AppDetail({app, onOperation}: AppDetailProps) {
               }
             }
 
-            const config = statusConfig[app.local.status as AppStatus] || statusConfig.not_installed
+            const config = statusConfig[app.config.status as AppStatus] || statusConfig.not_installed
 
             return (
               <Button

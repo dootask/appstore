@@ -41,7 +41,7 @@ function App() {
     })
     // 设置定时器
     timerRef.current = setInterval(() => {
-      if (apps.find(item => ['installing', 'uninstalling'].includes(item.local.status))) {
+      if (apps.find(item => ['installing', 'uninstalling'].includes(item.config.status))) {
         fetchApps(true);
       }
     }, 10000)
@@ -106,7 +106,7 @@ function App() {
 
     // 按安装状态过滤
     if (filter === 'installed') {
-      filtered = filtered.filter(app => app.local.status === 'installed');
+      filtered = filtered.filter(app => app.config.status === 'installed');
     }
 
     // 按类别过滤
@@ -150,7 +150,7 @@ function App() {
 
   // 点击安装、卸载、错误等操作
   const handleOperation = (app: AppItem) => {
-    if (app.local.status === 'installed') {
+    if (app.config.status === 'installed') {
       // 卸载应用
       Alert({
         type: "warning",
@@ -248,7 +248,7 @@ function App() {
                         icon={app.info.icon}
                         title={app.info.name}
                         description={app.info.description}
-                        status={app.local.status}
+                        status={app.config.status}
                         category={app.info.tags?.length ? app.info.tags : []}
                         onOpen={() => handleOpenApp(app)}
                       />

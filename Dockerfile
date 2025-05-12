@@ -50,10 +50,10 @@ RUN mkdir -p /var/appstore/web
 COPY --from=builder /app/dist /var/appstore/web
 
 # 复制 Go 构建产物
-COPY --from=go-builder /app/release/doocli /var/appstore/
+COPY --from=go-builder /app/release/doocli /usr/local/bin/
 
 # 设置权限
-RUN chmod +x /var/appstore/doocli
+RUN chmod +x /usr/local/bin/doocli
 
 # 设置入口点
-ENTRYPOINT ["/var/appstore/doocli", "apps", "--web", "/var/appstore/web"]
+ENTRYPOINT ["doocli", "appstore", "--web", "/var/appstore/web"]
