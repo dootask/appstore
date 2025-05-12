@@ -43,20 +43,26 @@ function App() {
     const off = interceptBack(() => {
       return beforeClose();
     })
+    // 清理函数
+    return () => {
+      off();
+    }
+  }, [])
+
+  useEffect(() => {
     // 设置定时器
     timerRef.current = setInterval(() => {
       if (apps.find(item => ['installing', 'uninstalling'].includes(item.config.status))) {
         fetchApps(true);
       }
     }, 10000)
-    // 清理函数
+    // 清理定时器
     return () => {
-      off();
       if (timerRef.current) {
         clearInterval(timerRef.current)
       }
     }
-  }, [])
+  }, [apps])
 
   const fetchApps = (silence: boolean = false) => {
     if (!silence) {

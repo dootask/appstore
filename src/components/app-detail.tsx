@@ -8,6 +8,8 @@ import {requestAPI} from "@dootask/tools";
 import {useEffect, useState, useRef} from "react";
 import {Skeleton} from "./ui/skeleton";
 import ReactMarkdown from "react-markdown"
+import {Prism as SyntaxHighlighter} from "react-syntax-highlighter"
+import {oneLight as SyntaxStyle} from 'react-syntax-highlighter/dist/esm/styles/prism'
 import "@/styles/github-markdown-light.css"
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "./ui/tabs";
 import {AppLog} from "@/components/app-log.tsx";
@@ -172,7 +174,27 @@ export function AppDetail({app, onOperation}: AppDetailProps) {
               app.document ? (
                 <div className="flex w-full">
                   <div className="flex-1 w-0 prose select-text app-markdown-body">
-                    <ReactMarkdown>{app.document}</ReactMarkdown>
+                    <ReactMarkdown
+                      children={app.document}
+                      components={{
+                      code(props) {
+                        const {children, className, ...rest} = props
+                        const match = /language-(\w+)/.exec(className || '')
+                        return match ? (
+                          <SyntaxHighlighter
+                            PreTag="div"
+                            children={String(children).replace(/\n$/, '')}
+                            language={match[1]}
+                            style={SyntaxStyle}
+                          />
+                        ) : (
+                          <code {...rest} className={className}>
+                            {children}
+                          </code>
+                        )
+                      }
+                    }}
+                    />
                   </div>
                 </div>
               ) : (
