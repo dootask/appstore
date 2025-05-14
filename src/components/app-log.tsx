@@ -103,7 +103,11 @@ export const AppLog = forwardRef<AppLogRef, AppLogProps>(({appName, onLoading}, 
           </div>
         ) : (
           logDetail ? (
-            <pre><code>{logDetail}</code></pre>
+            <div className="flex w-full">
+              <div className="flex-1 w-0 prose">
+                <pre className="overflow-auto"><code>{logDetail}</code></pre>
+              </div>
+            </div>
           ) : (
             <div className="text-sm text-gray-500 mb-4">{t('app.no_log')}</div>
           )
