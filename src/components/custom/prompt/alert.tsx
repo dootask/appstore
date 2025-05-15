@@ -49,7 +49,7 @@ export default function AlertPortal() {
       item.showCancel = item.showCancel ?? true
       item.showConfirm = item.showConfirm ?? true
       item.closeOnClickMask = item.closeOnClickMask ?? (item.type !== 'prompt')
-      item.zIndex = item.zIndex ?? nextZIndex()
+      item.zIndex = item.zIndex ?? (nextZIndex()+ 500)
       item.afterClose = () => setAlerts(prev => prev.filter(({id}) => id !== item.id))
       setAlerts(prev => [...prev, item])
     })

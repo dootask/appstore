@@ -41,7 +41,7 @@ export default function NoticePortal() {
       item.duration = item.duration ?? 6000
       item.delayShow = item.delayShow ?? 0
       item.showClose = item.showClose ?? true
-      item.zIndex = Math.max(zIndex, item.zIndex ?? nextZIndex())
+      item.zIndex = Math.max(zIndex, item.zIndex ?? (nextZIndex() + 1000))
       item.afterClose = () => setNotices(prev => prev.filter(({id}) => id !== item.id))
       setNotices(prev => [...prev, item])
       setZIndex(item.zIndex)
