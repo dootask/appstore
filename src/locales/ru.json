@@ -49,7 +49,17 @@
     "name": "Название",
     "resource_limit": "Ограничения ресурсов",
     "select_version": "Выбрать версию",
-    "version": "Версия"
+    "version": "Версия",
+    "update_app_list": "Обновить список приложений",
+    "install_from_url": "Установить из URL",
+    "install_from_url_placeholder": "Введите URL-адрес приложения или Git-репозитория",
+    "failure": "Установка не удалась",
+    "failure_description": "Установка приложения \"{{app}}\" не удалась: {{error}}",
+    "unknown_error": "Неизвестная ошибка",
+    "updating_app_list": "Обновление списка приложений...",
+    "update_app_list_success": "Список приложений обновлен",
+    "update_app_list_failure": "Не удалось обновить список приложений",
+    "update_app_list_failure_description": "Не удалось обновить список приложений: {{error}}"
   },
   "label": {
     "detail": "Детали",

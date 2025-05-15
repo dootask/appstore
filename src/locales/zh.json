@@ -49,7 +49,17 @@
     "name": "名称",
     "resource_limit": "资源限制",
     "select_version": "选择版本",
-    "version": "版本"
+    "version": "版本",
+    "update_app_list": "更新应用列表",
+    "install_from_url": "从 URL 安装",
+    "install_from_url_placeholder": "请输入应用包文件地址或Git仓库地址",
+    "failure": "安装失败",
+    "failure_description": "应用「{{app}}」安装失败：{{error}}",
+    "unknown_error": "未知错误",
+    "updating_app_list": "正在更新应用列表...",
+    "update_app_list_success": "应用列表更新成功",
+    "update_app_list_failure": "应用列表更新失败",
+    "update_app_list_failure_description": "应用列表更新失败：{{error}}"
   },
   "label": {
     "detail": "详情",

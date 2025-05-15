@@ -49,7 +49,17 @@
     "name": "이름",
     "resource_limit": "리소스 제한",
     "select_version": "버전 선택",
-    "version": "버전"
+    "version": "버전",
+    "update_app_list": "앱 목록 업데이트",
+    "install_from_url": "URL에서 설치",
+    "install_from_url_placeholder": "앱 패키지 파일 주소 또는 Git 저장소 주소를 입력하세요",
+    "failure": "설치가 실패했습니다",
+    "failure_description": "앱 설치 \"{{app}}\" 실패 : {{error}}",
+    "unknown_error": "알 수없는 오류",
+    "updating_app_list": "앱 목록 업데이트 중...",
+    "update_app_list_success": "앱 목록 업데이트 성공",
+    "update_app_list_failure": "앱 목록 업데이트 실패",
+    "update_app_list_failure_description": "앱 목록 업데이트 실패: {{error}}"
   },
   "label": {
     "detail": "상세",

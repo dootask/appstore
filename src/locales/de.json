@@ -49,7 +49,17 @@
     "name": "Name",
     "resource_limit": "Ressourcenlimits",
     "select_version": "Version auswählen",
-    "version": "Version"
+    "version": "Version",
+    "update_app_list": "App-Liste aktualisieren",
+    "install_from_url": "App aus URL installieren",
+    "install_from_url_placeholder": "Bitte geben Sie die URL des App-Pakets oder des Git-Repositorys ein",
+    "failure": "Installation fehlgeschlagen",
+    "failure_description": "Die Installation der Anwendung \"{{app}}\" fehlgeschlagen: {{ERROR}}",
+    "unknown_error": "Unbekannter Fehler",
+    "updating_app_list": "App-Liste wird aktualisiert...",
+    "update_app_list_success": "App-Liste erfolgreich aktualisiert",
+    "update_app_list_failure": "Fehler beim Aktualisieren der App-Liste",
+    "update_app_list_failure_description": "Fehler beim Aktualisieren der App-Liste: {{error}}"
   },
   "label": {
     "detail": "Details",

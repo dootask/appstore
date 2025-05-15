@@ -49,7 +49,17 @@
     "name": "名前",
     "resource_limit": "リソース制限",
     "select_version": "バージョンを選択",
-    "version": "バージョン"
+    "version": "バージョン",
+    "update_app_list": "アプリリストを更新",
+    "install_from_url": "URLからインストール",
+    "install_from_url_placeholder": "アプリパッケージファイルのURLまたはGitリポジトリのURLを入力してください",
+    "failure": "インストールに失敗しました",
+    "failure_description": "アプリケーションのインストールに失敗しました：{{error}}",
+    "unknown_error": "不明なエラー",
+    "updating_app_list": "アプリリストを更新中...",
+    "update_app_list_success": "アプリリスト更新成功",
+    "update_app_list_failure": "アプリリスト更新失敗",
+    "update_app_list_failure_description": "アプリリスト更新失敗：{{error}}"
   },
   "label": {
     "detail": "詳細",

@@ -1,19 +1,27 @@
 'use client'
 
-import {useEffect, useState} from "react";
-import {eventOn} from "@/lib/events";
-import {nextZIndex} from "@dootask/tools";
-import {uuidv4} from "@/lib/utils";
+import { useEffect, useState } from "react";
+import { eventOn } from "@/lib/events";
+import { nextZIndex } from "@dootask/tools";
+import { uuidv4 } from "@/lib/utils";
 import AlertItem from "./alert-item";
 
 export interface AlertProps {
-  type: "success" | "warning" | "error"
+  type: "success" | "warning" | "error" | "prompt"
   title: string
-  description: string
+  description?: string
+
+  placeholder?: string  // prompt type only
+  defaultValue?: string  // prompt type only
+  buttonText?: string  // prompt type only
+
   showCancel?: boolean
-  showConfirm?: boolean
+  showConfirm?: boolean  // Invalid for prompt type
+
+  closeOnClickMask?: boolean
   zIndex?: number
-  onConfirm?: () => void
+
+  onConfirm?: (value?: string) => void | Promise<void>
   onCancel?: () => void
 }
 
@@ -32,6 +40,7 @@ export default function AlertPortal() {
       item.type = item.type ?? "success"
       item.showCancel = item.showCancel ?? true
       item.showConfirm = item.showConfirm ?? true
+      item.closeOnClickMask = item.closeOnClickMask ?? (item.type !== 'prompt')
       item.zIndex = item.zIndex ?? nextZIndex()
       item.afterClose = () => setAlerts(prev => prev.filter(({id}) => id !== item.id))
       setAlerts(prev => [...prev, item])

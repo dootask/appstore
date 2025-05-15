@@ -49,7 +49,17 @@
     "name": "Name",
     "resource_limit": "Resource Limits",
     "select_version": "Select Version",
-    "version": "Version"
+    "version": "Version",
+    "update_app_list": "Update App List",
+    "install_from_url": "Install from URL",
+    "install_from_url_placeholder": "Enter the URL of the app package file or Git repository",
+    "failure": "Installation failed",
+    "failure_description": "The installation of the application \"{{app}}\" failed: {{error}}",
+    "unknown_error": "Unknown error",
+    "updating_app_list": "Updating app list...",
+    "update_app_list_success": "App list updated successfully",
+    "update_app_list_failure": "Failed to update app list",
+    "update_app_list_failure_description": "Failed to update app list: {{error}}"
   },
   "label": {
     "detail": "Details",

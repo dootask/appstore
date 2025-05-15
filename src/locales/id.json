@@ -49,7 +49,17 @@
     "name": "Nama",
     "resource_limit": "Batasan Sumber Daya",
     "select_version": "Pilih Versi",
-    "version": "Versi"
+    "version": "Versi",
+    "update_app_list": "Perbarui Daftar Aplikasi",
+    "install_from_url": "Instal dari URL",
+    "install_from_url_placeholder": "Masukkan URL aplikasi atau repositori Git",
+    "failure": "Instalasi gagal",
+    "failure_description": "Instalasi aplikasi \"{{app}}\" gagal: {{error}}",
+    "unknown_error": "Kesalahan yang tidak diketahui",
+    "updating_app_list": "Memperbarui daftar aplikasi...",
+    "update_app_list_success": "Daftar aplikasi berhasil diperbarui",
+    "update_app_list_failure": "Gagal memperbarui daftar aplikasi",
+    "update_app_list_failure_description": "Gagal memperbarui daftar aplikasi: {{error}}"
   },
   "label": {
     "detail": "Detail",

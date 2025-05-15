@@ -70,7 +70,7 @@ export function AppDetail({appName, onOperation}: AppDetailProps) {
       <div className="mx-6 mb-6 flex items-center justify-between">
         <div className="flex flex-1 items-start gap-4 mr-4">
           <img src={app.info.icon} alt={app.info.name} className="w-16 h-16 rounded-lg object-cover"/>
-          <div className="min-h-16 flex flex-col justify-center">
+          <div className="min-h-16 flex flex-col justify-center select-text">
             <div className="text-2xl font-bold mb-1">{app.info.name}</div>
             <div className="text-gray-500 text-sm mb-1">{app.info.description}</div>
           </div>
@@ -196,6 +196,14 @@ export function AppDetail({appName, onOperation}: AppDetailProps) {
                               <code {...rest} className={className}>
                                 {children}
                               </code>
+                            )
+                          },
+                          a(props) {
+                            const {children, ...rest} = props
+                            return (
+                              <a {...rest} target="_blank" rel="noopener noreferrer">
+                                {children}
+                              </a>
                             )
                           }
                         }}

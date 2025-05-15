@@ -214,8 +214,53 @@ function App() {
   const handleMenuChange = (value: string) => {
     if (value === 'update_app_list') {
       // 更新应用列表
+      Notice({
+        type: "text",
+        title: t('install.updating_app_list'),
+      })
+      requestAPI({
+        url: "apps/list/update",
+      }).then(() => {
+        Notice({
+          type: "success",
+          title: t('install.update_app_list_success'),
+        })
+        fetchApps();
+      }).catch((error) => {
+        Notice({
+          type: "error",
+          title: t('install.update_app_list_failure'),
+          description: t('install.update_app_list_failure_description', {error: error.msg || t('install.unknown_error')}),
+        })
+      })
     } else if (value === 'install_from_url') {
       // 从URL安装应用
+      Alert({
+        type: "prompt",
+        title: t('install.title'),
+        placeholder: t('install.install_from_url_placeholder'),
+        onConfirm: async (value) => {
+          if (!value) {
+            return;
+          }
+          await requestAPI({
+            url: "apps/install/url",
+            data: {
+              url: value
+            }
+          }).catch((error) => {
+            Alert({
+              type: "warning",
+              title: t('install.failure'),
+              description: t('install.failure_description', {app: value, error: error.msg || t('install.unknown_error')}),
+              showCancel: false,
+            })
+            throw error;
+          }).finally(() => {
+            fetchApps();
+          })
+        }
+      })
     }
   }
 
@@ -235,8 +280,8 @@ function App() {
           <div className="flex items-center gap-x-4 w-full sm:w-auto sm:min-w-[300px]">
             <AppSearch onSearch={handleSearch}/>
             <Dropdown className="h-10" options={[
-              {value: 'update_app_list', label: t('common.update_app_list')},
-              {value: 'install_from_url', label: t('common.install_from_url')},
+              {value: 'update_app_list', label: t('install.update_app_list')},
+              {value: 'install_from_url', label: t('install.install_from_url')},
             ]} onChange={handleMenuChange}/>
           </div>
         </div>

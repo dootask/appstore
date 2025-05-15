@@ -49,7 +49,17 @@
     "name": "Nom",
     "resource_limit": "Limites de ressources",
     "select_version": "Sélectionner la version",
-    "version": "Version"
+    "version": "Version",
+    "update_app_list": "Mettre à jour la liste des applications",
+    "install_from_url": "Installer depuis un URL",
+    "install_from_url_placeholder": "Entrez l'URL de l'application ou du dépôt Git",
+    "failure": "L'installation a échoué",
+    "failure_description": "L'installation de l'application \"{{app}}\" a échoué: {{error}}",
+    "unknown_error": "Erreur inconnue",
+    "updating_app_list": "Mise à jour de la liste des applications...",
+    "update_app_list_success": "Liste des applications mise à jour avec succès",
+    "update_app_list_failure": "Échec de la mise à jour de la liste des applications",
+    "update_app_list_failure_description": "Échec de la mise à jour de la liste des applications: {{error}}"
   },
   "label": {
     "detail": "Détails",
