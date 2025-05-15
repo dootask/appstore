@@ -214,7 +214,7 @@ function App() {
   const handleMenuChange = (value: string) => {
     if (value === 'update_app_list') {
       // 更新应用列表
-      Notice({
+      const off = Notice({
         type: "text",
         title: t('install.updating_app_list'),
       })
@@ -232,6 +232,8 @@ function App() {
           title: t('install.update_app_list_failure'),
           description: t('install.update_app_list_failure_description', {error: error.msg || t('install.unknown_error')}),
         })
+      }).finally(() => {
+        off()
       })
     } else if (value === 'install_from_url') {
       // 从URL安装应用

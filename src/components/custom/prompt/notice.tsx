@@ -15,6 +15,8 @@ export interface NoticeProps {
   showClose?: boolean
   zIndex?: number
   onClose?: () => void
+  
+  __closeIng?: boolean
 }
 
 export interface NoticeItem extends NoticeProps {
@@ -29,6 +31,12 @@ export default function NoticePortal() {
   useEffect(() => {
     const off = eventOn("notice", (args: unknown) => {
       const item = args as NoticeItem
+      if (item.__closeIng) {
+        setNotices(prev => prev.map(notice => 
+          notice.id === item.id ? {...notice, __closeIng: true} : notice
+        ))
+        return;
+      }
       item.id = item.id ?? uuidv4()
       item.duration = item.duration ?? 6000
       item.delayShow = item.delayShow ?? 0

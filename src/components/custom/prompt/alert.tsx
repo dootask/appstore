@@ -7,7 +7,7 @@ import { uuidv4 } from "@/lib/utils";
 import AlertItem from "./alert-item";
 
 export interface AlertProps {
-  type: "success" | "warning" | "error" | "prompt"
+  type: "success" | "warning" | "error" | "prompt" | "close"
   title: string
   description?: string
 
@@ -23,6 +23,8 @@ export interface AlertProps {
 
   onConfirm?: (value?: string) => void | Promise<void>
   onCancel?: () => void
+
+  __closeIng?: boolean
 }
 
 export interface AlertItem extends AlertProps {
@@ -36,6 +38,12 @@ export default function AlertPortal() {
   useEffect(() => {
     const off = eventOn("alert", (args: unknown) => {
       const item = args as AlertItem
+      if (item.__closeIng) {
+        setAlerts(prev => prev.map(alert => 
+          alert.id === item.id ? {...alert, __closeIng: true} : alert
+        ))
+        return;
+      }
       item.id = item.id ?? uuidv4()
       item.type = item.type ?? "success"
       item.showCancel = item.showCancel ?? true

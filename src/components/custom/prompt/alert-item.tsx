@@ -7,7 +7,7 @@ import { Loader2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import type { AlertItem } from "@/components/custom/prompt/alert.tsx";
 
-export default function AlertItem({type, title, description, placeholder, defaultValue, buttonText, showCancel, showConfirm, closeOnClickMask, zIndex, onConfirm, onCancel, afterClose}: AlertItem) {
+export default function AlertItem({type, title, description, placeholder, defaultValue, buttonText, showCancel, showConfirm, closeOnClickMask, zIndex, onConfirm, onCancel, afterClose, __closeIng}: AlertItem) {
   const {t} = useTranslation();
   const [open, setOpen] = useState(false)
   const [confirmLoading, setConfirmLoading] = useState(false)
@@ -51,6 +51,12 @@ export default function AlertItem({type, title, description, placeholder, defaul
   }, [open, afterClose])
 
   useEffect(() => {
+    if (__closeIng) {
+      handleClose()
+    }
+  }, [__closeIng])
+
+  useEffect(() => {
     setOpen(true)
   }, [])
 
@@ -69,7 +75,7 @@ export default function AlertItem({type, title, description, placeholder, defaul
           {type === 'prompt' ? (
             <DialogPanel
               transition
-              className="relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-lg sm:p-6 data-closed:sm:translate-y-0 data-closed:sm:scale-95 doo-dark:bg-gray-300 doo-dark:shadow-none"
+              className="relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 w-4/5 sm:w-full sm:max-w-lg sm:p-6 data-closed:sm:translate-y-0 data-closed:sm:scale-95 doo-dark:bg-gray-300 doo-dark:shadow-none"
             >
               <div className='flex items-start justify-between gap-2'>
                 <h3 className="text-base font-semibold text-gray-900">{title}</h3>

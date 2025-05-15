@@ -6,7 +6,7 @@ import {CheckCircleIcon, ExclamationCircleIcon, InformationCircleIcon, XCircleIc
 import {XMarkIcon} from '@heroicons/react/20/solid'
 import {type NoticeItem} from './notice'
 
-export default function NoticeItem({type, title, description, showClose, zIndex, onClose, afterClose, duration, delayShow}: NoticeItem) {
+export default function NoticeItem({type, title, description, showClose, zIndex, onClose, afterClose, duration, delayShow, __closeIng}: NoticeItem) {
   const [show, setShow] = useState(false)
 
   const handleClose = () => {
@@ -46,6 +46,12 @@ export default function NoticeItem({type, title, description, showClose, zIndex,
     }
   }, [])
 
+  useEffect(() => {
+    if (__closeIng) {
+      handleClose()
+    }
+  }, [__closeIng])
+
   return (
     <>
       <div
@@ -84,7 +90,7 @@ export default function NoticeItem({type, title, description, showClose, zIndex,
                       <button
                         type="button"
                         onClick={handleClose}
-                        className="inline-flex rounded-md bg-white text-gray-400 hover:text-gray-500 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-hidden"
+                        className="inline-flex rounded-md bg-white text-gray-400 hover:text-gray-500"
                       >
                         <span className="sr-only">Close</span>
                         <XMarkIcon aria-hidden="true" className="size-5"/>
