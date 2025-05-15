@@ -16,7 +16,8 @@
     "search": "Поиск приложений",
     "totalItems": "Всего {{count}} приложений",
     "uninstall": "Удалить",
-    "uninstalling": "Удаление"
+    "uninstalling": "Удаление",
+    "upgradeable": "Модернизируется"
   },
   "common": {
     "cancel": "Отмена",

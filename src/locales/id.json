@@ -16,7 +16,8 @@
     "search": "Cari aplikasi",
     "totalItems": "Total {{count}} item",
     "uninstall": "Hapus Instalasi",
-    "uninstalling": "Menghapus Instalasi"
+    "uninstalling": "Menghapus Instalasi",
+    "upgradeable": "Dapat ditingkatkan"
   },
   "common": {
     "cancel": "Batal",

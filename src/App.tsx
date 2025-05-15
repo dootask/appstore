@@ -114,8 +114,9 @@ function App() {
       const allTags = apps.flatMap(app => app.info.tags || []);
       // 去重并保留非空标签
       const uniqueTags = [...new Set(allTags)].filter(tag => tag.trim() !== '');
-      // 最多保留4个标签（加上 'all' 总共5个）
-      const limitedTags = uniqueTags.slice(0, 4);
+      // 随机保留4个标签（加上 'all' 总共5个）
+      const shuffledTags = uniqueTags.sort(() => Math.random() - 0.5);
+      const limitedTags = shuffledTags.slice(0, 4);
       // 始终保留 'all' 作为第一个选项
       const categories = ['all', ...limitedTags];
       setAvailableCategories(categories);
@@ -125,7 +126,7 @@ function App() {
         setCategory('all');
       }
     }
-  }, [apps, category]);
+  }, [apps]);
 
   // 过滤应用列表
   const getFilteredApps = () => {
@@ -267,9 +268,11 @@ function App() {
   }
 
   return (
-    <main ref={mainRef} className="min-h-screen p-4 md:p-6">
-      <div className="container mx-auto">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-3 md:mb-4">
+    <main ref={mainRef} className="h-screen flex flex-col">
+      <div className="flex-1 flex flex-col overflow-hidden pt-4 lg:pt-6 gap-y-3 md:gap-y-4">
+
+        {/* 导航、搜索、菜单 */}
+        <div className="px-4 lg:px-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center">
             {!props.isSubElectron && (
               <ChevronLeft className="min-md:hidden mr-4" onClick={backApp}/>
@@ -288,78 +291,95 @@ function App() {
           </div>
         </div>
 
-        <div className="flex gap-x-4 mb-3 md:mb-4">
-          <Button
-            variant={filter === 'all' ? "secondary" : "ghost"}
-            className="px-4 py-2 text-sm rounded-full"
-            onClick={() => setFilter('all')}>
-            {t('app.all')}
-          </Button>
-          <Button
-            variant={filter === 'installed' ? "secondary" : "ghost"}
-            className="px-4 py-2 text-sm rounded-full"
-            onClick={() => setFilter('installed')}>
-            {t('app.installed')}
-          </Button>
-        </div>
-
-        {availableCategories.length > 2 && (
-          <Tabs defaultValue="all" className="mb-3 md:mb-4" value={category} onValueChange={setCategory}>
-            <TabsList className="flex w-full md:max-w-md light:bg-gray-100 mb-3 md:mb-4">
-              {availableCategories.map((cat) => (
-                <TabsTrigger key={cat} value={cat} className="text-sm">
-                  {cat === 'all' ? t('app.all') : cat}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-
-            {availableCategories.map((tabValue) => (
-              <TabsContent key={tabValue} value={tabValue}>
-                {loading && getFilteredApps().length === 0 ? (
-                  <div className="text-center py-10">
-                    <p>{t('app.loading')}</p>
-                  </div>
-                ) : getFilteredApps().length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {getFilteredApps().map((app) => (
-                      <AppCard
-                        key={app.name}
-                        icon={app.info.icon}
-                        title={app.info.name}
-                        description={app.info.description}
-                        status={app.config.status}
-                        category={app.info.tags?.length ? app.info.tags : []}
-                        onOpen={() => handleOpenApp(app)}
-                      />
-                    ))}
-                  </div>
-                ) : (
-                  <div className="empty-content text-center py-10 text-gray-500">
-                    <p>{t('app.noApps')}</p>
-                  </div>
-                )}
-              </TabsContent>
-            ))}
-          </Tabs>
-        )}
-
-        {getFilteredApps().length > 0 && (
-          <div className="flex justify-between items-center text-sm text-gray-500 mt-4 md:mt-6">
-            <div>{t('app.totalItems', {count: getFilteredApps().length})}</div>
-            <div className="flex items-center gap-x-2">
-              <Button variant="outline" size="icon" className="w-7 h-7">
-                <ChevronLeft/>
-              </Button>
-              <span>1</span>
-              <span>/</span>
-              <span>1</span>
-              <span>{t('app.page')}</span>
-              <Button variant="outline" size="icon" className="w-7 h-7">
-                <ChevronRight/>
-              </Button>
-            </div>
+        <div className="px-4 lg:px-6 pb-4 lg:pb-6 flex-1 overflow-auto flex flex-col gap-y-3 md:gap-y-4">
+          {/* 安装状态 */}
+          <div className="flex gap-x-4">
+            <Button
+              variant={filter === 'all' ? "secondary" : "ghost"}
+              className="px-4 py-2 text-sm rounded-full"
+              onClick={() => setFilter('all')}>
+              {t('app.all')}
+            </Button>
+            <Button
+              variant={filter === 'installed' ? "secondary" : "ghost"}
+              className="px-4 py-2 text-sm rounded-full"
+              onClick={() => setFilter('installed')}>
+              {t('app.installed')}
+            </Button>
+            <Button
+              variant={filter === 'upgradeable' ? "secondary" : "ghost"}
+              className="px-4 py-2 text-sm rounded-full relative"
+              onClick={() => setFilter('upgradeable')}>
+              {t('app.upgradeable')}
+              <div className="absolute top-1 right-2 size-2 bg-red-500 rounded-full"></div>
+            </Button>
           </div>
-        )}
+
+          {/* 类别、列表 */}
+          {availableCategories.length > 0 && (
+            <Tabs defaultValue="all" className="flex-1 gap-y-3 md:gap-y-4" value={category} onValueChange={setCategory}>
+
+              {/* 类别 */}
+              {availableCategories.length > 2 && (
+                <TabsList className="flex w-full md:max-w-md light:bg-gray-100">
+                  {availableCategories.map((cat) => (
+                    <TabsTrigger key={cat} value={cat} className="text-sm">
+                      {cat === 'all' ? t('app.all') : cat}
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
+              )}
+
+              {/* 列表 */}
+              {availableCategories.map((tabValue) => (
+                <TabsContent key={tabValue} value={tabValue}>
+                  {loading && getFilteredApps().length === 0 ? (
+                    <div className="text-center py-10">
+                      <p>{t('app.loading')}</p>
+                    </div>
+                  ) : getFilteredApps().length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {getFilteredApps().map((app) => (
+                        <AppCard
+                          key={app.name}
+                          icon={app.info.icon}
+                          title={app.info.name}
+                          description={app.info.description}
+                          status={app.config.status}
+                          category={app.info.tags?.length ? app.info.tags : []}
+                          onOpen={() => handleOpenApp(app)}
+                        />
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="empty-content text-center py-10 text-gray-500">
+                      <p>{t('app.noApps')}</p>
+                    </div>
+                  )}
+                </TabsContent>
+              ))}
+            </Tabs>
+          )}
+
+          {/* 分页 */}
+          {getFilteredApps().length > 0 && (
+            <div className="mt-1 md:mt-2 flex justify-between items-center text-sm text-gray-500">
+              <div>{t('app.totalItems', {count: getFilteredApps().length})}</div>
+              <div className="flex items-center gap-x-2">
+                <Button variant="outline" size="icon" className="w-7 h-7">
+                  <ChevronLeft/>
+                </Button>
+                <span>1</span>
+                <span>/</span>
+                <span>1</span>
+                <span>{t('app.page')}</span>
+                <Button variant="outline" size="icon" className="w-7 h-7">
+                  <ChevronRight/>
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* 应用详情、安装应用 */}

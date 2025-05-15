@@ -16,7 +16,8 @@
     "search": "Search Apps",
     "totalItems": "Total {{count}} items",
     "uninstall": "Uninstall",
-    "uninstalling": "Uninstalling"
+    "uninstalling": "Uninstalling",
+    "upgradeable": "Upgradable"
   },
   "common": {
     "cancel": "Cancel",

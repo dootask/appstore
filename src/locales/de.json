@@ -16,7 +16,8 @@
     "search": "Apps suchen",
     "totalItems": "Insgesamt {{count}} Einträge",
     "uninstall": "Deinstallieren",
-    "uninstalling": "Deinstallation läuft"
+    "uninstalling": "Deinstallation läuft",
+    "upgradeable": "Aktualisierbar"
   },
   "common": {
     "cancel": "Abbrechen",

@@ -16,7 +16,8 @@
     "search": "Rechercher des applications",
     "totalItems": "Total {{count}} éléments",
     "uninstall": "Désinstaller",
-    "uninstalling": "Désinstallation en cours"
+    "uninstalling": "Désinstallation en cours",
+    "upgradeable": "Modulable"
   },
   "common": {
     "cancel": "Annuler",

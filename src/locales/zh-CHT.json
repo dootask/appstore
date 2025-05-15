@@ -16,7 +16,8 @@
     "search": "搜索應用",
     "totalItems": "共{{count}}個",
     "uninstall": "卸載",
-    "uninstalling": "卸載中"
+    "uninstalling": "卸載中",
+    "upgradeable": "可升級"
   },
   "common": {
     "cancel": "取消",

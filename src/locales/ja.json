@@ -16,7 +16,8 @@
     "search": "アプリを検索",
     "totalItems": "合計{{count}}個のアプリ",
     "uninstall": "アンインストール",
-    "uninstalling": "アンインストール中"
+    "uninstalling": "アンインストール中",
+    "upgradeable": "アップグレード可能"
   },
   "common": {
     "cancel": "キャンセル",
