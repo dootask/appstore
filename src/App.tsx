@@ -49,7 +49,6 @@ function App() {
         apps.forEach(app => {
           const prevApp = prevApps.find(p => p.name === app.name);
           if (prevApp && prevApp.config.status !== app.config.status) {
-            console.log(`应用 ${app.name} 状态从 ${prevApp.config.status} 变为 ${app.config.status}`);
             if (app.config.status === 'installing') {
               Notice({
                 type: "info",
