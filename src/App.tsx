@@ -15,6 +15,7 @@ import { beforeClose } from "@/lib/utils.ts";
 import { AppInstall } from './components/app-install.tsx';
 import PromptPortal, { Alert, Notice } from "@/components/custom/prompt";
 import { useAppStore } from '@/lib/store';
+import Dropdown from "./components/custom/dropdown.tsx";
 
 function App() {
   const {t} = useTranslation();
@@ -209,6 +210,15 @@ function App() {
     }
   }
 
+  // 菜单项点击事件
+  const handleMenuChange = (value: string) => {
+    if (value === 'update_app_list') {
+      // 更新应用列表
+    } else if (value === 'install_from_url') {
+      // 从URL安装应用
+    }
+  }
+
   return (
     <main ref={mainRef} className="min-h-screen p-4 md:p-6">
       <div className="container mx-auto">
@@ -222,8 +232,12 @@ function App() {
               {loading ? <LoaderCircle className="animate-spin"/> : <RefreshCw/>}
             </Button>
           </div>
-          <div className="w-full sm:w-auto sm:min-w-[300px]">
+          <div className="flex items-center gap-x-4 w-full sm:w-auto sm:min-w-[300px]">
             <AppSearch onSearch={handleSearch}/>
+            <Dropdown className="h-10" options={[
+              {value: 'update_app_list', label: t('common.update_app_list')},
+              {value: 'install_from_url', label: t('common.install_from_url')},
+            ]} onChange={handleMenuChange}/>
           </div>
         </div>
 

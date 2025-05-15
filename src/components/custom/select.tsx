@@ -28,7 +28,7 @@ export default function Select({options, defaultValue, onChange, placeholder = '
   return (
     <Listbox value={selected} onChange={handleChange}>
       <div className="relative">
-        <ListboxButton className="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left text-gray-900 transition-[color,box-shadow] sm:text-sm/6 outline-none border-input border focus:border-ring focus:ring-ring/50 focus:ring-[3px]"  {...props}>
+        <ListboxButton className="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left text-gray-900 transition-[color,box-shadow] sm:text-sm/6 outline-none border-input border focus:border-ring focus:ring-ring/50 focus:ring-[3px]" {...props}>
           {selected.name ? (
             <span className="col-start-1 row-start-1 truncate pr-6">{selected.name}</span>
           ) : (
