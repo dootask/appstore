@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { ScrollArea } from "./ui/scroll-area"
 import { useTranslation } from "react-i18next"
 import { Loader2 } from "lucide-react";
@@ -13,6 +13,7 @@ import { eventEmit } from "@/lib/events";
 import { Alert } from "@/components/custom/prompt";
 import { useAppStore } from "@/lib/store"
 import Select from "@/components/custom/select"
+import { compareVersions } from "@/lib/utils"
 
 interface AppInstallProps {
   appName: string
@@ -66,7 +67,7 @@ export function AppInstall({appName, onClose}: AppInstallProps) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: app.info.name,
-      version: app.versions[0]?.version || "",
+      version: "latest",
       cpuLimit: app.config.resources.cpu_limit || "0",
       memoryLimit: app.config.resources.memory_limit || "0",
       ...Object.fromEntries(
@@ -76,6 +77,23 @@ export function AppInstall({appName, onClose}: AppInstallProps) {
   })
 
   const onSubmit = (values: FormValues) => {
+    // 如果是可升级状态，检查选择的版本是否大于已安装版本
+    if (app.upgradeable && values.version !== 'latest') {
+      const installedVersion = app.config.install_version;
+      if (installedVersion && compareVersions(values.version, installedVersion) < 0) {
+        Alert({
+          type: "warning",
+          title: t('install.upgrade_failed'),
+          description: t('install.version_too_low', {
+            version: values.version,
+            installed_version: installedVersion
+          }),
+          showCancel: false,
+        });
+        return;
+      }
+    }
+
     // 提取 params 字段
     const params = app.info.fields.reduce((acc, field) => ({
       ...acc,
@@ -150,17 +168,22 @@ export function AppInstall({appName, onClose}: AppInstallProps) {
                         <Select
                           {...field}
                           options={[
-                            { id: 'latest', name: t('install.latest_version') },
+                            {id: 'latest', name: t('install.latest_version')},
                             ...app.versions.map(version => ({
                               id: version.version,
                               name: version.version
                             }))
                           ]}
-                          defaultValue="latest"
+                          defaultValue={field.value}
                           onChange={(value) => field.onChange(value.id)}
                           placeholder={t('install.select_version')}
                         />
                       </FormControl>
+                      {app.config.status === 'installed' && (
+                        <FormDescription className="mt-2 text-right">
+                          {t('install.installed_version', {version: app.config.install_version})}
+                        </FormDescription>
+                      )}
                       <FormMessage/>
                     </div>
                   </FormItem>
@@ -263,25 +286,26 @@ export function AppInstall({appName, onClose}: AppInstallProps) {
             </div>
           </div>
 
-          <div className="flex justify-end pt-4">
-            {(() => {
-              const config = {
-                className: "bg-green-100 text-green-700 hover:bg-green-200",
-                label: t('install.title')
-              }
-              if (app.upgradeable) {
-                Object.assign(config, {
-                  className: "bg-purple-100 text-purple-700 hover:bg-purple-200",
-                  label: t('install.upgrade_title')
-                })
-              } else if (app.config.status === 'installed') {
-                Object.assign(config, {
+          <div className="flex flex-col items-end gap-4 pt-4">
+            <div className="flex justify-end">
+              {(() => {
+                const config = {
                   className: "bg-green-100 text-green-700 hover:bg-green-200",
-                  label: t('install.reinstall_title')
-                })
-              }
-              return (
-                <Button
+                  label: t('install.title')
+                }
+                if (app.upgradeable) {
+                  Object.assign(config, {
+                    className: "bg-purple-100 text-purple-700 hover:bg-purple-200",
+                    label: t('install.upgrade_title')
+                  })
+                } else if (app.config.status === 'installed') {
+                  Object.assign(config, {
+                    className: "bg-green-100 text-green-700 hover:bg-green-200",
+                    label: t('install.reinstall_title')
+                  })
+                }
+                return (
+                  <Button
                     type="submit"
                     className={`w-full sm:w-auto ${config.className}`}
                     disabled={installing}
@@ -291,8 +315,9 @@ export function AppInstall({appName, onClose}: AppInstallProps) {
                     )}
                     {config.label}
                   </Button>
-              );
-            })()}
+                );
+              })()}
+            </div>
           </div>
         </form>
       </Form>
