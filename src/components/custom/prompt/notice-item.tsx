@@ -90,16 +90,16 @@ export default function NoticeItem({type, title, description, showClose, zIndex,
                 <div className="flex items-start">
                   <div className="shrink-0">
                     {type === 'success' && (
-                      <CheckCircleIcon aria-hidden="true" className="size-6 text-green-400"/>
+                      <CheckCircleIcon aria-hidden="true" className="size-6 text-mantis-400"/>
                     )}
                     {type === 'warning' && (
-                      <ExclamationCircleIcon aria-hidden="true" className="size-6 text-yellow-400"/>
+                      <ExclamationCircleIcon aria-hidden="true" className="size-6 text-amber-400"/>
                     )}
                     {type === 'error' && (
-                      <XCircleIcon aria-hidden="true" className="size-6 text-red-400"/>
+                      <XCircleIcon aria-hidden="true" className="size-6 text-coral-400"/>
                     )}
                     {type === 'info' && (
-                      <InformationCircleIcon aria-hidden="true" className="size-6 text-blue-400"/>
+                      <InformationCircleIcon aria-hidden="true" className="size-6 text-ocean-400"/>
                     )}
                   </div>
                   <div className="ml-3 w-0 flex-1 pt-0.5">

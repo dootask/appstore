@@ -104,7 +104,7 @@ export default function AlertItem({type, title, description, placeholder, defaul
                 </div>
                 <button
                   type="submit"
-                  className="mt-3 shrink-0 inline-flex w-full items-center justify-center rounded-md bg-mantis-400 transition-colors px-3.5 py-2 text-sm font-semibold text-white shadow-xs hover:bg-mantis-350 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600 sm:mt-0 sm:ml-3 sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="mt-3 shrink-0 inline-flex w-full items-center justify-center rounded-md bg-mantis-400 transition-colors px-3.5 py-2 text-sm font-semibold text-white shadow-xs hover:bg-mantis-350 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mantis-300 sm:mt-0 sm:ml-3 sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
                   onClick={handleConfirm}
                   disabled={confirmLoading}
                 >
@@ -122,9 +122,9 @@ export default function AlertItem({type, title, description, placeholder, defaul
             >
               <div className="sm:flex sm:items-start">
                 <div className={`mx-auto flex size-12 shrink-0 items-center justify-center rounded-full sm:mx-0 sm:size-7 text-white ${
-                  type === 'success' ? 'bg-green-600' :
-                    type === 'warning' ? 'bg-yellow-500' :
-                      'bg-red-600'
+                  type === 'success' ? 'bg-mantis-400' :
+                    type === 'warning' ? 'bg-amber-400' :
+                      'bg-coral-400'
                 }`}>
                   {type === 'success' && (
                     <CheckIcon aria-hidden="true" className="size-4.5"/>
@@ -154,9 +154,9 @@ export default function AlertItem({type, title, description, placeholder, defaul
                     onClick={handleConfirm}
                     disabled={confirmLoading}
                     className={`flex items-center w-full min-w-24 justify-center rounded-md px-3 py-2 text-sm font-semibold text-white shadow-xs sm:ml-3 sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed ${
-                      type === 'success' ? 'bg-green-600 hover:bg-green-500' :
-                        type === 'warning' ? 'bg-yellow-500 hover:bg-yellow-400' :
-                          'bg-red-600 hover:bg-red-500'
+                      type === 'success' ? 'bg-mantis-400 hover:bg-mantis-350' :
+                        type === 'warning' ? 'bg-amber-400 hover:bg-amber-350' :
+                          'bg-coral-400 hover:bg-coral-350'
                     }`}
                   >
                     {confirmLoading ? (
@@ -169,7 +169,7 @@ export default function AlertItem({type, title, description, placeholder, defaul
                   <button
                     type="button"
                     onClick={handleCancel}
-                    className="mt-3 inline-flex w-full min-w-24 justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs ring-1 ring-gray-300 ring-inset hover:bg-gray-50 sm:mt-0 sm:w-auto"
+                    className="mt-3 inline-flex w-full min-w-24 justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs ring-1 ring-gray-200 ring-inset hover:bg-gray-50 sm:mt-0 sm:w-auto"
                   >
                     {t('common.cancel')}
                   </button>

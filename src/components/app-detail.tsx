@@ -58,7 +58,7 @@ export function AppDetail({appName, onInstall, onUninstall}: AppDetailProps) {
     return () => {
       off()
     }
-  }, [appName]);
+  }, [appName, updateOrAddApp]);
 
   const handleRefreshLog = () => {
     setActiveTab('log')
@@ -80,7 +80,7 @@ export function AppDetail({appName, onInstall, onUninstall}: AppDetailProps) {
           <div className="flex flex-wrap justify-end gap-3">
             {app.config.status === 'installed' && (
               <Button
-              className="bg-yellow-100 text-yellow-700 hover:bg-yellow-200 rounded-lg px-6 py-2 font-semibold cursor-pointer"
+                className="bg-amber-400 text-white hover:bg-amber-350 rounded-lg px-6 py-2 font-semibold cursor-pointer"
                 onClick={() => {
                   onUninstall(app)
                 }}
@@ -91,27 +91,27 @@ export function AppDetail({appName, onInstall, onUninstall}: AppDetailProps) {
             {(() => {
               const statusConfig: Record<AppStatus, { className: string; loading: boolean; text: string }> = {
                 installing: {
-                  className: "bg-blue-100 text-blue-700 hover:bg-blue-200",
+                  className: "bg-ocean-400 text-white hover:bg-ocean-350",
                   loading: true,
                   text: 'installing'
                 },
                 installed: {
-                  className: "bg-green-100 text-green-700 hover:bg-green-200",
+                  className: "bg-mantis-400 text-white hover:bg-mantis-350",
                   loading: false,
                   text: 'reinstall'
                 },
                 uninstalling: {
-                  className: "bg-orange-100 text-orange-700 hover:bg-orange-200",
+                  className: "bg-amber-400 text-white hover:bg-amber-350",
                   loading: true,
                   text: 'uninstalling'
                 },
                 not_installed: {
-                  className: "bg-green-100 text-green-700 hover:bg-green-200",
+                  className: "bg-mantis-400 text-white hover:bg-mantis-350",
                   loading: false,
                   text: 'install'
                 },
                 error: {
-                  className: "bg-red-100 text-red-700 hover:bg-red-200",
+                  className: "bg-coral-400 text-white hover:bg-coral-350",
                   loading: false,
                   text: 'error'
                 }
@@ -120,7 +120,7 @@ export function AppDetail({appName, onInstall, onUninstall}: AppDetailProps) {
               const config = statusConfig[app.config.status] || statusConfig.not_installed
               if (app.upgradeable) {
                 Object.assign(config, {
-                  className: "bg-purple-100 text-purple-700 hover:bg-purple-200",
+                  className: "bg-lavender-400 text-white hover:bg-lavender-350",
                   text: 'upgrade'
                 })
               }

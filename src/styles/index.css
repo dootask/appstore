@@ -161,29 +161,29 @@
   --color-amber-950: #0c0800;
   --color-amber-975: #060400;
 
-  /* Ruby 辅助色系 - 红色 */
-  --color-ruby-50: #fff1f2;
-  --color-ruby-75: #ffe4e6;
-  --color-ruby-100: #fecdd3;
-  --color-ruby-150: #fda4ae;
-  --color-ruby-200: #fb7185;
-  --color-ruby-250: #f43f5e;
-  --color-ruby-300: #e11d48;
-  --color-ruby-350: #be123c;
-  --color-ruby-400: #9f1239;
-  --color-ruby-450: #8c0f32;
-  --color-ruby-500: #780c2b;
-  --color-ruby-550: #660a24;
-  --color-ruby-600: #54091e;
-  --color-ruby-650: #430718;
-  --color-ruby-700: #330613;
-  --color-ruby-750: #25040e;
-  --color-ruby-800: #1a030a;
-  --color-ruby-850: #120207;
-  --color-ruby-900: #0c0205;
-  --color-ruby-925: #080103;
-  --color-ruby-950: #040001;
-  --color-ruby-975: #020001;
+  /* Coral 辅助色系 - 红色 */
+  --color-coral-50: #fff5f5;
+  --color-coral-75: #ffebea;
+  --color-coral-100: #ffe2e0;
+  --color-coral-150: #ffd3cf;
+  --color-coral-200: #ffc4be;
+  --color-coral-250: #ffb0a9;
+  --color-coral-300: #ff9c93;
+  --color-coral-350: #ff877c;
+  --color-coral-400: #ff7265;
+  --color-coral-450: #f9614f;
+  --color-coral-500: #f04f3c;
+  --color-coral-550: #e14032;
+  --color-coral-600: #d23328;
+  --color-coral-650: #c02920;
+  --color-coral-700: #ae2018;
+  --color-coral-750: #951a13;
+  --color-coral-800: #7c150f;
+  --color-coral-850: #63110c;
+  --color-coral-900: #4a0d09;
+  --color-coral-925: #360a07;
+  --color-coral-950: #230704;
+  --color-coral-975: #110302;
 
   /* Lavender 辅助色系 - 紫色 */
   --color-lavender-50: #f8f6fe;

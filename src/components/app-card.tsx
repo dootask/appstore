@@ -53,14 +53,14 @@ export function AppCard({icon, title, description, status, upgradeable, category
           </div>
           <div className={`inline-flex items-center px-3 py-1 text-xs font-medium rounded-md relative ${(() => {
             if (upgradeable) {
-              return "bg-purple-100 text-purple-700"
+              return "bg-lavender-400 text-white"
             }
             const statusClass: Record<AppStatus, string> = {
-              installing: "bg-blue-100 text-blue-700",
-              installed: "bg-gray-100 text-gray-400",
-              uninstalling: "bg-orange-100 text-orange-700",
-              not_installed: "bg-green-100 text-green-700",
-              error: "bg-red-100 text-red-700",
+              installing: "bg-ocean-400 text-white",
+              installed: "bg-gray-300 text-white",
+              uninstalling: "bg-amber-400 text-white",
+              not_installed: "bg-mantis-400 text-white",
+              error: "bg-coral-400 text-white",
             }
             return statusClass[status as AppStatus] || statusClass.not_installed
           })()} whitespace-nowrap cursor-pointer`}>

@@ -290,17 +290,17 @@ export function AppInstall({appName, onClose}: AppInstallProps) {
             <div className="flex justify-end">
               {(() => {
                 const config = {
-                  className: "bg-green-100 text-green-700 hover:bg-green-200",
+                  className: "bg-mantis-400 text-white hover:bg-mantis-350",
                   label: t('install.install_title')
                 }
                 if (app.upgradeable) {
                   Object.assign(config, {
-                    className: "bg-purple-100 text-purple-700 hover:bg-purple-200",
+                    className: "bg-lavender-400 text-white hover:bg-lavender-350",
                     label: t('install.upgrade_title')
                   })
                 } else if (app.config.status === 'installed') {
                   Object.assign(config, {
-                    className: "bg-green-100 text-green-700 hover:bg-green-200",
+                    className: "bg-mantis-400 text-white hover:bg-mantis-350",
                     label: t('install.reinstall_title')
                   })
                 }
