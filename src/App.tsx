@@ -51,7 +51,7 @@ function App() {
           const prevApp = prevApps.find(p => p.name === app.name);
           if (prevApp && prevApp.config.status !== app.config.status) {
             if (app.config.status === 'installing') {
-              const installType = app.upgradeable ? 'upgrade' : 'install'
+              const installType = prevApp.upgradeable ? 'upgrade' : 'install'
               handlers.installer = [
                 Notice({
                   type: "info",
@@ -318,7 +318,7 @@ function App() {
               onClick={() => setFilter('installed')}>
               {t('app.installed')}
             </Button>
-            {hasUpgradeableApps && (
+            {(hasUpgradeableApps || filter === 'upgradeable') && (
               <Button
                 variant={filter === 'upgradeable' ? "secondary" : "ghost"}
                 className="px-4 py-2 text-sm rounded-full relative"
@@ -368,7 +368,15 @@ function App() {
                     </div>
                   ) : (
                     <div className="empty-content text-center py-10 text-gray-500">
-                      <p>{t('app.noApps')}</p>
+                      {filter === 'all' && (
+                        <p>{t('app.no_apps')}</p>
+                      )}
+                      {filter === 'installed' && (
+                        <p>{t('app.no_installed_apps')}</p>
+                      )}
+                      {filter === 'upgradeable' && (
+                        <p>{t('app.no_upgradeable_apps')}</p>
+                      )}
                     </div>
                   )}
                 </TabsContent>

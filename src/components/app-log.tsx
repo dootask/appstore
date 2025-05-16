@@ -44,7 +44,12 @@ export const AppLog = forwardRef<AppLogRef, AppLogProps>(({appName, onLoading}, 
         }
       })
       if (data && data.name === app.name) {
-        updateOrAddApp({name: data.name, config: data.config} as AppItem);
+        updateOrAddApp({
+          name: data.name,
+          config: data.config,
+          versions: data.versions,
+          upgradeable: data.upgradeable
+        } as AppItem);
         setLogDetail(data.log)
       }
     } catch (err) {

@@ -12,7 +12,8 @@ export default function AlertItem({type, title, description, placeholder, defaul
   const [open, setOpen] = useState(false)
   const [confirmLoading, setConfirmLoading] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
-
+  const divRef = useRef<HTMLDivElement>(null)
+  
   const handleConfirm = () => {
     if (typeof onConfirm === 'function') {
       setConfirmLoading(true)
@@ -61,13 +62,13 @@ export default function AlertItem({type, title, description, placeholder, defaul
   }, [])
 
   return (
-    <Dialog open={open} onClose={handleClose} className="relative" style={{zIndex: zIndex}}>
+    <Dialog open={open} onClose={handleClose} className="relative" style={{zIndex: zIndex}} initialFocus={divRef}>
       <DialogBackdrop
         transition
         className="fixed inset-0 bg-black/60 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in doo-dark:bg-white/60"
       />
 
-      <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
+      <div ref={divRef} className="fixed inset-0 z-10 w-screen overflow-y-auto">
         {open && (
           <div role="app-store-close" role-index={zIndex} className="hidden" onClick={handleCancel}></div>
         )}
