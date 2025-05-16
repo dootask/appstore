@@ -33,16 +33,15 @@ export interface AppInfo {
 }
 
 export interface AppConfig {
-  installed_at: string;
-  installed_num: number;
-  installed_version: string;
+  install_at: string;
+  install_num: number;
+  install_version: string;
   status: AppStatus;
   params: Record<string, string | number>;
   resources: {
     cpu_limit: string;
     memory_limit: string;
   };
-  uninstalled_at?: string;
 }
 
 export interface AppVersion {

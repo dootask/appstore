@@ -16,6 +16,8 @@ import { AppInstall } from './components/app-install.tsx';
 import PromptPortal, { Alert, Notice } from "@/components/custom/prompt";
 import { useAppStore } from '@/lib/store';
 import Dropdown from "./components/custom/dropdown.tsx";
+import { hasUpgradeableVersion } from "@/lib/utils.ts";
+
 
 function App() {
   const {t} = useTranslation();
@@ -28,6 +30,7 @@ function App() {
   const [category, setCategory] = useState('all');
   const [availableCategories, setAvailableCategories] = useState<string[]>(['all']);
   const [searchKeyword, setSearchKeyword] = useState('');
+  const [hasUpgradeableApps, setHasUpgradeableApps] = useState(false);
   const mainRef = useRef<HTMLDivElement>(null)
   const timerRef = useRef<NodeJS.Timeout>(null)
 
@@ -120,12 +123,13 @@ function App() {
       // 始终保留 'all' 作为第一个选项
       const categories = ['all', ...limitedTags];
       setAvailableCategories(categories);
-
-      // 如果当前选中的类别不在新的类别列表中，重置为 'all'
-      if (category !== 'all' && !limitedTags.includes(category)) {
-        setCategory('all');
-      }
     }
+  }, [apps]);
+
+  // 检查是否有可升级的应用
+  useEffect(() => {
+    const hasUpgradeable = apps.some(app => hasUpgradeableVersion(app));
+    setHasUpgradeableApps(hasUpgradeable);
   }, [apps]);
 
   // 过滤应用列表
@@ -135,6 +139,8 @@ function App() {
     // 按安装状态过滤
     if (filter === 'installed') {
       filtered = filtered.filter(app => app.config.status === 'installed');
+    } else if (filter === 'upgradeable') {
+      filtered = filtered.filter(app => hasUpgradeableVersion(app));
     }
 
     // 按类别过滤
@@ -306,13 +312,15 @@ function App() {
               onClick={() => setFilter('installed')}>
               {t('app.installed')}
             </Button>
-            <Button
-              variant={filter === 'upgradeable' ? "secondary" : "ghost"}
-              className="px-4 py-2 text-sm rounded-full relative"
-              onClick={() => setFilter('upgradeable')}>
-              {t('app.upgradeable')}
-              <div className="absolute top-1 right-2 size-2 bg-red-500 rounded-full"></div>
-            </Button>
+            {hasUpgradeableApps && (
+              <Button
+                variant={filter === 'upgradeable' ? "secondary" : "ghost"}
+                className="px-4 py-2 text-sm rounded-full relative"
+                onClick={() => setFilter('upgradeable')}>
+                {t('app.upgradeable')}
+                <div className="absolute top-1 right-2 size-2 bg-red-500 rounded-full"></div>
+              </Button>
+            )}
           </div>
 
           {/* 类别、列表 */}
@@ -346,6 +354,7 @@ function App() {
                           title={app.info.name}
                           description={app.info.description}
                           status={app.config.status}
+                          upgradeable={hasUpgradeableVersion(app)}
                           category={app.info.tags?.length ? app.info.tags : []}
                           onOpen={() => handleOpenApp(app)}
                         />
