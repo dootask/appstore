@@ -136,7 +136,7 @@ export function AppInstall({appName, onClose}: AppInstallProps) {
   }
 
   return (
-    <ScrollArea className="flex-1 h-0">
+    <ScrollArea className="h-full">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-6 p-6">
           <div className="flex flex-col gap-5">

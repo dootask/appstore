@@ -13,7 +13,7 @@ export default function AlertItem({type, title, description, placeholder, defaul
   const [confirmLoading, setConfirmLoading] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
   const divRef = useRef<HTMLDivElement>(null)
-  
+
   const handleConfirm = () => {
     if (typeof onConfirm === 'function') {
       setConfirmLoading(true)
@@ -65,13 +65,10 @@ export default function AlertItem({type, title, description, placeholder, defaul
     <Dialog open={open} onClose={handleClose} className="relative" style={{zIndex: zIndex}} initialFocus={divRef}>
       <DialogBackdrop
         transition
-        className="fixed inset-0 bg-black/60 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in doo-dark:bg-white/60"
+        className="fixed inset-0 bg-black/40 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in doo-dark:bg-white/60"
       />
 
       <div ref={divRef} className="fixed inset-0 z-10 w-screen overflow-y-auto">
-        {open && (
-          <div role="app-store-close" role-index={zIndex} className="hidden" onClick={handleCancel}></div>
-        )}
         <div className="flex min-h-full justify-center p-4 text-center items-center sm:p-0">
           {type === 'prompt' ? (
             <DialogPanel
@@ -180,6 +177,7 @@ export default function AlertItem({type, title, description, placeholder, defaul
               </div>
             </DialogPanel>
           )}
+          <span className="sr-only" role="app-store-close" role-index={zIndex}></span>
         </div>
       </div>
     </Dialog>

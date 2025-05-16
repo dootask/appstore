@@ -66,7 +66,7 @@ export function AppDetail({appName, onInstall, onUninstall}: AppDetailProps) {
   }
 
   return (
-    <div className="flex-1 h-0 flex flex-col">
+    <div className="h-full flex flex-col">
       {/* 顶部信息区 */}
       <div className="mx-6 mb-6 flex items-center justify-between">
         <div className="flex flex-1 items-start gap-4 mr-4">

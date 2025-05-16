@@ -1,10 +1,9 @@
 import i18n from "@/i18n";
 import { useEffect, useRef, useState } from 'react'
 import { Button } from './components/ui/button'
-import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from "./components/ui/drawer"
 import { useTranslation } from "react-i18next";
-import { props, backApp, nextZIndex, interceptBack, requestAPI } from "@dootask/tools";
-import { X, ChevronLeft, ChevronRight, LoaderCircle, RefreshCw } from "lucide-react";
+import { props, backApp, interceptBack, requestAPI } from "@dootask/tools";
+import { ChevronLeft, ChevronRight, LoaderCircle, RefreshCw } from "lucide-react";
 import { AppSearch } from './components/app-search';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './components/ui/tabs';
 import { AppCard } from './components/app-card';
@@ -15,14 +14,14 @@ import { AppInstall } from './components/app-install.tsx';
 import PromptPortal, { Alert, Notice } from "@/components/custom/prompt";
 import { useAppStore } from '@/lib/store';
 import Dropdown from "./components/custom/dropdown.tsx";
+import Drawer from "./components/custom/drawer.tsx";
 
 function App() {
   const {t} = useTranslation();
   const {apps, loading, categorys, fetchApps} = useAppStore();
   const [selectedApp, setSelectedApp] = useState<AppItem | null>(null)
-  const [preInstallApp, setPreInstallApp] = useState(false)
-  const [detailZIndex, setDetailZIndex] = useState(1000);
-  const [installZIndex, setInstallZIndex] = useState(1000);
+  const [openDetail, setOpenDetail] = useState(false)
+  const [openInstall, setOpenInstall] = useState(false)
   const [filter, setFilter] = useState('all');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchKeyword, setSearchKeyword] = useState('');
@@ -172,8 +171,8 @@ function App() {
 
   // 打开应用详情
   const handleOpenApp = (app: AppItem) => {
-    setDetailZIndex(nextZIndex());
     setSelectedApp(app);
+    setOpenDetail(true)
   }
 
   // 打开安装应用
@@ -182,8 +181,7 @@ function App() {
       // 如果应用正在安装或卸载，则直接返回
       return;
     }
-    setInstallZIndex(nextZIndex())
-    setPreInstallApp(true)
+    setOpenInstall(true)
   }
 
   // 卸载应用
@@ -284,8 +282,8 @@ function App() {
       <div className="flex-1 flex flex-col overflow-hidden pt-4 lg:pt-6 gap-y-3 md:gap-y-4">
 
         {/* 导航、搜索、菜单 */}
-        <div className="px-4 lg:px-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center">
+        <div className="px-4 lg:px-6 flex flex-wrap items-center gap-4">
+          <div className="flex items-center flex-1 whitespace-nowrap">
             {!props.isSubElectron && (
               <ChevronLeft className="min-md:hidden mr-4" onClick={backApp}/>
             )}
@@ -331,7 +329,7 @@ function App() {
 
           {/* 类别、列表 */}
           {categorys.length > 0 && (
-            <Tabs defaultValue="all" className="flex-1 gap-y-3 md:gap-y-4" value={selectedCategory} onValueChange={setSelectedCategory}>
+            <Tabs defaultValue="all" className="flex-1 gap-y-4 md:gap-y-5" value={selectedCategory} onValueChange={setSelectedCategory}>
 
               {/* 类别 */}
               {categorys.length > 2 && (
@@ -352,7 +350,7 @@ function App() {
                       <p>{t('app.loading')}</p>
                     </div>
                   ) : getFilteredApps().length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-5">
                       {getFilteredApps().map((app) => (
                         <AppCard
                           key={app.name}
@@ -407,60 +405,24 @@ function App() {
 
       {/* 应用详情 */}
       <Drawer
-        modal={false}
-        dismissible={false}
-        container={mainRef.current}
-        open={!!selectedApp}
-        direction={"right"}
-        onOpenChange={(open) => !open && setSelectedApp(null)}>
-        {selectedApp && (
-          <div className="fixed top-0 right-0 left-0 bottom-0 bg-black/40 animate-fade-in pointer-events-auto doo-dark:bg-white/40" style={{zIndex: detailZIndex}} onClick={() => setSelectedApp(null)}></div>
-        )}
-        <DrawerContent style={{zIndex: detailZIndex}} className="rounded-l-xl !w-[1000px] !max-w-[90vw]">
-          <DrawerHeader>
-            <DrawerTitle className="flex items-center justify-between">
-              <div className="text-base">
-                {t('app.detail')}
-              </div>
-              <DrawerClose role="app-store-close" role-index={detailZIndex} className="cursor-pointer" onClick={() => setSelectedApp(null)}>
-                <X size={20}/>
-              </DrawerClose>
-            </DrawerTitle>
-            <DrawerDescription className="hidden"></DrawerDescription>
-          </DrawerHeader>
-          {selectedApp && <AppDetail appName={selectedApp.name} onInstall={handleInstall} onUninstall={handleUninstall}/>}
-        </DrawerContent>
+        open={openDetail}
+        onOpenChange={setOpenDetail}
+        title={t('app.detail')}
+        className="rounded-l-xl w-[1000px] max-w-[90vw]">
+        {selectedApp && <AppDetail appName={selectedApp.name} onInstall={handleInstall} onUninstall={handleUninstall}/>}
       </Drawer>
 
       {/* 安装应用 */}
       <Drawer
-        modal={false}
-        dismissible={false}
-        container={mainRef.current}
-        open={preInstallApp && !!selectedApp}
-        direction={"right"}
-        onOpenChange={setPreInstallApp}>
-        {preInstallApp && !!selectedApp && (
-          <div className="fixed top-0 right-0 left-0 bottom-0 bg-black/40 animate-fade-in pointer-events-auto doo-dark:bg-white/40" style={{zIndex: installZIndex}}></div>
-        )}
-        <DrawerContent style={{zIndex: installZIndex}} className="rounded-l-xl !w-[600px] !max-w-[80vw]">
-          <DrawerHeader>
-            <DrawerTitle className="flex items-center justify-between">
-              <div className="text-base">
-                {(() => {
-                  if (selectedApp?.upgradeable) return t('app.upgrade');
-                  if (selectedApp?.config.status === 'installed') return t('app.reinstall');
-                  return t('app.install');
-                })()}
-              </div>
-              <DrawerClose role="app-store-close" role-index={installZIndex} className="cursor-pointer" onClick={() => setPreInstallApp(false)}>
-                <X size={20}/>
-              </DrawerClose>
-            </DrawerTitle>
-            <DrawerDescription className="hidden"></DrawerDescription>
-          </DrawerHeader>
-          {preInstallApp && !!selectedApp && <AppInstall appName={selectedApp.name} onClose={() => setPreInstallApp(false)}/>}
-        </DrawerContent>
+        open={openInstall}
+        onOpenChange={setOpenInstall}
+        title={
+          selectedApp?.upgradeable ? t('app.upgrade') :
+          selectedApp?.config.status === 'installed' ? t('app.reinstall') :
+          t('app.install')
+        }
+        className="rounded-l-xl w-[600px] max-w-[80vw]">
+        {selectedApp && <AppInstall appName={selectedApp.name} onClose={() => setOpenInstall(false)}/>}
       </Drawer>
 
       {/* 提示弹窗 */}
