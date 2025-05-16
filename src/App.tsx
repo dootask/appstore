@@ -44,41 +44,63 @@ function App() {
       return beforeClose();
     })
     // 监听应用列表变化
+    const handlers: {installer: [(() => void), string] | null, uninstaller: [(() => void), string] | null} = {installer: null, uninstaller: null}
     const unsubscribe = useAppStore.subscribe(
       ({apps}, {apps: prevApps}) => {
         apps.forEach(app => {
           const prevApp = prevApps.find(p => p.name === app.name);
           if (prevApp && prevApp.config.status !== app.config.status) {
             if (app.config.status === 'installing') {
-              Notice({
-                type: "info",
-                title: t('install.title'),
-                description: t('install.install_starting', {app: app.info.name}),
-              })
+              const installType = app.upgradeable ? 'upgrade' : 'install'
+              handlers.installer = [
+                Notice({
+                  type: "info",
+                  title: t(`install.${installType}_title`),
+                  description: t(`install.${installType}_starting`, {app: app.info.name}),
+                }),
+                installType
+              ]
             } else if (app.config.status === 'installed') {
-              Notice({
-                type: "success",
-                title: t('install.title'),
-                description: t('install.install_success', {app: app.info.name}),
-              })
+              if (handlers.installer) {
+                handlers.installer[0]()
+                Notice({
+                  type: "success",
+                  title: t(`install.${handlers.installer[1]}_title`),
+                  description: t(`install.${handlers.installer[1]}_success`, {app: app.info.name}),
+                })
+                handlers.installer = null
+              }
             } else if (app.config.status === 'uninstalling') {
-              Notice({
-                type: "warning",
-                title: t('uninstall.title'),
-                description: t('uninstall.uninstall_starting', {app: app.info.name}),
-              })
+              handlers.uninstaller = [
+                Notice({
+                  type: "warning",
+                  title: t('uninstall.title'),
+                  description: t('uninstall.uninstall_starting', {app: app.info.name}),
+                }),
+                'uninstall'
+              ]
             } else if (app.config.status === 'not_installed') {
-              Notice({
-                type: "success",
-                title: t('uninstall.success'),
-                description: t('uninstall.success_description', {app: app.info.name}),
-              })
-            } else if (app.config.status === 'error' && prevApp.config.status === 'installing') {
-              Notice({
-                type: "error",
-                title: t('install.title'),
-                description: t('install.install_failed', {app: app.info.name})
-              })
+              if (handlers.uninstaller) {
+                handlers.uninstaller[0]()
+                Notice({
+                  type: "success",
+                  title: t('uninstall.success'),
+                  description: t('uninstall.success_description', {app: app.info.name}),
+                })
+                handlers.uninstaller = null
+              }
+            } else if (app.config.status === 'error') {
+              if (prevApp.config.status === 'installing') {
+                if (handlers.installer) {
+                  handlers.installer[0]()
+                  Notice({
+                    type: "error",
+                    title: t(`install.${handlers.installer[1]}_title`),
+                    description: t(`install.${handlers.installer[1]}_failed`, {app: app.info.name})
+                  })
+                  handlers.installer = null
+                }
+              }
             }
           }
         });
@@ -230,7 +252,7 @@ function App() {
       // 从URL安装应用
       Alert({
         type: "prompt",
-        title: t('install.title'),
+        title: t('install.install_title'),
         placeholder: t('install.install_from_url_placeholder'),
         onConfirm: async (value) => {
           if (!value) {

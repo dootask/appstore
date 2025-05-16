@@ -83,7 +83,7 @@ export function AppInstall({appName, onClose}: AppInstallProps) {
       if (installedVersion && compareVersions(values.version, installedVersion) < 0) {
         Alert({
           type: "warning",
-          title: t('install.upgrade_failed'),
+          title: t('install.upgrade_title'),
           description: t('install.version_too_low', {
             version: values.version,
             installed_version: installedVersion
@@ -291,7 +291,7 @@ export function AppInstall({appName, onClose}: AppInstallProps) {
               {(() => {
                 const config = {
                   className: "bg-green-100 text-green-700 hover:bg-green-200",
-                  label: t('install.title')
+                  label: t('install.install_title')
                 }
                 if (app.upgradeable) {
                   Object.assign(config, {
