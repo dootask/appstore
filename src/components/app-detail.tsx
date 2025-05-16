@@ -111,7 +111,7 @@ export function AppDetail({appName, onInstall, onUninstall}: AppDetailProps) {
                   text: 'install'
                 },
                 error: {
-                  className: "bg-gray-100 text-gray-700 hover:bg-gray-200",
+                  className: "bg-red-100 text-red-700 hover:bg-red-200",
                   loading: false,
                   text: 'error'
                 }
