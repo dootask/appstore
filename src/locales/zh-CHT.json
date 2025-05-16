@@ -13,10 +13,12 @@
     "no_log": "沒有相關日誌",
     "not_installed": "未安裝",
     "page": "頁",
+    "reinstall": "重裝",
     "search": "搜索應用",
     "totalItems": "共{{count}}個",
     "uninstall": "卸載",
     "uninstalling": "卸載中",
+    "upgrade": "升級",
     "upgradeable": "可升級"
   },
   "common": {
@@ -25,6 +27,7 @@
     "document": "文檔說明",
     "open_community": "開源社區",
     "title": "應用商店",
+    "unknown_error": "未知錯誤",
     "website": "官方網站"
   },
   "install": {
@@ -40,27 +43,31 @@
       "memory_required": "請輸入內存限制",
       "version_required": "請選擇版本"
     },
-    "title": "安裝應用",
+    "failure": "安裝失敗",
+    "failure_description": "應用「{{app}}」安裝失敗：{{error}}",
     "install_failed": "應用「{{app}}」安裝失敗",
+    "install_from_url": "從 URL 安裝",
+    "install_from_url_placeholder": "請輸入應用包文件地址或Git倉庫地址",
     "install_starting": "應用「{{app}}」開始安裝...",
     "install_success": "應用「{{app}}」安裝成功",
+    "installed_version": "已安裝版本：{{version}}",
     "latest_version": "最新版本",
     "memory_limit": "內存限制（MB/GB）",
     "memory_limit_placeholder": "示例：512MB、1GB，限制為 0 則關閉限制",
     "name": "名稱",
+    "reinstall_title": "重裝應用",
     "resource_limit": "資源限制",
     "select_version": "選擇版本",
-    "version": "版本",
+    "title": "安裝應用",
     "update_app_list": "更新應用列表",
-    "install_from_url": "從 URL 安裝",
-    "install_from_url_placeholder": "請輸入應用包文件地址或Git倉庫地址",
-    "failure": "安裝失敗",
-    "failure_description": "應用「{{app}}」安裝失敗：{{error}}",
-    "unknown_error": "未知錯誤",
-    "updating_app_list": "正在更新應用列表...",
-    "update_app_list_success": "應用列表更新成功",
     "update_app_list_failure": "應用列表更新失敗",
-    "update_app_list_failure_description": "應用列表更新失敗：{{error}}"
+    "update_app_list_failure_description": "應用列表更新失敗：{{error}}",
+    "update_app_list_success": "應用列表更新成功",
+    "updating_app_list": "正在更新應用列表...",
+    "upgrade_failed": "升級失敗",
+    "upgrade_title": "升級應用",
+    "version": "版本",
+    "version_too_low": "無法降級版本，當前選擇版本 {{version}} 低於已安裝版本 {{installed_version}}"
   },
   "label": {
     "detail": "詳情",
@@ -73,7 +80,6 @@
     "success": "卸載成功",
     "success_description": "應用「{{app}}」已成功卸載",
     "title": "卸載應用",
-    "unknown_error": "未知錯誤",
     "uninstall_starting": "應用「{{app}}」開始卸載..."
   }
 }

@@ -13,10 +13,12 @@
     "no_log": "ログなし",
     "not_installed": "未インストール",
     "page": "ページ",
+    "reinstall": "再インストールします",
     "search": "アプリを検索",
     "totalItems": "合計{{count}}個のアプリ",
     "uninstall": "アンインストール",
     "uninstalling": "アンインストール中",
+    "upgrade": "アップグレード",
     "upgradeable": "アップグレード可能"
   },
   "common": {
@@ -25,6 +27,7 @@
     "document": "ドキュメント",
     "open_community": "オープンソースコミュニティ",
     "title": "アプリストア",
+    "unknown_error": "不明なエラー",
     "website": "公式サイト"
   },
   "install": {
@@ -40,27 +43,31 @@
       "memory_required": "メモリ制限を入力してください",
       "version_required": "バージョンを選択してください"
     },
-    "title": "アプリをインストール",
+    "failure": "インストールに失敗しました",
+    "failure_description": "アプリケーションのインストールに失敗しました：{{error}}",
     "install_failed": "アプリ「{{app}}」のインストールに失敗しました",
+    "install_from_url": "URLからインストール",
+    "install_from_url_placeholder": "アプリパッケージファイルのURLまたはGitリポジトリのURLを入力してください",
     "install_starting": "アプリ「{{app}}」のインストールを開始しています...",
     "install_success": "アプリ「{{app}}」のインストールに成功しました",
+    "installed_version": "インストールされたバージョン：{{バージョン}}",
     "latest_version": "最新バージョン",
     "memory_limit": "メモリ制限（MB/GB）",
     "memory_limit_placeholder": "例：512MB、1GB、0に設定すると制限を無効化",
     "name": "名前",
+    "reinstall_title": "アプリケーションを再インストール",
     "resource_limit": "リソース制限",
     "select_version": "バージョンを選択",
-    "version": "バージョン",
+    "title": "アプリをインストール",
     "update_app_list": "アプリリストを更新",
-    "install_from_url": "URLからインストール",
-    "install_from_url_placeholder": "アプリパッケージファイルのURLまたはGitリポジトリのURLを入力してください",
-    "failure": "インストールに失敗しました",
-    "failure_description": "アプリケーションのインストールに失敗しました：{{error}}",
-    "unknown_error": "不明なエラー",
-    "updating_app_list": "アプリリストを更新中...",
-    "update_app_list_success": "アプリリスト更新成功",
     "update_app_list_failure": "アプリリスト更新失敗",
-    "update_app_list_failure_description": "アプリリスト更新失敗：{{error}}"
+    "update_app_list_failure_description": "アプリリスト更新失敗：{{error}}",
+    "update_app_list_success": "アプリリスト更新成功",
+    "updating_app_list": "アプリリストを更新中...",
+    "upgrade_failed": "アップグレードは失敗しました",
+    "upgrade_title": "アプリケーションをアップグレード",
+    "version": "バージョン",
+    "version_too_low": "バージョンをダウングレードできませんが、現在選択されているバージョン{{バージョン}}は、インストールされているバージョン{{installed_version}}よりも低いです"
   },
   "label": {
     "detail": "詳細",
@@ -73,7 +80,6 @@
     "success": "アンインストール成功",
     "success_description": "「{{app}}」 アプリがアンインストールされました",
     "title": "アプリをアンインストール",
-    "unknown_error": "不明なエラー",
     "uninstall_starting": "「{{app}}」 アプリのアンインストールを開始しています..."
   }
 }

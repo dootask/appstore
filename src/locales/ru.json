@@ -13,10 +13,12 @@
     "no_log": "Нет логов",
     "not_installed": "Не установлено",
     "page": "Страница",
+    "reinstall": "Переустановить",
     "search": "Поиск приложений",
     "totalItems": "Всего {{count}} приложений",
     "uninstall": "Удалить",
     "uninstalling": "Удаление",
+    "upgrade": "обновление",
     "upgradeable": "Модернизируется"
   },
   "common": {
@@ -25,6 +27,7 @@
     "document": "Документация",
     "open_community": "Сообщество с открытым исходным кодом",
     "title": "Магазин приложений",
+    "unknown_error": "Неизвестная ошибка",
     "website": "Официальный сайт"
   },
   "install": {
@@ -40,27 +43,31 @@
       "memory_required": "Пожалуйста, введите ограничение памяти",
       "version_required": "Пожалуйста, выберите версию"
     },
-    "title": "Установить приложение",
+    "failure": "Установка не удалась",
+    "failure_description": "Установка приложения \"{{app}}\" не удалась: {{error}}",
     "install_failed": "Ошибка установки приложения «{{app}}»",
+    "install_from_url": "Установить из URL",
+    "install_from_url_placeholder": "Введите URL-адрес приложения или Git-репозитория",
     "install_starting": "Начало установки приложения «{{app}}»...",
     "install_success": "Установка приложения «{{app}}» успешна",
+    "installed_version": "Установленная версия: {{версия}}",
     "latest_version": "Последняя версия",
     "memory_limit": "Ограничение памяти (MB/GB)",
     "memory_limit_placeholder": "Пример: 512MB, 1GB, установите 0 для отключения ограничения",
     "name": "Название",
+    "reinstall_title": "Переустановить приложение",
     "resource_limit": "Ограничения ресурсов",
     "select_version": "Выбрать версию",
-    "version": "Версия",
+    "title": "Установить приложение",
     "update_app_list": "Обновить список приложений",
-    "install_from_url": "Установить из URL",
-    "install_from_url_placeholder": "Введите URL-адрес приложения или Git-репозитория",
-    "failure": "Установка не удалась",
-    "failure_description": "Установка приложения \"{{app}}\" не удалась: {{error}}",
-    "unknown_error": "Неизвестная ошибка",
-    "updating_app_list": "Обновление списка приложений...",
-    "update_app_list_success": "Список приложений обновлен",
     "update_app_list_failure": "Не удалось обновить список приложений",
-    "update_app_list_failure_description": "Не удалось обновить список приложений: {{error}}"
+    "update_app_list_failure_description": "Не удалось обновить список приложений: {{error}}",
+    "update_app_list_success": "Список приложений обновлен",
+    "updating_app_list": "Обновление списка приложений...",
+    "upgrade_failed": "Обновление не удалось",
+    "upgrade_title": "Обновить приложение",
+    "version": "Версия",
+    "version_too_low": "Невозможно понизить версию, в настоящее время выбранная версия {{version}} ниже, чем установленная версия {{stanted_version}}"
   },
   "label": {
     "detail": "Детали",
@@ -73,7 +80,6 @@
     "success": "Удаление успешно",
     "success_description": "Приложение «{{app}}» успешно удалено",
     "title": "Удалить приложение",
-    "unknown_error": "Неизвестная ошибка",
     "uninstall_starting": "Начало удаления приложения «{{app}}»..."
   }
 }

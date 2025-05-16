@@ -13,10 +13,12 @@
     "no_log": "No Logs",
     "not_installed": "Not Installed",
     "page": "Page",
+    "reinstall": "Reinstall",
     "search": "Search Apps",
     "totalItems": "Total {{count}} items",
     "uninstall": "Uninstall",
     "uninstalling": "Uninstalling",
+    "upgrade": "upgrade",
     "upgradeable": "Upgradable"
   },
   "common": {
@@ -25,6 +27,7 @@
     "document": "Documentation",
     "open_community": "Open Source Community",
     "title": "App Store",
+    "unknown_error": "Unknown Error",
     "website": "Official Website"
   },
   "install": {
@@ -40,27 +43,31 @@
       "memory_required": "Please enter memory limit",
       "version_required": "Please select a version"
     },
-    "title": "Install App",
+    "failure": "Installation failed",
+    "failure_description": "The installation of the application \"{{app}}\" failed: {{error}}",
     "install_failed": "App «{{app}}» installation failed",
+    "install_from_url": "Install from URL",
+    "install_from_url_placeholder": "Enter the URL of the app package file or Git repository",
     "install_starting": "App «{{app}}» installation starting...",
     "install_success": "App «{{app}}» installation successful",
+    "installed_version": "Installed version: {{version}}",
     "latest_version": "Latest Version",
     "memory_limit": "Memory Limit (MB/GB)",
     "memory_limit_placeholder": "Example: 512MB, 1GB, set to 0 to disable limit",
     "name": "Name",
+    "reinstall_title": "Reinstall App",
     "resource_limit": "Resource Limits",
     "select_version": "Select Version",
-    "version": "Version",
+    "title": "Install App",
     "update_app_list": "Update App List",
-    "install_from_url": "Install from URL",
-    "install_from_url_placeholder": "Enter the URL of the app package file or Git repository",
-    "failure": "Installation failed",
-    "failure_description": "The installation of the application \"{{app}}\" failed: {{error}}",
-    "unknown_error": "Unknown error",
-    "updating_app_list": "Updating app list...",
-    "update_app_list_success": "App list updated successfully",
     "update_app_list_failure": "Failed to update app list",
-    "update_app_list_failure_description": "Failed to update app list: {{error}}"
+    "update_app_list_failure_description": "Failed to update app list: {{error}}",
+    "update_app_list_success": "App list updated successfully",
+    "updating_app_list": "Updating app list...",
+    "upgrade_failed": "Upgrade failed",
+    "upgrade_title": "Upgrade App",
+    "version": "Version",
+    "version_too_low": "Unable to downgrade the version, currently selected version {{version}} is lower than installed version {{installed_version}}"
   },
   "label": {
     "detail": "Details",
@@ -73,7 +80,6 @@
     "success": "Uninstall Success",
     "success_description": "The app «{{app}}» has been uninstalled successfully",
     "title": "Uninstall App",
-    "unknown_error": "Unknown Error",
     "uninstall_starting": "Starting to uninstall app «{{app}}»..."
   }
 }

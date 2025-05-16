@@ -190,7 +190,7 @@ function App() {
           Alert({
             type: "warning",
             title: t('uninstall.error'),
-            description: t('uninstall.error_description', {app: app.info.name, error: error.msg || t('uninstall.unknown_error')}),
+            description: t('uninstall.error_description', {app: app.info.name, error: error.msg || t('common.unknown_error')}),
             showCancel: false,
           })
         }).finally(() => {
@@ -221,7 +221,7 @@ function App() {
         Notice({
           type: "error",
           title: t('install.update_app_list_failure'),
-          description: t('install.update_app_list_failure_description', {error: error.msg || t('install.unknown_error')}),
+          description: t('install.update_app_list_failure_description', {error: error.msg || t('common.unknown_error')}),
         })
       }).finally(() => {
         off()
@@ -245,7 +245,7 @@ function App() {
             Alert({
               type: "warning",
               title: t('install.failure'),
-              description: t('install.failure_description', {app: value, error: error.msg || t('install.unknown_error')}),
+              description: t('install.failure_description', {app: value, error: error.msg || t('common.unknown_error')}),
               showCancel: false,
             })
             throw error;

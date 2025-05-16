@@ -13,10 +13,12 @@
     "no_log": "Pas de logs",
     "not_installed": "Non installé",
     "page": "Page",
+    "reinstall": "Réinstaller",
     "search": "Rechercher des applications",
     "totalItems": "Total {{count}} éléments",
     "uninstall": "Désinstaller",
     "uninstalling": "Désinstallation en cours",
+    "upgrade": "mise à niveau",
     "upgradeable": "Modulable"
   },
   "common": {
@@ -25,6 +27,7 @@
     "document": "Documentation",
     "open_community": "Communauté Open Source",
     "title": "Boutique d'Applications",
+    "unknown_error": "Erreur inconnue",
     "website": "Site Officiel"
   },
   "install": {
@@ -40,27 +43,31 @@
       "memory_required": "Veuillez saisir la limite de mémoire",
       "version_required": "Veuillez sélectionner une version"
     },
-    "title": "Installer l'application",
+    "failure": "L'installation a échoué",
+    "failure_description": "L'installation de l'application \"{{app}}\" a échoué: {{error}}",
     "install_failed": "Échec de l'installation de l'application «{{app}}»",
+    "install_from_url": "Installer depuis un URL",
+    "install_from_url_placeholder": "Entrez l'URL de l'application ou du dépôt Git",
     "install_starting": "Démarrage de l'installation de l'application «{{app}}»...",
     "install_success": "Installation réussie de l'application «{{app}}»",
+    "installed_version": "Version installée: {{version}}",
     "latest_version": "Dernière version",
     "memory_limit": "Limite mémoire (MB/GB)",
     "memory_limit_placeholder": "Exemple : 512MB, 1GB, mettre à 0 pour désactiver la limite",
     "name": "Nom",
+    "reinstall_title": "Réinstaller l'application",
     "resource_limit": "Limites de ressources",
     "select_version": "Sélectionner la version",
-    "version": "Version",
+    "title": "Installer l'application",
     "update_app_list": "Mettre à jour la liste des applications",
-    "install_from_url": "Installer depuis un URL",
-    "install_from_url_placeholder": "Entrez l'URL de l'application ou du dépôt Git",
-    "failure": "L'installation a échoué",
-    "failure_description": "L'installation de l'application \"{{app}}\" a échoué: {{error}}",
-    "unknown_error": "Erreur inconnue",
-    "updating_app_list": "Mise à jour de la liste des applications...",
-    "update_app_list_success": "Liste des applications mise à jour avec succès",
     "update_app_list_failure": "Échec de la mise à jour de la liste des applications",
-    "update_app_list_failure_description": "Échec de la mise à jour de la liste des applications: {{error}}"
+    "update_app_list_failure_description": "Échec de la mise à jour de la liste des applications: {{error}}",
+    "update_app_list_success": "Liste des applications mise à jour avec succès",
+    "updating_app_list": "Mise à jour de la liste des applications...",
+    "upgrade_failed": "La mise à niveau a échoué",
+    "upgrade_title": "Mettre à niveau l'application",
+    "version": "Version",
+    "version_too_low": "Impossible de rétrograder la version, la version actuellement sélectionnée {{version}} est inférieure à la version installée {{installée_version}}"
   },
   "label": {
     "detail": "Détails",
@@ -73,7 +80,6 @@
     "success": "Désinstallation réussie",
     "success_description": "L'application « {{app}} » a été désinstallée avec succès",
     "title": "Désinstaller l'application",
-    "unknown_error": "Erreur inconnue",
     "uninstall_starting": "Démarrage de la désinstallation de l'application « {{app}} »..."
   }
 }
