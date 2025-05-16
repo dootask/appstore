@@ -10,17 +10,24 @@ interface AppStoreState {
   setApps: (apps: AppItem[]) => void;
   fetchApps: (silence?: boolean) => Promise<void>;
   updateOrAddApp: (app: AppItem) => void;
+
+  categorys: string[];
+  updateCategorys: () => void;  // 获取应用列表、添加应用后，更新应用类别
 }
 
 export const useAppStore = create<AppStoreState>((set, get) => ({
   apps: [],
   loading: false,
+  categorys: ['all'],
   setApps: (apps) => set({apps}),
   fetchApps: async (silence = false) => {
     if (!silence) set({loading: true});
     try {
       const {data} = await requestAPI({url: 'apps/list'});
-      if (data) set({apps: data});
+      if (data) {
+        set({apps: data});
+        get().updateCategorys();
+      }
     } catch (e) {
       if (!silence) {
         Alert({
@@ -44,6 +51,15 @@ export const useAppStore = create<AppStoreState>((set, get) => ({
       set({apps: newApps});
     } else {
       set({apps: [...apps, app]});
+      get().updateCategorys();
     }
+  },
+  updateCategorys: () => {
+    const {apps} = get();
+    const allTags = apps.flatMap(app => app.info.tags || []);
+    const uniqueTags = [...new Set(allTags)].filter(tag => tag.trim() !== '');
+    const shuffledTags = uniqueTags.sort(() => Math.random() - 0.5);
+    const limitedTags = shuffledTags.slice(0, 4);
+    set({categorys: ['all', ...limitedTags]});
   },
 }));

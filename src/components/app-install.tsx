@@ -100,7 +100,7 @@ export function AppInstall({appName, onClose}: AppInstallProps) {
         app_name: app.name,
       }),
     }).then(() => {
-      eventEmit("refreshDetail", app.name)
+      eventEmit("refreshLog", app.name)
       onClose?.()
     }).catch((error) => {
       Alert({
@@ -264,16 +264,35 @@ export function AppInstall({appName, onClose}: AppInstallProps) {
           </div>
 
           <div className="flex justify-end pt-4">
-            <Button
-              type="submit"
-              className="w-full sm:w-auto bg-green-100 text-green-700 hover:bg-green-200"
-              disabled={installing}
-            >
-              {installing && (
-                <Loader2 className="animate-spin"/>
-              )}
-              {t('install.title')}
-            </Button>
+            {(() => {
+              const config = {
+                className: "bg-green-100 text-green-700 hover:bg-green-200",
+                label: t('install.title')
+              }
+              if (app.upgradeable) {
+                Object.assign(config, {
+                  className: "bg-purple-100 text-purple-700 hover:bg-purple-200",
+                  label: t('install.upgrade_title')
+                })
+              } else if (app.config.status === 'installed') {
+                Object.assign(config, {
+                  className: "bg-green-100 text-green-700 hover:bg-green-200",
+                  label: t('install.reinstall_title')
+                })
+              }
+              return (
+                <Button
+                    type="submit"
+                    className={`w-full sm:w-auto ${config.className}`}
+                    disabled={installing}
+                  >
+                    {installing && (
+                      <Loader2 className="animate-spin"/>
+                    )}
+                    {config.label}
+                  </Button>
+              );
+            })()}
           </div>
         </form>
       </Form>

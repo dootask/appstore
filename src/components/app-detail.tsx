@@ -18,10 +18,11 @@ import { useAppStore } from "@/lib/store.ts";
 
 interface AppDetailProps {
   appName: string
-  onOperation: (app: AppItem) => void
+  onInstall: (app: AppItem) => void
+  onUninstall: (app: AppItem) => void
 }
 
-export function AppDetail({appName, onOperation}: AppDetailProps) {
+export function AppDetail({appName, onInstall, onUninstall}: AppDetailProps) {
   const {t} = useTranslation()
   const {updateOrAddApp, apps} = useAppStore();
   const [loading, setLoading] = useState(true)
@@ -49,9 +50,9 @@ export function AppDetail({appName, onOperation}: AppDetailProps) {
     }).finally(() => {
       setLoading(false)
     })
-    const off = eventOn("refreshDetail", (app_name: unknown) => {
+    const off = eventOn("refreshLog", (app_name: unknown) => {
       if (app_name === appName) {
-        handleRefresh()
+        handleRefreshLog()
       }
     })
     return () => {
@@ -59,7 +60,7 @@ export function AppDetail({appName, onOperation}: AppDetailProps) {
     }
   }, [appName]);
 
-  const handleRefresh = () => {
+  const handleRefreshLog = () => {
     setActiveTab('log')
     appLogRef.current?.fetchLogs()
   }
@@ -75,57 +76,78 @@ export function AppDetail({appName, onOperation}: AppDetailProps) {
             <div className="text-gray-500 text-sm mb-1">{app.info.description}</div>
           </div>
         </div>
-        <div className="flex flex-col items-end gap-3 min-w-[120px]">
-          {(() => {
-            const statusConfig: Record<AppStatus, { className: string; loading: boolean; text: string }> = {
-              installing: {
-                className: "bg-blue-100 text-blue-700 hover:bg-blue-200",
-                loading: true,
-                text: 'installing'
-              },
-              installed: {
-                className: "bg-yellow-100 text-yellow-700 hover:bg-yellow-200",
-                loading: false,
-                text: 'uninstall'
-              },
-              uninstalling: {
-                className: "bg-orange-100 text-orange-700 hover:bg-orange-200",
-                loading: true,
-                text: 'uninstalling'
-              },
-              not_installed: {
-                className: "bg-green-100 text-green-700 hover:bg-green-200",
-                loading: false,
-                text: 'install'
-              },
-              error: {
-                className: "bg-gray-100 text-gray-700 hover:bg-gray-200",
-                loading: false,
-                text: 'error'
-              }
-            }
-
-            const config = statusConfig[app.config.status as AppStatus] || statusConfig.not_installed
-
-            return (
+        <div className="flex flex-col items-end gap-5 min-w-[120px]">
+          <div className="flex flex-wrap justify-end gap-3">
+            {app.config.status === 'installed' && (
               <Button
-                className={`${config.className} rounded-lg px-6 py-2 font-semibold cursor-pointer`}
+              className="bg-yellow-100 text-yellow-700 hover:bg-yellow-200 rounded-lg px-6 py-2 font-semibold cursor-pointer"
                 onClick={() => {
-                  if (config.loading) {
-                    handleRefresh()
-                  } else {
-                    onOperation(app)
-                  }
+                  onUninstall(app)
                 }}
               >
-                {config.loading && (
-                  <Loader2 className="animate-spin"/>
-                )}
-                {t('app.' + config.text)}
+                {t('app.uninstall')}
               </Button>
-            )
-          })()}
-          <div className="flex flex-wrap justify-end gap-2 mt-2">
+            )}
+            {(() => {
+              const statusConfig: Record<AppStatus, { className: string; loading: boolean; text: string }> = {
+                installing: {
+                  className: "bg-blue-100 text-blue-700 hover:bg-blue-200",
+                  loading: true,
+                  text: 'installing'
+                },
+                installed: {
+                  className: "bg-green-100 text-green-700 hover:bg-green-200",
+                  loading: false,
+                  text: 'reinstall'
+                },
+                uninstalling: {
+                  className: "bg-orange-100 text-orange-700 hover:bg-orange-200",
+                  loading: true,
+                  text: 'uninstalling'
+                },
+                not_installed: {
+                  className: "bg-green-100 text-green-700 hover:bg-green-200",
+                  loading: false,
+                  text: 'install'
+                },
+                error: {
+                  className: "bg-gray-100 text-gray-700 hover:bg-gray-200",
+                  loading: false,
+                  text: 'error'
+                }
+              }
+
+              const config = statusConfig[app.config.status] || statusConfig.not_installed
+              if (app.upgradeable) {
+                Object.assign(config, {
+                  className: "bg-purple-100 text-purple-700 hover:bg-purple-200",
+                  text: 'upgrade'
+                })
+              }
+
+              return (
+                <Button
+                  className={`${config.className} rounded-lg px-6 py-2 font-semibold cursor-pointer relative`}
+                  onClick={() => {
+                    if (config.loading) {
+                      handleRefreshLog()
+                    } else {
+                      onInstall(app)
+                    }
+                  }}
+                >
+                  {config.loading && (
+                    <Loader2 className="animate-spin"/>
+                  )}
+                  {t('app.' + config.text)}
+                  {app.upgradeable && (
+                    <div className="absolute -top-1 -right-1 size-2.5 bg-red-500 rounded-full"></div>
+                  )}
+                </Button>
+              )
+            })()}
+          </div>
+          <div className="flex flex-wrap justify-end gap-3">
             {app.info.website && (
               <a href={app.info.website} target="_blank" rel="noopener noreferrer" className="text-xs text-gray-500 hover:text-blue-600 flex items-center gap-1">
                 {t('common.website')} <ExternalLink size={14}/>
@@ -157,7 +179,7 @@ export function AppDetail({appName, onOperation}: AppDetailProps) {
               <div className="flex items-center gap-2">
                 <div>{t('label.log')}</div>
                 {activeTab === 'log' && (
-                  <div className=" text-gray-500 hover:text-gray-700 -mr-0.5 cursor-pointer" onClick={handleRefresh}>
+                  <div className=" text-gray-500 hover:text-gray-700 -mr-0.5 cursor-pointer" onClick={handleRefreshLog}>
                     {isRefreshing ? <LoaderCircle className="!w-3.5 !h-3.5 animate-spin"/> : <RefreshCw className="!w-3.5 !h-3.5"/>}
                   </div>
                 )}
@@ -165,8 +187,8 @@ export function AppDetail({appName, onOperation}: AppDetailProps) {
             </TabsTrigger>
           </TabsList>
         </div>
+        {/* 详情内容 */}
         <TabsContent value="detail" className="flex-1 h-0">
-          {/* 详情内容 */}
           <ScrollArea className="h-full">
             <div className="px-6 pb-6 select-text">
               {loading ? (
@@ -219,9 +241,13 @@ export function AppDetail({appName, onOperation}: AppDetailProps) {
             </div>
           </ScrollArea>
         </TabsContent>
+        {/* 日志内容 */}
         <TabsContent value="log" className="flex-1 h-0">
-          {/* 日志内容 */}
-          <AppLog ref={appLogRef} appName={appName} onLoading={setIsRefreshing}/>
+          <ScrollArea className="h-full">
+            <div className="px-6 pb-6 select-text">
+              <AppLog ref={appLogRef} appName={appName} onLoading={setIsRefreshing}/>
+            </div>
+          </ScrollArea>
         </TabsContent>
       </Tabs>
     </div>

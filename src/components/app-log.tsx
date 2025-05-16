@@ -2,7 +2,6 @@ import { requestAPI } from "@dootask/tools";
 import { useEffect, useState, useRef, forwardRef, useImperativeHandle } from "react";
 import { Skeleton } from "./ui/skeleton";
 import { useTranslation } from "react-i18next";
-import { ScrollArea } from "./ui/scroll-area";
 import type { AppItem } from "@/types/app.ts";
 import { useAppStore } from "@/lib/store.ts";
 
@@ -93,27 +92,25 @@ export const AppLog = forwardRef<AppLogRef, AppLogProps>(({appName, onLoading}, 
   }, [logDetail]);
 
   return (
-    <ScrollArea className="h-full">
-      <div className="px-6 pb-6 select-text">
-        {loading && logDetail == "" ? (
-          <div className="flex flex-col gap-3">
-            <Skeleton className="h-4 w-[80%]"/>
-            <Skeleton className="h-4 w-[70%]"/>
-            <Skeleton className="h-4 w-[40%]"/>
+    <>
+      {loading && logDetail == "" ? (
+        <div className="flex flex-col gap-3">
+          <Skeleton className="h-4 w-[80%]"/>
+          <Skeleton className="h-4 w-[70%]"/>
+          <Skeleton className="h-4 w-[40%]"/>
+        </div>
+      ) : (
+        logDetail ? (
+          <div className="flex w-full">
+            <div className="flex-1 w-0 prose">
+              <pre className="overflow-auto"><code>{logDetail}</code></pre>
+            </div>
           </div>
         ) : (
-          logDetail ? (
-            <div className="flex w-full">
-              <div className="flex-1 w-0 prose">
-                <pre className="overflow-auto"><code>{logDetail}</code></pre>
-              </div>
-            </div>
-          ) : (
-            <div className="text-sm text-gray-500 mb-4">{t('app.no_log')}</div>
-          )
-        )}
-        <div ref={bottomRef}></div>
-      </div>
-    </ScrollArea>
+          <div className="text-sm text-gray-500 mb-4">{t('app.no_log')}</div>
+        )
+      )}
+      <div ref={bottomRef}></div>
+    </>
   )
 })

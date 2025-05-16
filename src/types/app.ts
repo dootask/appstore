@@ -54,4 +54,5 @@ export interface AppItem {
   config: AppConfig;
   versions: AppVersion[];
   document?: string
+  upgradeable?: boolean
 }

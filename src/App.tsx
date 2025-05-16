@@ -1,8 +1,7 @@
 import i18n from "@/i18n";
-import { Drawer as DrawerPrimitive } from "vaul"
 import { useEffect, useRef, useState } from 'react'
 import { Button } from './components/ui/button'
-import { Drawer, DrawerClose, DrawerContent, DrawerHeader, DrawerTitle } from "./components/ui/drawer"
+import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from "./components/ui/drawer"
 import { useTranslation } from "react-i18next";
 import { props, backApp, nextZIndex, interceptBack, requestAPI } from "@dootask/tools";
 import { X, ChevronLeft, ChevronRight, LoaderCircle, RefreshCw } from "lucide-react";
@@ -16,19 +15,16 @@ import { AppInstall } from './components/app-install.tsx';
 import PromptPortal, { Alert, Notice } from "@/components/custom/prompt";
 import { useAppStore } from '@/lib/store';
 import Dropdown from "./components/custom/dropdown.tsx";
-import { hasUpgradeableVersion } from "@/lib/utils.ts";
-
 
 function App() {
   const {t} = useTranslation();
-  const {apps, loading, fetchApps} = useAppStore();
+  const {apps, loading, categorys, fetchApps} = useAppStore();
   const [selectedApp, setSelectedApp] = useState<AppItem | null>(null)
   const [preInstallApp, setPreInstallApp] = useState(false)
   const [detailZIndex, setDetailZIndex] = useState(1000);
   const [installZIndex, setInstallZIndex] = useState(1000);
   const [filter, setFilter] = useState('all');
-  const [category, setCategory] = useState('all');
-  const [availableCategories, setAvailableCategories] = useState<string[]>(['all']);
+  const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchKeyword, setSearchKeyword] = useState('');
   const [hasUpgradeableApps, setHasUpgradeableApps] = useState(false);
   const mainRef = useRef<HTMLDivElement>(null)
@@ -96,6 +92,9 @@ function App() {
   }, [])
 
   useEffect(() => {
+    // 检查是否有可升级的应用
+    const hasUpgradeable = apps.some(app => app.upgradeable);
+    setHasUpgradeableApps(hasUpgradeable);
     // 设置定时器
     timerRef.current = setInterval(() => {
       if (apps.find(item => ['installing', 'uninstalling'].includes(item.config.status))) {
@@ -110,28 +109,6 @@ function App() {
     }
   }, [apps])
 
-  // 提取应用标签并更新可用类别
-  useEffect(() => {
-    if (apps.length > 0) {
-      // 收集所有应用的标签
-      const allTags = apps.flatMap(app => app.info.tags || []);
-      // 去重并保留非空标签
-      const uniqueTags = [...new Set(allTags)].filter(tag => tag.trim() !== '');
-      // 随机保留4个标签（加上 'all' 总共5个）
-      const shuffledTags = uniqueTags.sort(() => Math.random() - 0.5);
-      const limitedTags = shuffledTags.slice(0, 4);
-      // 始终保留 'all' 作为第一个选项
-      const categories = ['all', ...limitedTags];
-      setAvailableCategories(categories);
-    }
-  }, [apps]);
-
-  // 检查是否有可升级的应用
-  useEffect(() => {
-    const hasUpgradeable = apps.some(app => hasUpgradeableVersion(app));
-    setHasUpgradeableApps(hasUpgradeable);
-  }, [apps]);
-
   // 过滤应用列表
   const getFilteredApps = () => {
     let filtered = [...apps];
@@ -140,14 +117,14 @@ function App() {
     if (filter === 'installed') {
       filtered = filtered.filter(app => app.config.status === 'installed');
     } else if (filter === 'upgradeable') {
-      filtered = filtered.filter(app => hasUpgradeableVersion(app));
+      filtered = filtered.filter(app => app.upgradeable);
     }
 
     // 按类别过滤
-    if (category !== 'all') {
+    if (selectedCategory !== 'all') {
       filtered = filtered.filter(app => {
         const tags = app.info.tags || [];
-        return tags.some(tag => tag.toLowerCase() === category.toLowerCase());
+        return tags.some(tag => tag.toLowerCase() === selectedCategory.toLowerCase());
       });
     }
 
@@ -177,44 +154,51 @@ function App() {
     setSelectedApp(app);
   }
 
-  // 点击安装、卸载、错误等操作
-  const handleOperation = (app: AppItem) => {
-    if (app.config.status === 'installed') {
-      // 卸载应用
-      Alert({
-        type: "warning",
-        title: t('uninstall.title'),
-        description: t('uninstall.description', {app: app.info.name}),
-        showCancel: true,
-        onConfirm: async () => {
-          // 确认卸载
-          await requestAPI({
-            url: "apps/uninstall",
-            data: {
-              app_name: app.name
-            }
-          }).then(() => {
-            // 卸载成功
-            setSelectedApp(null);
-          }).catch((error) => {
-            // 卸载失败
-            Alert({
-              type: "warning",
-              title: t('uninstall.error'),
-              description: t('uninstall.error_description', {app: app.info.name, error: error.msg || t('uninstall.unknown_error')}),
-              showCancel: false,
-            })
-          }).finally(() => {
-            // 请求应用列表
-            fetchApps();
-          })
-        }
-      })
-    } else {
-      // 安装应用
-      setInstallZIndex(nextZIndex())
-      setPreInstallApp(true)
+  // 打开安装应用
+  const handleInstall = (app: AppItem) => {
+    if (['installing', 'uninstalling'].includes(app.config.status)) {
+      // 如果应用正在安装或卸载，则直接返回
+      return;
     }
+    setInstallZIndex(nextZIndex())
+    setPreInstallApp(true)
+  }
+
+  // 卸载应用
+  const handleUninstall = (app: AppItem) => {
+    if (app.config.status !== 'installed') {
+      // 如果应用未安装，则直接返回
+      return;
+    }
+    Alert({
+      type: "warning",
+      title: t('uninstall.title'),
+      description: t('uninstall.description', {app: app.info.name}),
+      showCancel: true,
+      onConfirm: async () => {
+        // 确认卸载
+        await requestAPI({
+          url: "apps/uninstall",
+          data: {
+            app_name: app.name
+          }
+        }).then(() => {
+          // 卸载成功
+          setSelectedApp(null);
+        }).catch((error) => {
+          // 卸载失败
+          Alert({
+            type: "warning",
+            title: t('uninstall.error'),
+            description: t('uninstall.error_description', {app: app.info.name, error: error.msg || t('uninstall.unknown_error')}),
+            showCancel: false,
+          })
+        }).finally(() => {
+          // 请求应用列表
+          fetchApps();
+        })
+      }
+    })
   }
 
   // 菜单项点击事件
@@ -324,13 +308,13 @@ function App() {
           </div>
 
           {/* 类别、列表 */}
-          {availableCategories.length > 0 && (
-            <Tabs defaultValue="all" className="flex-1 gap-y-3 md:gap-y-4" value={category} onValueChange={setCategory}>
+          {categorys.length > 0 && (
+            <Tabs defaultValue="all" className="flex-1 gap-y-3 md:gap-y-4" value={selectedCategory} onValueChange={setSelectedCategory}>
 
               {/* 类别 */}
-              {availableCategories.length > 2 && (
+              {categorys.length > 2 && (
                 <TabsList className="flex w-full md:max-w-md light:bg-gray-100">
-                  {availableCategories.map((cat) => (
+                  {categorys.map((cat) => (
                     <TabsTrigger key={cat} value={cat} className="text-sm">
                       {cat === 'all' ? t('app.all') : cat}
                     </TabsTrigger>
@@ -339,7 +323,7 @@ function App() {
               )}
 
               {/* 列表 */}
-              {availableCategories.map((tabValue) => (
+              {categorys.map((tabValue) => (
                 <TabsContent key={tabValue} value={tabValue}>
                   {loading && getFilteredApps().length === 0 ? (
                     <div className="text-center py-10">
@@ -354,7 +338,7 @@ function App() {
                           title={app.info.name}
                           description={app.info.description}
                           status={app.config.status}
-                          upgradeable={hasUpgradeableVersion(app)}
+                          upgradeable={app.upgradeable}
                           category={app.info.tags?.length ? app.info.tags : []}
                           onOpen={() => handleOpenApp(app)}
                         />
@@ -391,7 +375,7 @@ function App() {
         </div>
       </div>
 
-      {/* 应用详情、安装应用 */}
+      {/* 应用详情 */}
       <Drawer
         modal={false}
         dismissible={false}
@@ -401,9 +385,6 @@ function App() {
         onOpenChange={(open) => !open && setSelectedApp(null)}>
         {selectedApp && (
           <div className="fixed top-0 right-0 left-0 bottom-0 bg-black/40 animate-fade-in pointer-events-auto doo-dark:bg-white/40" style={{zIndex: detailZIndex}} onClick={() => setSelectedApp(null)}></div>
-        )}
-        {preInstallApp && !!selectedApp && (
-          <div className="fixed top-0 right-0 left-0 bottom-0 bg-black/40 animate-fade-in pointer-events-auto doo-dark:bg-white/40" style={{zIndex: installZIndex}}></div>
         )}
         <DrawerContent style={{zIndex: detailZIndex}} className="rounded-l-xl !w-[1000px] !max-w-[90vw]">
           <DrawerHeader>
@@ -415,31 +396,40 @@ function App() {
                 <X size={20}/>
               </DrawerClose>
             </DrawerTitle>
+            <DrawerDescription className="hidden"></DrawerDescription>
           </DrawerHeader>
-          {/* 应用详情 */}
-          {selectedApp && <AppDetail appName={selectedApp.name} onOperation={handleOperation}/>}
-          {/* 安装应用 */}
-          <DrawerPrimitive.NestedRoot
-            modal={false}
-            dismissible={false}
-            container={mainRef.current}
-            open={preInstallApp && !!selectedApp}
-            direction={"right"}
-            onOpenChange={setPreInstallApp}>
-            <DrawerContent style={{zIndex: installZIndex}} className="rounded-l-xl !w-[600px] !max-w-[80vw]">
-              <DrawerHeader>
-                <DrawerTitle className="flex items-center justify-between">
-                  <div className="text-base">
-                    {t('app.install')}
-                  </div>
-                  <DrawerClose role="app-store-close" role-index={installZIndex} className="cursor-pointer" onClick={() => setPreInstallApp(false)}>
-                    <X size={20}/>
-                  </DrawerClose>
-                </DrawerTitle>
-              </DrawerHeader>
-              {preInstallApp && !!selectedApp && <AppInstall appName={selectedApp.name} onClose={() => setPreInstallApp(false)}/>}
-            </DrawerContent>
-          </DrawerPrimitive.NestedRoot>
+          {selectedApp && <AppDetail appName={selectedApp.name} onInstall={handleInstall} onUninstall={handleUninstall}/>}
+        </DrawerContent>
+      </Drawer>
+
+      {/* 安装应用 */}
+      <Drawer
+        modal={false}
+        dismissible={false}
+        container={mainRef.current}
+        open={preInstallApp && !!selectedApp}
+        direction={"right"}
+        onOpenChange={setPreInstallApp}>
+        {preInstallApp && !!selectedApp && (
+          <div className="fixed top-0 right-0 left-0 bottom-0 bg-black/40 animate-fade-in pointer-events-auto doo-dark:bg-white/40" style={{zIndex: installZIndex}}></div>
+        )}
+        <DrawerContent style={{zIndex: installZIndex}} className="rounded-l-xl !w-[600px] !max-w-[80vw]">
+          <DrawerHeader>
+            <DrawerTitle className="flex items-center justify-between">
+              <div className="text-base">
+                {(() => {
+                  if (selectedApp?.upgradeable) return t('app.upgrade');
+                  if (selectedApp?.config.status === 'installed') return t('app.reinstall');
+                  return t('app.install');
+                })()}
+              </div>
+              <DrawerClose role="app-store-close" role-index={installZIndex} className="cursor-pointer" onClick={() => setPreInstallApp(false)}>
+                <X size={20}/>
+              </DrawerClose>
+            </DrawerTitle>
+            <DrawerDescription className="hidden"></DrawerDescription>
+          </DrawerHeader>
+          {preInstallApp && !!selectedApp && <AppInstall appName={selectedApp.name} onClose={() => setPreInstallApp(false)}/>}
         </DrawerContent>
       </Drawer>
 
