@@ -1,10 +1,10 @@
 'use client'
 
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import NoticeItem from "./notice-item";
-import {eventOn} from "@/lib/events";
-import {cn, uuidv4} from "@/lib/utils";
-import {nextZIndex} from "@dootask/tools";
+import { eventOn } from "@/lib/events";
+import { cn, uuidv4 } from "@/lib/utils";
+import { nextZIndex } from "@dootask/tools";
 
 export interface NoticeProps {
   type: "success" | "warning" | "error" | "info" | "text"
@@ -15,7 +15,7 @@ export interface NoticeProps {
   showClose?: boolean
   zIndex?: number
   onClose?: () => void
-  
+
   __closeIng?: boolean
 }
 
@@ -32,7 +32,7 @@ export default function NoticePortal() {
     const off = eventOn("notice", (args: unknown) => {
       const item = args as NoticeItem
       if (item.__closeIng) {
-        setNotices(prev => prev.map(notice => 
+        setNotices(prev => prev.map(notice =>
           notice.id === item.id ? {...notice, __closeIng: true} : notice
         ))
         return;
@@ -49,7 +49,7 @@ export default function NoticePortal() {
     return () => {
       off()
     }
-  }, [])
+  }, [zIndex])
 
   return (
     <>

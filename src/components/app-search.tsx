@@ -33,7 +33,7 @@ export function AppSearch({ onSearch }: AppSearchProps) {
       <Button
         size="icon"
         variant="ghost"
-        className="absolute right-0 top-0 h-full px-3 py-2 text-muted-foreground"
+        className="absolute right-0 top-0 h-full px-3 py-2 text-muted-foreground hover:bg-transparent"
         onClick={handleSearch}
       >
         <Search />

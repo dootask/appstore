@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react'
 import { CheckIcon, ExclamationTriangleIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { Loader2 } from 'lucide-react'
@@ -32,12 +32,12 @@ export default function AlertItem({type, title, description, placeholder, defaul
     setOpen(false)
   }
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     if (!closeOnClickMask) {
       return
     }
     setOpen(false)
-  }
+  }, [closeOnClickMask])
 
   useEffect(() => {
     let timer: NodeJS.Timeout | null = null
@@ -55,7 +55,7 @@ export default function AlertItem({type, title, description, placeholder, defaul
     if (__closeIng) {
       handleClose()
     }
-  }, [__closeIng])
+  }, [__closeIng, handleClose])
 
   useEffect(() => {
     setOpen(true)

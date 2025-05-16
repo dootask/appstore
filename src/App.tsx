@@ -133,6 +133,13 @@ function App() {
   }, [apps])
 
   useEffect(() => {
+    // 如果当前选中的类别不在新的类别列表中，重置为 'all'
+    if (selectedCategory !== 'all' && !categorys.includes(selectedCategory)) {
+      setSelectedCategory('all');
+    }
+  }, [categorys, selectedCategory])
+
+  useEffect(() => {
     if (!openDetail) {
       detailTimerRef.current = setTimeout(() => {
         setSelectedApp(null)

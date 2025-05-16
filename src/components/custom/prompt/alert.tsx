@@ -39,7 +39,7 @@ export default function AlertPortal() {
     const off = eventOn("alert", (args: unknown) => {
       const item = args as AlertItem
       if (item.__closeIng) {
-        setAlerts(prev => prev.map(alert => 
+        setAlerts(prev => prev.map(alert =>
           alert.id === item.id ? {...alert, __closeIng: true} : alert
         ))
         return;
@@ -49,7 +49,7 @@ export default function AlertPortal() {
       item.showCancel = item.showCancel ?? true
       item.showConfirm = item.showConfirm ?? true
       item.closeOnClickMask = item.closeOnClickMask ?? (item.type !== 'prompt')
-      item.zIndex = item.zIndex ?? (nextZIndex()+ 500)
+      item.zIndex = item.zIndex ?? (nextZIndex() + 500)
       item.afterClose = () => setAlerts(prev => prev.filter(({id}) => id !== item.id))
       setAlerts(prev => [...prev, item])
     })

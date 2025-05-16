@@ -18,7 +18,6 @@ interface AppStoreState {
 export const useAppStore = create<AppStoreState>((set, get) => ({
   apps: [],
   loading: false,
-  categorys: ['all'],
   setApps: (apps) => set({apps}),
   fetchApps: async (silence = false) => {
     if (!silence) set({loading: true});
@@ -54,6 +53,8 @@ export const useAppStore = create<AppStoreState>((set, get) => ({
       get().updateCategorys();
     }
   },
+
+  categorys: ['all'],
   updateCategorys: () => {
     const {apps} = get();
     const allTags = apps.flatMap(app => app.info.tags || []);
