@@ -21,7 +21,7 @@ const DrawerTitle = memo(function DrawerTitle({title}: { title?: ReactNode }) {
 // 内容组件
 const DrawerContent = memo(function DrawerContent({children}: { children?: ReactNode }) {
   return (
-    <div className="relative flex-1 overflow-hidden">
+    <div className="relative flex-1 h-0">
       {children}
     </div>
   )

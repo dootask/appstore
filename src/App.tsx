@@ -27,7 +27,8 @@ function App() {
   const [searchKeyword, setSearchKeyword] = useState('');
   const [hasUpgradeableApps, setHasUpgradeableApps] = useState(false);
   const mainRef = useRef<HTMLDivElement>(null)
-  const timerRef = useRef<NodeJS.Timeout>(null)
+  const fetchTimerRef = useRef<NodeJS.Timeout>(null)
+  const detailTimerRef = useRef<NodeJS.Timeout>(null)
 
   useEffect(() => {
     // 设置主题
@@ -43,7 +44,7 @@ function App() {
       return beforeClose();
     })
     // 监听应用列表变化
-    const handlers: {installer: [(() => void), string] | null, uninstaller: [(() => void), string] | null} = {installer: null, uninstaller: null}
+    const handlers: { installer: [(() => void), string] | null, uninstaller: [(() => void), string] | null } = {installer: null, uninstaller: null}
     const unsubscribe = useAppStore.subscribe(
       ({apps}, {apps: prevApps}) => {
         apps.forEach(app => {
@@ -60,15 +61,16 @@ function App() {
                 installType
               ]
             } else if (app.config.status === 'installed') {
+              const installType = handlers.installer?.[1] || 'install'
               if (handlers.installer) {
                 handlers.installer[0]()
-                Notice({
-                  type: "success",
-                  title: t(`install.${handlers.installer[1]}_title`),
-                  description: t(`install.${handlers.installer[1]}_success`, {app: app.info.name}),
-                })
                 handlers.installer = null
               }
+              Notice({
+                type: "success",
+                title: t(`install.${installType}_title`),
+                description: t(`install.${installType}_success`, {app: app.info.name}),
+              })
             } else if (app.config.status === 'uninstalling') {
               handlers.uninstaller = [
                 Notice({
@@ -81,13 +83,13 @@ function App() {
             } else if (app.config.status === 'not_installed') {
               if (handlers.uninstaller) {
                 handlers.uninstaller[0]()
-                Notice({
-                  type: "success",
-                  title: t('uninstall.success'),
-                  description: t('uninstall.success_description', {app: app.info.name}),
-                })
                 handlers.uninstaller = null
               }
+              Notice({
+                type: "success",
+                title: t('uninstall.success'),
+                description: t('uninstall.success_description', {app: app.info.name}),
+              })
             } else if (app.config.status === 'error') {
               if (prevApp.config.status === 'installing') {
                 if (handlers.installer) {
@@ -117,18 +119,31 @@ function App() {
     const hasUpgradeable = apps.some(app => app.upgradeable);
     setHasUpgradeableApps(hasUpgradeable);
     // 设置定时器
-    timerRef.current = setInterval(() => {
+    fetchTimerRef.current = setInterval(() => {
       if (apps.find(item => ['installing', 'uninstalling'].includes(item.config.status))) {
         fetchApps(true);
       }
     }, 10000)
     // 清理定时器
     return () => {
-      if (timerRef.current) {
-        clearInterval(timerRef.current)
+      if (fetchTimerRef.current) {
+        clearInterval(fetchTimerRef.current)
       }
     }
   }, [apps])
+
+  useEffect(() => {
+    if (!openDetail) {
+      detailTimerRef.current = setTimeout(() => {
+        setSelectedApp(null)
+      }, 1000)
+    }
+    return () => {
+      if (detailTimerRef.current) {
+        clearTimeout(detailTimerRef.current)
+      }
+    }
+  }, [openDetail])
 
   // 过滤应用列表
   const getFilteredApps = () => {
@@ -204,7 +219,8 @@ function App() {
           }
         }).then(() => {
           // 卸载成功
-          setSelectedApp(null);
+          setOpenDetail(false);
+          setOpenInstall(false);
         }).catch((error) => {
           // 卸载失败
           Alert({
@@ -418,8 +434,8 @@ function App() {
         onOpenChange={setOpenInstall}
         title={
           selectedApp?.upgradeable ? t('app.upgrade') :
-          selectedApp?.config.status === 'installed' ? t('app.reinstall') :
-          t('app.install')
+            selectedApp?.config.status === 'installed' ? t('app.reinstall') :
+              t('app.install')
         }
         className="rounded-l-xl w-[600px] max-w-[80vw]">
         {selectedApp && <AppInstall appName={selectedApp.name} onClose={() => setOpenInstall(false)}/>}
