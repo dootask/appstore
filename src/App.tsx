@@ -410,14 +410,14 @@ function App() {
             <div className="mt-1 md:mt-2 flex justify-between items-center text-sm text-gray-500">
               <div>{t('app.totalItems', {count: getFilteredApps().length})}</div>
               <div className="flex items-center gap-x-2">
-                <Button variant="outline" size="icon" className="w-7 h-7">
+                <Button variant="outline" size="icon" className="w-7 h-7" disabled={true}>
                   <ChevronLeft/>
                 </Button>
                 <span>1</span>
                 <span>/</span>
                 <span>1</span>
                 <span>{t('app.page')}</span>
-                <Button variant="outline" size="icon" className="w-7 h-7">
+                <Button variant="outline" size="icon" className="w-7 h-7" disabled={true}>
                   <ChevronRight/>
                 </Button>
               </div>

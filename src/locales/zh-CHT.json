@@ -17,7 +17,7 @@
     "page": "頁",
     "reinstall": "重裝",
     "search": "搜索應用",
-    "totalItems": "共{{count}}個",
+    "totalItems": "共 {{count}} 個",
     "uninstall": "卸載",
     "uninstalling": "卸載中",
     "upgrade": "升級",

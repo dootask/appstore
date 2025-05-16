@@ -17,7 +17,7 @@
     "page": "ページ",
     "reinstall": "再インストールします",
     "search": "アプリを検索",
-    "totalItems": "合計{{count}}個のアプリ",
+    "totalItems": "合計 {{count}} 個のアプリ",
     "uninstall": "アンインストール",
     "uninstalling": "アンインストール中",
     "upgrade": "アップグレード",

@@ -104,7 +104,7 @@ export default function AlertItem({type, title, description, placeholder, defaul
                 </div>
                 <button
                   type="submit"
-                  className="mt-3 shrink-0 inline-flex w-full items-center justify-center rounded-md bg-green-600 px-3.5 py-2 text-sm font-semibold text-white shadow-xs hover:bg-green-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600 sm:mt-0 sm:ml-3 sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="mt-3 shrink-0 inline-flex w-full items-center justify-center rounded-md bg-mantis-400 transition-colors px-3.5 py-2 text-sm font-semibold text-white shadow-xs hover:bg-mantis-350 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600 sm:mt-0 sm:ml-3 sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
                   onClick={handleConfirm}
                   disabled={confirmLoading}
                 >

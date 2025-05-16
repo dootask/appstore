@@ -88,6 +88,126 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Mantis 主色系 - 绿色 */
+  --color-mantis-50: #f5fbf2;
+  --color-mantis-75: #eef8ea;
+  --color-mantis-100: #e8f6e2;
+  --color-mantis-150: #ddf1d4;
+  --color-mantis-200: #d2ecc6;
+  --color-mantis-250: #bfe4af;
+  --color-mantis-300: #addc99;
+  --color-mantis-350: #98d181;
+  --color-mantis-400: #84c56a;
+  --color-mantis-450: #70b655;
+  --color-mantis-500: #5da740;
+  --color-mantis-550: #539838;
+  --color-mantis-600: #498930;
+  --color-mantis-650: #427b2c;
+  --color-mantis-700: #3b6d28;
+  --color-mantis-750: #366226;
+  --color-mantis-800: #325724;
+  --color-mantis-850: #2e4f22;
+  --color-mantis-900: #2a481f;
+  --color-mantis-925: #1e3716;
+  --color-mantis-950: #13270c;
+  --color-mantis-975: #091a06;
+
+  /* Ocean 辅助色系 - 蓝色 */
+  --color-ocean-50: #f0f9ff;
+  --color-ocean-75: #e0f4fe;
+  --color-ocean-100: #d0effd;
+  --color-ocean-150: #b8e7fb;
+  --color-ocean-200: #a0dff9;
+  --color-ocean-250: #7dd2f6;
+  --color-ocean-300: #5ac5f2;
+  --color-ocean-350: #38b6eb;
+  --color-ocean-400: #1ea7e1;
+  --color-ocean-450: #1694cf;
+  --color-ocean-500: #0f81bd;
+  --color-ocean-550: #0d70a8;
+  --color-ocean-600: #0b5f94;
+  --color-ocean-650: #0a517e;
+  --color-ocean-700: #094369;
+  --color-ocean-750: #083857;
+  --color-ocean-800: #072e45;
+  --color-ocean-850: #062536;
+  --color-ocean-900: #051c27;
+  --color-ocean-925: #04141c;
+  --color-ocean-950: #030c11;
+  --color-ocean-975: #020608;
+
+  /* Amber 辅助色系 - 橙黄色 */
+  --color-amber-50: #fffbeb;
+  --color-amber-75: #fff6d6;
+  --color-amber-100: #fef2c0;
+  --color-amber-150: #feeba8;
+  --color-amber-200: #fde58f;
+  --color-amber-250: #fdda6c;
+  --color-amber-300: #fcce49;
+  --color-amber-350: #fbc026;
+  --color-amber-400: #f8b103;
+  --color-amber-450: #e19d02;
+  --color-amber-500: #ca8a02;
+  --color-amber-550: #b37802;
+  --color-amber-600: #9c6602;
+  --color-amber-650: #845602;
+  --color-amber-700: #6d4702;
+  --color-amber-750: #593a01;
+  --color-amber-800: #452d01;
+  --color-amber-850: #322101;
+  --color-amber-900: #1f1500;
+  --color-amber-925: #150f00;
+  --color-amber-950: #0c0800;
+  --color-amber-975: #060400;
+
+  /* Ruby 辅助色系 - 红色 */
+  --color-ruby-50: #fff1f2;
+  --color-ruby-75: #ffe4e6;
+  --color-ruby-100: #fecdd3;
+  --color-ruby-150: #fda4ae;
+  --color-ruby-200: #fb7185;
+  --color-ruby-250: #f43f5e;
+  --color-ruby-300: #e11d48;
+  --color-ruby-350: #be123c;
+  --color-ruby-400: #9f1239;
+  --color-ruby-450: #8c0f32;
+  --color-ruby-500: #780c2b;
+  --color-ruby-550: #660a24;
+  --color-ruby-600: #54091e;
+  --color-ruby-650: #430718;
+  --color-ruby-700: #330613;
+  --color-ruby-750: #25040e;
+  --color-ruby-800: #1a030a;
+  --color-ruby-850: #120207;
+  --color-ruby-900: #0c0205;
+  --color-ruby-925: #080103;
+  --color-ruby-950: #040001;
+  --color-ruby-975: #020001;
+
+  /* Lavender 辅助色系 - 紫色 */
+  --color-lavender-50: #f8f6fe;
+  --color-lavender-75: #f1edfd;
+  --color-lavender-100: #e9e4fc;
+  --color-lavender-150: #ded5fa;
+  --color-lavender-200: #d2c5f9;
+  --color-lavender-250: #c2b0f6;
+  --color-lavender-300: #b29cf3;
+  --color-lavender-350: #9c7fef;
+  --color-lavender-400: #8662ea;
+  --color-lavender-450: #7247e5;
+  --color-lavender-500: #5d2ce0;
+  --color-lavender-550: #4f20cc;
+  --color-lavender-600: #4319b3;
+  --color-lavender-650: #38149a;
+  --color-lavender-700: #2d1081;
+  --color-lavender-750: #240d69;
+  --color-lavender-800: #1b0a50;
+  --color-lavender-850: #140739;
+  --color-lavender-900: #0e0526;
+  --color-lavender-925: #09031a;
+  --color-lavender-950: #05020f;
+  --color-lavender-975: #020107;
 }
 
 .dark {
