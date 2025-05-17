@@ -56,4 +56,4 @@ COPY --from=go-builder /app/release/doocli /usr/local/bin/
 RUN chmod +x /usr/local/bin/doocli
 
 # 设置入口点
-ENTRYPOINT ["doocli", "appstore", "--web", "/var/appstore/web"]
+ENTRYPOINT ["doocli", "appstore", "--web", "/var/appstore/web", "--mode", "release"]

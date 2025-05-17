@@ -31,10 +31,6 @@ function App() {
   const detailTimerRef = useRef<NodeJS.Timeout>(null)
 
   useEffect(() => {
-    // 设置主题
-    if (props.themeName === 'dark') {
-      document.body.classList.add('dark')
-    }
     // 设置语言
     i18n.changeLanguage(props.languageName)
     // 获取应用列表数据
