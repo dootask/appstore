@@ -9,6 +9,7 @@
     "installing": "安装中",
     "loading": "加载中",
     "no_apps": "暂无应用",
+    "no_apps_found": "没有找到「{{keyword}}」相关的应用",
     "no_document": "没有相关文档",
     "no_installed_apps": "暂无已安装应用",
     "no_log": "没有相关日志",

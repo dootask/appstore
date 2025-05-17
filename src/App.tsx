@@ -385,14 +385,20 @@ function App() {
                     </div>
                   ) : (
                     <div className="empty-content text-center py-10 text-gray-500">
-                      {filter === 'all' && (
-                        <p>{t('app.no_apps')}</p>
-                      )}
-                      {filter === 'installed' && (
-                        <p>{t('app.no_installed_apps')}</p>
-                      )}
-                      {filter === 'upgradeable' && (
-                        <p>{t('app.no_upgradeable_apps')}</p>
+                      {searchKeyword ? (
+                        <p>{t('app.no_apps_found', {keyword: searchKeyword})}</p>
+                      ) : (
+                        <>
+                          {filter === 'all' && (
+                            <p>{t('app.no_apps')}</p>
+                          )}
+                          {filter === 'installed' && (
+                            <p>{t('app.no_installed_apps')}</p>
+                          )}
+                          {filter === 'upgradeable' && (
+                            <p>{t('app.no_upgradeable_apps')}</p>
+                          )}
+                        </>
                       )}
                     </div>
                   )}

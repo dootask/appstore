@@ -9,6 +9,7 @@
     "installing": "Installation en cours",
     "loading": "Chargement",
     "no_apps": "Aucune application",
+    "no_apps_found": "Aucune application liée à \"{{keyword}}\" n'a été trouvée",
     "no_document": "Pas de documentation",
     "no_installed_apps": "Aucune application installée encore",
     "no_log": "Pas de logs",

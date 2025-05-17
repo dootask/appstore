@@ -9,6 +9,7 @@
     "installing": "Installing",
     "loading": "Loading",
     "no_apps": "No Apps",
+    "no_apps_found": "No apps found related to \"{{keyword}}\"",
     "no_document": "No Documentation",
     "no_installed_apps": "No installed applications yet",
     "no_log": "No Logs",

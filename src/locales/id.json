@@ -9,6 +9,7 @@
     "installing": "Menginstal",
     "loading": "Memuat",
     "no_apps": "Tidak ada aplikasi",
+    "no_apps_found": "Tidak ada aplikasi yang terkait dengan \"{{keyword}}\"",
     "no_document": "Tidak ada dokumentasi",
     "no_installed_apps": "Belum ada aplikasi yang diinstal",
     "no_log": "Tidak ada log",

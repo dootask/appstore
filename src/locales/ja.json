@@ -9,6 +9,7 @@
     "installing": "インストール中",
     "loading": "読み込み中",
     "no_apps": "アプリなし",
+    "no_apps_found": "「{{keyword}}」に関連するアプリケーションは見つかりませんでした",
     "no_document": "ドキュメントなし",
     "no_installed_apps": "インストールされているアプリケーションはまだありません",
     "no_log": "ログなし",
@@ -53,7 +54,7 @@
     "install_starting": "アプリ「{{app}}」のインストールを開始しています...",
     "install_success": "アプリ「{{app}}」のインストールに成功しました",
     "install_title": "アプリをインストール",
-    "installed_version": "インストールされたバージョン：{{バージョン}}",
+    "installed_version": "インストールされたバージョン：{{version}}",
     "latest_version": "最新バージョン",
     "memory_limit": "メモリ制限（MB/GB）",
     "memory_limit_placeholder": "例：512MB、1GB、0に設定すると制限を無効化",
@@ -71,7 +72,7 @@
     "upgrade_success": "アプリ「{{app}}」のアップグレードに成功しました",
     "upgrade_title": "アプリケーションをアップグレード",
     "version": "バージョン",
-    "version_too_low": "バージョンをダウングレードできませんが、現在選択されているバージョン{{バージョン}}は、インストールされているバージョン{{installed_version}}よりも低いです"
+    "version_too_low": "バージョンをダウングレードできませんが、現在選択されているバージョン{{version}}は、インストールされているバージョン{{installed_version}}よりも低いです"
   },
   "label": {
     "detail": "詳細",
