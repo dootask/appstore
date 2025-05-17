@@ -3,7 +3,6 @@
 
 @custom-variant light (&:is(.light *));
 @custom-variant dark (&:is(.dark *));
-@custom-variant doo-dark (&:is(.doo-dark *));
 
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;

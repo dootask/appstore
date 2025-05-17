@@ -65,7 +65,7 @@ export default function AlertItem({type, title, description, placeholder, defaul
     <Dialog open={open} onClose={handleClose} className="relative" style={{zIndex: zIndex}} initialFocus={divRef}>
       <DialogBackdrop
         transition
-        className="fixed inset-0 bg-black/40 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in doo-dark:bg-white/60"
+        className="fixed inset-0 bg-black/40 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"
       />
 
       <div ref={divRef} className="fixed inset-0 z-10 w-screen overflow-y-auto">
@@ -73,7 +73,7 @@ export default function AlertItem({type, title, description, placeholder, defaul
           {type === 'prompt' ? (
             <DialogPanel
               transition
-              className="relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 w-4/5 sm:w-full sm:max-w-lg sm:p-6 data-closed:sm:translate-y-0 data-closed:sm:scale-95 doo-dark:bg-gray-300 doo-dark:shadow-none"
+              className="relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 w-4/5 sm:w-full sm:max-w-lg sm:p-6 data-closed:sm:translate-y-0 data-closed:sm:scale-95"
             >
               <div className='flex items-start justify-between gap-2'>
                 <h3 className="text-base font-semibold text-gray-900">{title}</h3>
@@ -118,7 +118,7 @@ export default function AlertItem({type, title, description, placeholder, defaul
           ) : (
             <DialogPanel
               transition
-              className="relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-lg sm:p-6 data-closed:sm:translate-y-0 data-closed:sm:scale-95 doo-dark:bg-gray-300 doo-dark:shadow-none"
+              className="relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-lg sm:p-6 data-closed:sm:translate-y-0 data-closed:sm:scale-95"
             >
               <div className="sm:flex sm:items-start">
                 <div className={`mx-auto flex size-12 shrink-0 items-center justify-center rounded-full sm:mx-0 sm:size-7 text-white ${

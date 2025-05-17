@@ -33,7 +33,7 @@ function App() {
   useEffect(() => {
     // 设置主题
     if (props.themeName === 'dark') {
-      document.body.classList.add('doo-dark')
+      document.body.classList.add('dark')
     }
     // 设置语言
     i18n.changeLanguage(props.languageName)

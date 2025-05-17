@@ -85,7 +85,7 @@ export default function NoticeItem({type, title, description, showClose, zIndex,
       >
         <div className="flex w-full flex-col items-center gap-y-3 sm:items-end">
           <Transition show={show}>
-            <div ref={itemRef} className="pointer-events-auto w-full mb-4 sm:mb-6 max-w-sm overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black/5 transition data-enter:transform data-enter:duration-300 data-enter:ease-out data-closed:opacity-0 data-closed:data-enter:-translate-y-full data-closed:data-enter:sm:translate-y-0 data-closed:data-enter:sm:translate-x-full data-leave:duration-200 data-leave:ease-in data-leave:-translate-y-full data-leave:sm:translate-y-0 data-leave:sm:translate-x-full doo-dark:bg-gray-300 doo-dark:shadow-none">
+            <div ref={itemRef} className="pointer-events-auto w-full mb-4 sm:mb-6 max-w-sm overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black/5 transition data-enter:transform data-enter:duration-300 data-enter:ease-out data-closed:opacity-0 data-closed:data-enter:-translate-y-full data-closed:data-enter:sm:translate-y-0 data-closed:data-enter:sm:translate-x-full data-leave:duration-200 data-leave:ease-in data-leave:-translate-y-full data-leave:sm:translate-y-0 data-leave:sm:translate-x-full">
               <div className="p-4">
                 <div className="flex items-start">
                   <div className="shrink-0">

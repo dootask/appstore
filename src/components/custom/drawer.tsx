@@ -74,7 +74,7 @@ export default function Drawer({open, onOpenChange, title, children, className, 
       {showBackdrop && (
         <DialogBackdrop
           transition
-          className="fixed inset-0 bg-black/40 transition-opacity duration-300 ease-out data-closed:opacity-0 doo-dark:bg-white/40"
+          className="fixed inset-0 bg-black/40 transition-opacity duration-300 ease-out data-closed:opacity-0"
           onClick={dismissible ? () => onOpenChange(false) : undefined}
         />
       )}
