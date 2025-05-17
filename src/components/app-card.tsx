@@ -19,7 +19,7 @@ export function AppCard({icon, title, description, status, upgradeable, category
 
   return (
     <Card
-      className="flex flex-col overflow-hidden border px-2 py-3 cursor-pointer hover:bg-gray-50 transition-colors"
+      className="flex flex-col overflow-hidden border px-2 py-3 cursor-pointer hover:bg-gray-50 dark:hover:bg-zinc-900 transition-colors"
       onClick={onOpen}
     >
       <CardHeader className="p-4 pb-0">
@@ -57,7 +57,7 @@ export function AppCard({icon, title, description, status, upgradeable, category
             }
             const statusClass: Record<AppStatus, string> = {
               installing: "bg-ocean-400 text-white",
-              installed: "bg-gray-300 text-white",
+              installed: "bg-gray-300 text-white dark:bg-zinc-700",
               uninstalling: "bg-amber-400 text-white",
               not_installed: "bg-mantis-400 text-white",
               error: "bg-coral-400 text-white",

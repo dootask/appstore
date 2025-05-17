@@ -9,8 +9,7 @@ import { useEffect, useState, useRef } from "react";
 import { Skeleton } from "./ui/skeleton";
 import ReactMarkdown from "react-markdown"
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
-import { oneLight as SyntaxStyle } from 'react-syntax-highlighter/dist/esm/styles/prism'
-import "@/styles/github-markdown-light.css"
+import { darcula as SyntaxStyle } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import { AppLog } from "@/components/app-log.tsx";
 import { eventOn } from "@/lib/events";
@@ -72,8 +71,8 @@ export function AppDetail({appName, onInstall, onUninstall}: AppDetailProps) {
         <div className="flex flex-1 items-start gap-4 mr-4">
           <img src={app.info.icon} alt={app.info.name} className="w-16 h-16 rounded-lg object-cover"/>
           <div className="min-h-16 flex flex-col justify-center select-text">
-            <div className="text-2xl font-bold mb-1">{app.info.name}</div>
-            <div className="text-gray-500 text-sm mb-1">{app.info.description}</div>
+            <div className="text-2xl text-gray-700 dark:text-gray-100 font-bold mb-1">{app.info.name}</div>
+            <div className="text-gray-500 dark:text-gray-400 text-sm mb-1">{app.info.description}</div>
           </div>
         </div>
         <div className="flex flex-col items-end gap-5 min-w-[120px]">
@@ -168,7 +167,7 @@ export function AppDetail({appName, onInstall, onUninstall}: AppDetailProps) {
       </div>
 
       {/* 分割线 */}
-      <div className="mx-6 mb-3 border-b border-gray-200"/>
+      <div className="mx-6 mb-3 border-b border-gray-200 dark:border-zinc-700"/>
 
       {/* 详情、日志 */}
       <Tabs defaultValue="detail" value={activeTab} className="flex-1 flex flex-col h-0" onValueChange={setActiveTab}>
@@ -213,6 +212,11 @@ export function AppDetail({appName, onInstall, onUninstall}: AppDetailProps) {
                                 children={String(children).replace(/\n$/, '')}
                                 language={match[1]}
                                 style={SyntaxStyle}
+                                customStyle={{
+                                  padding: 'var(--base-size-16)',
+                                  margin: 'calc(var(--base-size-16) * -1)',
+                                  backgroundColor: '#151b23',
+                                }}
                               />
                             ) : (
                               <code {...rest} className={className}>

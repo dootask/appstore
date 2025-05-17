@@ -11,7 +11,7 @@ const DrawerTitle = memo(function DrawerTitle({title}: { title?: ReactNode }) {
 
   return (
     <div className="p-4 sm:px-6">
-      <DialogTitle className="text-base font-semibold text-gray-900">
+      <DialogTitle className="text-base font-semibold text-gray-900 dark:text-zinc-100">
         {title}
       </DialogTitle>
     </div>
@@ -74,7 +74,7 @@ export default function Drawer({open, onOpenChange, title, children, className, 
       {showBackdrop && (
         <DialogBackdrop
           transition
-          className="fixed inset-0 bg-black/40 transition-opacity duration-300 ease-out data-closed:opacity-0"
+          className="fixed inset-0 bg-black/40 dark:bg-zinc-950/70 transition-opacity duration-300 ease-out data-closed:opacity-0"
           onClick={dismissible ? () => onOpenChange(false) : undefined}
         />
       )}
@@ -88,7 +88,7 @@ export default function Drawer({open, onOpenChange, title, children, className, 
             <DialogPanel
               transition
               className={cn(
-                "pointer-events-auto relative w-screen max-w-md bg-white transform transition-transform duration-300 ease-out will-change-transform",
+                "pointer-events-auto relative w-screen max-w-md bg-white dark:bg-black transform transition-transform duration-300 ease-out will-change-transform",
                 direction === 'right' ? 'data-closed:translate-x-full' : 'data-closed:-translate-x-full',
                 className
               )}>

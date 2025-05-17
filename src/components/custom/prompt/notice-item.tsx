@@ -85,7 +85,7 @@ export default function NoticeItem({type, title, description, showClose, zIndex,
       >
         <div className="flex w-full flex-col items-center gap-y-3 sm:items-end">
           <Transition show={show}>
-            <div ref={itemRef} className="pointer-events-auto w-full mb-4 sm:mb-6 max-w-sm overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black/5 transition data-enter:transform data-enter:duration-300 data-enter:ease-out data-closed:opacity-0 data-closed:data-enter:-translate-y-full data-closed:data-enter:sm:translate-y-0 data-closed:data-enter:sm:translate-x-full data-leave:duration-200 data-leave:ease-in data-leave:-translate-y-full data-leave:sm:translate-y-0 data-leave:sm:translate-x-full">
+            <div ref={itemRef} className="pointer-events-auto w-full mb-4 sm:mb-6 max-w-sm overflow-hidden rounded-lg bg-white dark:bg-zinc-800 shadow-lg ring-1 ring-black/5 transition data-enter:transform data-enter:duration-300 data-enter:ease-out data-closed:opacity-0 data-closed:data-enter:-translate-y-full data-closed:data-enter:sm:translate-y-0 data-closed:data-enter:sm:translate-x-full data-leave:duration-200 data-leave:ease-in data-leave:-translate-y-full data-leave:sm:translate-y-0 data-leave:sm:translate-x-full">
               <div className="p-4">
                 <div className="flex items-start">
                   <div className="shrink-0">
@@ -103,15 +103,15 @@ export default function NoticeItem({type, title, description, showClose, zIndex,
                     )}
                   </div>
                   <div className="ml-3 w-0 flex-1 pt-0.5">
-                    <p className="text-sm font-medium text-gray-900">{title}</p>
-                    {description && <p className="mt-1 text-sm text-gray-500">{description}</p>}
+                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{title}</p>
+                    {description && <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{description}</p>}
                   </div>
                   {showClose && (
                     <div className="ml-4 flex shrink-0">
                       <button
                         ref={closeRef}
                         type="button"
-                        className="inline-flex rounded-md bg-white text-gray-400 hover:text-gray-500"
+                        className="inline-flex rounded-full text-gray-400 hover:text-gray-500 dark:text-gray-400 dark:hover:text-gray-300"
                       >
                         <span className="sr-only">Close</span>
                         <XMarkIcon aria-hidden="true" className="size-5"/>

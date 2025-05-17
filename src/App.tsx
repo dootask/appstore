@@ -302,15 +302,15 @@ function App() {
 
   return (
     <main ref={mainRef} className="h-screen flex flex-col">
-      <div className="flex-1 flex flex-col overflow-hidden pt-4 lg:pt-6 gap-y-3 md:gap-y-4">
+      <div className="flex-1 flex flex-col overflow-hidden pt-4 lg:pt-6 gap-y-3 md:gap-y-4 lg:gap-y-5">
 
         {/* 导航、搜索、菜单 */}
-        <div className="px-4 lg:px-6 flex flex-wrap items-center gap-4">
+        <div className="px-4 lg:px-7 flex flex-wrap items-center gap-4">
           <div className="flex items-center flex-1 whitespace-nowrap">
             {!props.isSubElectron && (
               <ChevronLeft className="min-md:hidden mr-4" onClick={backApp}/>
             )}
-            <h1 className="text-2xl font-bold mr-2">{t('common.title')}</h1>
+            <h1 className="text-2xl font-bold mr-2 text-gray-900 dark:text-zinc-100">{t('common.title')}</h1>
             <Button variant="ghost" size="icon" className="rounded-full" onClick={() => fetchApps()}>
               {loading ? <LoaderCircle className="animate-spin"/> : <RefreshCw/>}
             </Button>
@@ -324,7 +324,7 @@ function App() {
           </div>
         </div>
 
-        <div className="px-4 lg:px-6 pb-4 lg:pb-6 flex-1 overflow-auto flex flex-col gap-y-3 md:gap-y-4">
+        <div className="px-4 lg:px-7 pb-4 lg:pb-6 flex-1 overflow-auto flex flex-col gap-y-3 md:gap-y-4 lg:gap-y-5">
           {/* 安装状态 */}
           <div className="flex gap-x-4">
             <Button
@@ -352,7 +352,7 @@ function App() {
 
           {/* 类别、列表 */}
           {categorys.length > 0 && (
-            <Tabs defaultValue="all" className="flex-1 gap-y-4 md:gap-y-5" value={selectedCategory} onValueChange={setSelectedCategory}>
+            <Tabs defaultValue="all" className="flex-1 gap-y-4 md:gap-y-5 lg:gap-y-6" value={selectedCategory} onValueChange={setSelectedCategory}>
 
               {/* 类别 */}
               {categorys.length > 2 && (

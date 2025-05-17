@@ -28,7 +28,7 @@ export default function Select({options, defaultValue, onChange, placeholder = '
   return (
     <Listbox value={selected} onChange={handleChange}>
       <div className="relative">
-        <ListboxButton className="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left text-gray-900 transition-[color,box-shadow] sm:text-sm/6 outline-none border-input border focus:border-ring focus:ring-ring/50 focus:ring-[3px]" {...props}>
+        <ListboxButton className="grid w-full cursor-default grid-cols-1 rounded-md bg-background py-1.5 pr-2 pl-3 text-left text-gray-900 dark:text-gray-100 transition-[color,box-shadow] sm:text-sm/6 outline-none border-input border focus:border-ring focus:ring-ring/50 focus:ring-[3px]" {...props}>
           {selected.name ? (
             <span className="col-start-1 row-start-1 truncate pr-6">{selected.name}</span>
           ) : (
@@ -42,13 +42,13 @@ export default function Select({options, defaultValue, onChange, placeholder = '
 
         <ListboxOptions
           transition
-          className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-hidden data-leave:transition data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 sm:text-sm"
+          className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-background dark:border dark:border-zinc-700 py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-hidden data-leave:transition data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 sm:text-sm"
         >
           {options.map((option) => (
             <ListboxOption
               key={option.id}
               value={option}
-              className="group relative cursor-default py-2 pr-9 pl-3 text-gray-800 select-none data-focus:bg-gray-100 data-focus:outline-hidden"
+              className="group relative cursor-default py-2 pr-9 pl-3 text-gray-800 dark:text-gray-100 select-none data-focus:bg-gray-100 dark:data-focus:bg-zinc-800 data-focus:outline-hidden"
             >
               <span className="block truncate font-normal group-data-selected:font-medium">{option.name}</span>
               <span className="absolute inset-y-0 right-0 flex items-center pr-4 text-gray-600 group-not-data-selected:hidden">

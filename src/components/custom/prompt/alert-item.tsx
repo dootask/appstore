@@ -73,10 +73,10 @@ export default function AlertItem({type, title, description, placeholder, defaul
           {type === 'prompt' ? (
             <DialogPanel
               transition
-              className="relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 w-4/5 sm:w-full sm:max-w-lg sm:p-6 data-closed:sm:translate-y-0 data-closed:sm:scale-95"
+              className="relative transform overflow-hidden rounded-lg bg-white dark:bg-zinc-800 px-4 pt-5 pb-4 text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 w-4/5 sm:w-full sm:max-w-lg sm:p-6 data-closed:sm:translate-y-0 data-closed:sm:scale-95"
             >
               <div className='flex items-start justify-between gap-2'>
-                <h3 className="text-base font-semibold text-gray-900">{title}</h3>
+                <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100">{title}</h3>
                 {showCancel && (
                   <button
                     type="button"
@@ -99,7 +99,7 @@ export default function AlertItem({type, title, description, placeholder, defaul
                     type="text"
                     placeholder={placeholder}
                     defaultValue={defaultValue}
-                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 placeholder:text-gray-400 transition-[color,box-shadow] outline-none border-input border focus:border-ring focus:ring-ring/50 focus:ring-[3px] sm:text-sm/6"
+                    className="block w-full rounded-md bg-transparent px-3 py-1.5 text-base text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 transition-[color,box-shadow] outline-none border-input border focus:border-ring focus:ring-ring/50 focus:ring-[3px] sm:text-sm/6"
                   />
                 </div>
                 <button
@@ -118,7 +118,7 @@ export default function AlertItem({type, title, description, placeholder, defaul
           ) : (
             <DialogPanel
               transition
-              className="relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-lg sm:p-6 data-closed:sm:translate-y-0 data-closed:sm:scale-95"
+              className="relative transform overflow-hidden rounded-lg bg-white dark:bg-zinc-800 px-4 pt-5 pb-4 text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-lg sm:p-6 data-closed:sm:translate-y-0 data-closed:sm:scale-95"
             >
               <div className="sm:flex sm:items-start">
                 <div className={`mx-auto flex size-12 shrink-0 items-center justify-center rounded-full sm:mx-0 sm:size-7 text-white ${
@@ -137,7 +137,7 @@ export default function AlertItem({type, title, description, placeholder, defaul
                   )}
                 </div>
                 <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                  <DialogTitle as="h3" className="text-base font-semibold text-gray-900">
+                  <DialogTitle as="h3" className="text-base font-semibold text-gray-900 dark:text-gray-100">
                     {title}
                   </DialogTitle>
                   <div className="mt-2">
@@ -153,7 +153,7 @@ export default function AlertItem({type, title, description, placeholder, defaul
                     type="button"
                     onClick={handleConfirm}
                     disabled={confirmLoading}
-                    className={`flex items-center w-full min-w-24 justify-center rounded-md px-3 py-2 text-sm font-semibold text-white shadow-xs sm:ml-3 sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed ${
+                    className={`flex items-center w-full min-w-24 justify-center rounded-md px-3 py-2 text-sm font-semibold text-white shadow-xs sm:ml-4 sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed ${
                       type === 'success' ? 'bg-mantis-400 hover:bg-mantis-350' :
                         type === 'warning' ? 'bg-amber-400 hover:bg-amber-350' :
                           'bg-coral-400 hover:bg-coral-350'
@@ -169,7 +169,7 @@ export default function AlertItem({type, title, description, placeholder, defaul
                   <button
                     type="button"
                     onClick={handleCancel}
-                    className="mt-3 inline-flex w-full min-w-24 justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs ring-1 ring-gray-200 ring-inset hover:bg-gray-50 sm:mt-0 sm:w-auto"
+                    className="mt-3 inline-flex w-full min-w-24 justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs ring-1 ring-gray-200 ring-inset hover:bg-gray-100 sm:mt-0 sm:w-auto"
                   >
                     {t('common.cancel')}
                   </button>
