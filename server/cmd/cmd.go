@@ -9,7 +9,6 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
-	"sort"
 	"strings"
 
 	"appstore/server/global"
@@ -37,7 +36,7 @@ func init() {
 	rootCmd.PersistentFlags().StringVarP(&mode, "mode", "m", global.DefaultMode, "运行模式 (debug/release)")
 }
 
-func runPre(cmd *cobra.Command, args []string) {
+func runPre(*cobra.Command, []string) {
 	if mode == global.ModeRelease {
 		gin.SetMode(gin.ReleaseMode)
 	} else {
@@ -59,108 +58,57 @@ func runPre(cmd *cobra.Command, args []string) {
 	fmt.Printf("工作目录: %s\n", global.WorkDir)
 }
 
-// findLatestVersionForApp 获取应用的最新版本
-func findLatestVersionForApp(appId string) (string, error) {
-	appRootPath := utils.JoinPath(global.WorkDir, "apps", appId)
-	if !utils.IsDirExists(appRootPath) {
-		return "", fmt.Errorf("application directory for %s not found", appId)
+func runServer(*cobra.Command, []string) {
+	// 创建默认的gin路由引擎
+	r := gin.Default()
+
+	// 注册语言中间件
+	r.Use(middlewares.Middleware())
+
+	// 创建v1路由组
+	v1 := r.Group("/api/" + global.APIVersion)
+	{
+		v1.GET("/list", routeList)                            // 获取应用列表
+		v1.GET("/one/:appId", routeAppOne)                    // 获取单个应用
+		v1.GET("/readme/:appId", routeAppReadme)              // 获取应用自述文件
+		v1.GET("/log/:appId", routeAppLog)                    // 获取应用日志
+		v1.GET("/icon/:appId/*iconPath", routeAppIcon)        // 查看应用图标
+		v1.GET("/download/:appId/*version", routeAppDownload) // 下载应用压缩包
 	}
-	versions := []string{}
-	versionRegex := regexp.MustCompile(`^v?\d+(\.\d+){1,2}$`)
-	entries, err := os.ReadDir(appRootPath)
+
+	// 启动服务器
+	err := r.Run(":" + global.DefaultPort)
 	if err != nil {
-		return "", err
+		fmt.Printf("启动服务器失败: %v\n", err)
+		os.Exit(1)
 	}
-	for _, entry := range entries {
-		if entry.IsDir() {
-			dirName := entry.Name()
-			if versionRegex.MatchString(dirName) {
-				composePath := filepath.Join(appRootPath, dirName, "docker-compose.yml")
-				if _, err := os.Stat(composePath); err == nil {
-					versions = append(versions, dirName)
-				}
-			}
-		}
-	}
-	if len(versions) == 0 {
-		return "", fmt.Errorf("no valid versions found for app %s", appId)
-	}
-	sort.Strings(versions)
-	return versions[len(versions)-1], nil
 }
 
-// getAppsFromDir 从目录获取所有应用信息
-func getAppsFromDir() ([]*models.App, error) {
-	appsParentDir := utils.JoinPath(global.WorkDir, "apps")
-
-	if !utils.IsDirExists(appsParentDir) {
-		return nil, fmt.Errorf("apps目录不存在: %s", appsParentDir)
-	}
-
-	appIDs, err := utils.GetSubDirs(appsParentDir)
-	if err != nil {
-		return nil, err
-	}
-
-	var apps []*models.App
-	for _, appID := range appIDs {
-		appDir := utils.JoinPath(appsParentDir, appID)
-		apps = append(apps, models.NewApp(appDir))
-	}
-
-	return apps, nil
+// Execute 执行命令
+func Execute() error {
+	return rootCmd.Execute()
 }
 
-// getAppFromDir 从目录获取应用信息
-func getAppFromDir(appId string) (*models.App, error) {
-	appDir := utils.JoinPath(global.WorkDir, "apps", appId)
-	if !utils.IsDirExists(appDir) {
-		return nil, fmt.Errorf("application directory for %s not found", appId)
-	}
-	return models.NewApp(appDir), nil
-}
-
-// getAppReadmeFromDir 从目录获取应用自述文件
-func getAppReadmeFromDir(appId string) (string, error) {
-	appDir := utils.JoinPath(global.WorkDir, "apps", appId)
-	if !utils.IsDirExists(appDir) {
-		return "", fmt.Errorf("application directory for %s not found", appId)
-	}
-	return models.GetReadme(appDir), nil
-}
+// ****************************************************************************
+// ****************************************************************************
+// ****************************************************************************
 
 // routeList 获取应用列表
 func routeList(c *gin.Context) {
-	apps, err := getAppsFromDir()
-	if err != nil {
-		response.ErrorWithDetail(c, global.CodeError, "获取应用列表失败", err)
-		return
-	}
-
-	response.SuccessWithData(c, apps)
+	response.SuccessWithData(c, models.NewApps())
 }
 
 // routeAppOne 获取应用详情
 func routeAppOne(c *gin.Context) {
 	appId := c.Param("appId")
-	app, err := getAppFromDir(appId)
-	if err != nil {
-		response.ErrorWithDetail(c, global.CodeError, "获取应用详情失败", err)
-		return
-	}
-	response.SuccessWithData(c, app)
+	response.SuccessWithData(c, models.NewApp(appId))
 }
 
 // routeAppReadme 获取应用自述文件
 func routeAppReadme(c *gin.Context) {
 	appId := c.Param("appId")
-	content, err := getAppReadmeFromDir(appId)
-	if err != nil {
-		response.ErrorWithDetail(c, global.CodeError, "获取应用自述文件失败", err)
-		return
-	}
 	response.SuccessWithData(c, gin.H{
-		"content": content,
+		"content": models.GetReadme(appId),
 	})
 }
 
@@ -175,7 +123,7 @@ func routeAppLog(c *gin.Context) {
 // routeAppIcon 处理应用图标请求
 func routeAppIcon(c *gin.Context) {
 	appId := c.Param("appId")
-	iconPath := c.Param("iconPath")
+	iconPath := strings.TrimPrefix(c.Param("iconPath"), "/")
 
 	if appId == "" || iconPath == "" {
 		c.String(http.StatusBadRequest, "App ID and icon path are required")
@@ -190,12 +138,12 @@ func routeAppIcon(c *gin.Context) {
 		return
 	}
 
-	if strings.Contains(cleanedIconPath, "..") {
+	if strings.Contains(cleanedIconPath, "..") || filepath.IsAbs(cleanedIconPath) {
 		c.String(http.StatusBadRequest, "Invalid icon path")
 		return
 	}
 
-	iconFullPath := utils.JoinPath(global.WorkDir, "apps", cleanedAppId, cleanedIconPath)
+	iconFullPath := filepath.Join(global.WorkDir, "apps", cleanedAppId, cleanedIconPath)
 
 	if _, err := os.Stat(iconFullPath); os.IsNotExist(err) {
 		c.String(http.StatusNotFound, "Icon not found")
@@ -220,7 +168,7 @@ func routeAppDownload(c *gin.Context) {
 		return
 	}
 
-	appRootPath := utils.JoinPath(global.WorkDir, "apps", cleanedAppId)
+	appRootPath := filepath.Join(global.WorkDir, "apps", cleanedAppId)
 	if !utils.IsDirExists(appRootPath) {
 		c.String(http.StatusNotFound, fmt.Sprintf("Application directory not found: %s", appRootPath))
 		return
@@ -231,7 +179,7 @@ func routeAppDownload(c *gin.Context) {
 	versionRegex := regexp.MustCompile(`^v?\d+(\.\d+){1,2}$`)
 
 	if versionParam == "latest" {
-		latestV, err := findLatestVersionForApp(cleanedAppId)
+		latestV, err := models.FindLatestVersionForApp(cleanedAppId)
 		if err != nil {
 			c.String(http.StatusNotFound, fmt.Sprintf("Could not determine latest version for %s: %v", cleanedAppId, err))
 			return
@@ -244,7 +192,7 @@ func routeAppDownload(c *gin.Context) {
 			c.String(http.StatusBadRequest, "Invalid or malformed version parameter")
 			return
 		}
-		if !utils.IsDirExists(utils.JoinPath(appRootPath, cleanedVersion)) {
+		if !utils.IsDirExists(filepath.Join(appRootPath, cleanedVersion)) {
 			c.String(http.StatusNotFound, fmt.Sprintf("Specified version %s not found for app %s", cleanedVersion, cleanedAppId))
 			return
 		}
@@ -314,31 +262,4 @@ func routeAppDownload(c *gin.Context) {
 	if err != nil {
 		fmt.Printf("Error during tar.gz creation for %s (version: %s): %v\n", cleanedAppId, effectiveVersion, err)
 	}
-}
-
-func runServer(cmd *cobra.Command, args []string) {
-	// 创建默认的gin路由引擎
-	r := gin.Default()
-
-	// 注册语言中间件
-	r.Use(middlewares.Middleware())
-
-	// 创建v1路由组
-	v1 := r.Group("/api/" + global.APIVersion)
-	{
-		v1.GET("/list", routeList)                            // 获取应用列表
-		v1.GET("/one/:appId", routeAppOne)                    // 获取单个应用
-		v1.GET("/readme/:appId", routeAppReadme)              // 获取应用自述文件
-		v1.GET("/log/:appId", routeAppLog)                    // 获取应用日志
-		v1.GET("/icon/:appId/*iconPath", routeAppIcon)        // 查看应用图标
-		v1.GET("/download/:appId/*version", routeAppDownload) // 下载应用压缩包
-	}
-
-	// 启动服务器
-	r.Run(":" + global.DefaultPort)
-}
-
-// Execute 执行命令
-func Execute() error {
-	return rootCmd.Execute()
 }

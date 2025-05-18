@@ -1,6 +1,7 @@
 package models
 
 import (
+	"appstore/server/utils"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -118,7 +119,9 @@ func getLocalizedValue(data interface{}, lang string) string {
 }
 
 // findIcon 查找应用图标文件
-func findIcon(appDir string) string {
+func findIcon(appId string) string {
+	appDir := filepath.Join(global.WorkDir, "apps", appId)
+
 	iconCandidates := []string{"logo.svg", "logo.png", "icon.svg", "icon.png"}
 	for _, candidate := range iconCandidates {
 		iconPath := filepath.Join(appDir, candidate)
@@ -130,23 +133,22 @@ func findIcon(appDir string) string {
 }
 
 // findVersions 查找应用版本列表
-func findVersions(appDir string) []string {
-	var versions []string
-	versionRegex := regexp.MustCompile(`^v?\d+(\.\d+){1,2}$`)
+func findVersions(appId string) []string {
+	appDir := filepath.Join(global.WorkDir, "apps", appId)
 
-	entries, err := os.ReadDir(appDir)
+	var versions []string
+
+	entries, err := utils.GetSubDirs(appDir)
 	if err != nil {
 		return versions
 	}
 
-	for _, entry := range entries {
-		if entry.IsDir() {
-			dirName := entry.Name()
-			if versionRegex.MatchString(dirName) {
-				composePath := filepath.Join(appDir, dirName, "docker-compose.yml")
-				if _, err := os.Stat(composePath); err == nil {
-					versions = append(versions, dirName)
-				}
+	versionRegex := regexp.MustCompile(`^v?\d+(\.\d+){1,2}$`)
+	for _, dirName := range entries {
+		if versionRegex.MatchString(dirName) {
+			composePath := filepath.Join(appDir, dirName, "docker-compose.yml")
+			if _, err := os.Stat(composePath); err == nil {
+				versions = append(versions, dirName)
 			}
 		}
 	}
@@ -193,8 +195,31 @@ func getAppConfig(appId string) *AppConfig {
 	return appConfig
 }
 
+// NewApps 创建应用实例列表
+func NewApps() []*App {
+	appsDir := filepath.Join(global.WorkDir, "apps")
+
+	if !utils.IsDirExists(appsDir) {
+		return nil
+	}
+
+	appIds, err := utils.GetSubDirs(appsDir)
+	if err != nil {
+		return nil
+	}
+
+	var apps []*App
+	for _, appId := range appIds {
+		apps = append(apps, NewApp(appId))
+	}
+
+	return apps
+}
+
 // NewApp 创建新的应用实例
-func NewApp(appDir string) *App {
+func NewApp(appId string) *App {
+	appDir := filepath.Join(global.WorkDir, "apps", appId)
+
 	app := &App{}
 	configFile := filepath.Join(appDir, "config.yml")
 	if _, err := os.Stat(configFile); err == nil {
@@ -204,7 +229,7 @@ func NewApp(appDir string) *App {
 		}
 	}
 
-	app.ID = filepath.Base(appDir)
+	app.ID = appId
 
 	app.Name = getLocalizedValue(app.Name, global.Language)
 	if app.Name == "" {
@@ -213,14 +238,14 @@ func NewApp(appDir string) *App {
 
 	app.Description = getLocalizedValue(app.Description, global.Language)
 
-	iconFilename := findIcon(appDir)
+	iconFilename := findIcon(app.ID)
 	if iconFilename != "" {
 		app.Icon = fmt.Sprintf("%s/api/%s/icon/%s/%s", global.BaseUrl, global.APIVersion, app.ID, iconFilename)
 	} else {
 		app.Icon = ""
 	}
 
-	app.Versions = findVersions(appDir)
+	app.Versions = findVersions(app.ID)
 
 	if app.Tags == nil {
 		app.Tags = []string{}
@@ -229,7 +254,7 @@ func NewApp(appDir string) *App {
 	app.DownloadURL = fmt.Sprintf("%s/api/%s/download/%s/latest", global.BaseUrl, global.APIVersion, app.ID)
 
 	// 处理 Fields
-	fields := []FieldConfig{}
+	var fields []FieldConfig
 	if app.Fields != nil {
 		for _, field := range app.Fields {
 			field := FieldConfig{
@@ -255,7 +280,7 @@ func NewApp(appDir string) *App {
 	app.Fields = fields
 
 	// 处理 RequireUninstalls
-	requireUninstalls := []RequireUninstall{}
+	var requireUninstalls []RequireUninstall
 	if app.RequireUninstalls != nil {
 		for _, require := range app.RequireUninstalls {
 			operator, version := parseVersionOperator(require.Version)
@@ -275,7 +300,7 @@ func NewApp(appDir string) *App {
 	app.RequireUninstalls = requireUninstalls
 
 	// 处理 MenuItems
-	menuItems := []MenuItem{}
+	var menuItems []MenuItem
 	if app.MenuItems != nil {
 		for _, menu := range app.MenuItems {
 			appMenuItem := MenuItem{
@@ -318,7 +343,7 @@ func NewApp(appDir string) *App {
 }
 
 // GetReadme 获取应用的自述文件内容
-func GetReadme(appDir string) string {
+func GetReadme(appId string) string {
 	// 定义可能的 README 文件名模式
 	patterns := []string{
 		fmt.Sprintf("README_%s.md", global.Language),
@@ -331,6 +356,7 @@ func GetReadme(appDir string) string {
 	patterns = append(patterns, "README.md")
 
 	// 获取目录中的所有文件
+	appDir := filepath.Join(global.WorkDir, "apps", appId)
 	entries, err := os.ReadDir(appDir)
 	if err != nil {
 		return ""
@@ -364,13 +390,25 @@ func GetLog(appId string, limit int) string {
 	if _, err := os.Stat(logFile); os.IsNotExist(err) {
 		return ""
 	}
+
 	content, err := os.ReadFile(logFile)
 	if err != nil {
 		return ""
 	}
+
 	lines := strings.Split(string(content), "\n")
 	if len(lines) > limit {
 		lines = lines[len(lines)-limit:]
 	}
+
 	return strings.Join(lines, "\n")
+}
+
+// FindLatestVersionForApp 获取应用的最新版本
+func FindLatestVersionForApp(appId string) (string, error) {
+	versions := findVersions(appId)
+	if len(versions) == 0 {
+		return "", fmt.Errorf("no versions found for app %s", appId)
+	}
+	return versions[len(versions)-1], nil
 }

@@ -3,7 +3,6 @@ package utils
 import (
 	"fmt"
 	"os"
-	"path/filepath"
 )
 
 // IsDirExists 检查目录是否存在
@@ -30,9 +29,4 @@ func GetSubDirs(dir string) ([]string, error) {
 	}
 
 	return dirs, nil
-}
-
-// JoinPath 安全地拼接路径
-func JoinPath(elem ...string) string {
-	return filepath.Join(elem...)
 }
