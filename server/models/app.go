@@ -14,102 +14,55 @@ import (
 
 // App 应用信息结构
 type App struct {
-	ID                string                `json:"id"`
-	Name              string                `json:"name"`
-	Description       string                `json:"description"`
-	Icon              string                `json:"icon"`
-	Versions          []string              `json:"versions"`
-	Tags              []string              `json:"tags"`
-	Author            string                `json:"author"`
-	Website           string                `json:"website"`
-	Github            string                `json:"github"`
-	Document          string                `json:"document"`
-	DownloadURL       string                `json:"download_url"`
-	Fields            []AppFieldConfig      `json:"fields,omitempty"`
-	RequireUninstalls []AppRequireUninstall `json:"require_uninstalls,omitempty"`
-	MenuItems         []AppMenuItem         `json:"menu_items,omitempty"`
-}
-
-// AppFieldOption 是 App 结构中字段选项的表示
-type AppFieldOption struct {
-	Label string `json:"label"`
-	Value string `json:"value"`
-}
-
-// AppFieldConfig 是 App 结构中可配置字段的表示
-type AppFieldConfig struct {
-	Name        string           `json:"name"`
-	Label       string           `json:"label"`
-	Placeholder string           `json:"placeholder,omitempty"`
-	Type        string           `json:"type"`
-	Default     interface{}      `json:"default,omitempty"`
-	Required    bool             `json:"required,omitempty"`
-	Options     []AppFieldOption `json:"options,omitempty"`
-}
-
-// AppRequireUninstall 是 App 结构中卸载要求的表示
-type AppRequireUninstall struct {
-	Version string `json:"version"`
-	Reason  string `json:"reason,omitempty"`
-}
-
-// AppMenuItem 是 App 结构中菜单项的表示
-type AppMenuItem struct {
-	Location      string `json:"location"`
-	Label         string `json:"label"`
-	URL           string `json:"url"`
-	Icon          string `json:"icon,omitempty"`
-	Transparent   bool   `json:"transparent"`
-	AutoDarkTheme bool   `json:"autoDarkTheme"`
-	KeepAlive     bool   `json:"keepAlive"`
-}
-
-// AppYamlConfig 应用配置文件结构
-type AppYamlConfig struct {
-	Name              interface{}        `yaml:"name"`
-	Description       interface{}        `yaml:"description"`
-	Tags              []string           `yaml:"tags"`
-	Author            string             `yaml:"author"`
-	Website           string             `yaml:"website"`
-	Github            string             `yaml:"github"`
-	Document          string             `yaml:"document"`
-	Fields            []FieldConfig      `yaml:"fields,omitempty"`
-	RequireUninstalls []RequireUninstall `yaml:"require_uninstalls,omitempty"`
-	MenuItems         []MenuItem         `yaml:"menu_items,omitempty"`
-}
-
-// FieldOption 定义字段配置中的选项结构
-type FieldOption struct {
-	Label interface{} `yaml:"label"` // 支持多语言
-	Value string      `yaml:"value"`
+	ID                string             `yaml:"id" json:"id"`
+	Name              string             `yaml:"name" json:"name"`
+	Description       string             `yaml:"description" json:"description"`
+	Icon              string             `yaml:"icon" json:"icon"`
+	Versions          []string           `yaml:"versions" json:"versions"`
+	Tags              []string           `yaml:"tags" json:"tags"`
+	Author            string             `yaml:"author" json:"author"`
+	Website           string             `yaml:"website" json:"website"`
+	Github            string             `yaml:"github" json:"github"`
+	Document          string             `yaml:"document" json:"document"`
+	DownloadURL       string             `yaml:"download_url" json:"download_url"`
+	Fields            []FieldConfig      `yaml:"fields,omitempty" json:"fields,omitempty"`
+	RequireUninstalls []RequireUninstall `yaml:"require_uninstalls,omitempty" json:"require_uninstalls,omitempty"`
+	MenuItems         []MenuItem         `yaml:"menu_items,omitempty" json:"menu_items,omitempty"`
 }
 
 // FieldConfig 定义应用的可配置字段结构
 type FieldConfig struct {
-	Name        string        `yaml:"name"`
-	Label       interface{}   `yaml:"label"`                 // 支持多语言
-	Placeholder interface{}   `yaml:"placeholder,omitempty"` // 支持多语言
-	Type        string        `yaml:"type"`
-	Default     interface{}   `yaml:"default,omitempty"`
-	Required    bool          `yaml:"required,omitempty"`
-	Options     []FieldOption `yaml:"options,omitempty"`
+	Name        string        `yaml:"name" json:"name"`
+	Label       interface{}   `yaml:"label" json:"label"`
+	Placeholder interface{}   `yaml:"placeholder,omitempty" json:"placeholder,omitempty"`
+	Type        string        `yaml:"type" json:"type"`
+	Default     interface{}   `yaml:"default,omitempty" json:"default,omitempty"`
+	Required    bool          `yaml:"required,omitempty" json:"required,omitempty"`
+	Options     []FieldOption `yaml:"options,omitempty" json:"options,omitempty"`
+}
+
+// FieldOption 定义字段配置中的选项结构
+type FieldOption struct {
+	Label interface{} `yaml:"label" json:"label"`
+	Value string      `yaml:"value" json:"value"`
 }
 
 // RequireUninstall 定义需要先卸载的版本结构
 type RequireUninstall struct {
-	Version string      `yaml:"version"`
-	Reason  interface{} `yaml:"reason,omitempty"` // 支持多语言
+	Version  string      `yaml:"version" json:"version"`
+	Reason   interface{} `yaml:"reason,omitempty" json:"reason,omitempty"`
+	Operator string      `yaml:"operator,omitempty" json:"operator"`
 }
 
 // MenuItem 定义应用菜单入口结构
 type MenuItem struct {
-	Location      string      `yaml:"location"`
-	Label         interface{} `yaml:"label"` // 支持多语言
-	URL           string      `yaml:"url"`
-	Icon          string      `yaml:"icon,omitempty"`
-	Transparent   bool        `yaml:"transparent,omitempty"`
-	AutoDarkTheme *bool       `yaml:"autoDarkTheme,omitempty"` // 使用指针以区分缺失和false，默认 true
-	KeepAlive     *bool       `yaml:"keepAlive,omitempty"`     // 使用指针以区分缺失和false，默认 true
+	Location      string      `yaml:"location" json:"location"`
+	Label         interface{} `yaml:"label" json:"label"`
+	URL           string      `yaml:"url" json:"url"`
+	Icon          string      `yaml:"icon,omitempty" json:"icon,omitempty"`
+	Transparent   bool        `yaml:"transparent,omitempty" json:"transparent"`
+	AutoDarkTheme *bool       `yaml:"autoDarkTheme,omitempty" json:"autoDarkTheme"`
+	KeepAlive     *bool       `yaml:"keepAlive,omitempty" json:"keepAlive"`
 }
 
 // getLocalizedValue 获取多语言字符串值
@@ -184,16 +137,41 @@ func findVersions(appDir string) []string {
 	return versions
 }
 
+// parseVersionOperator 解析版本字符串中的操作符
+func parseVersionOperator(version string) (string, string) {
+	// 匹配操作符和版本号
+	re := regexp.MustCompile(`^\s*([<>=!]*)\s*(.+)$`)
+	matches := re.FindStringSubmatch(version)
+	if len(matches) == 3 {
+		operator := matches[1]
+		versionNum := matches[2]
+		if operator == "" {
+			operator = "="
+		}
+		return operator, versionNum
+	}
+	return "=", version
+}
+
 // NewApp 创建新的应用实例
 func NewApp(id string, appDir string) *App {
-	app := &App{
-		ID:                id,
-		Tags:              []string{},
-		Versions:          []string{},
-		Fields:            []AppFieldConfig{},
-		RequireUninstalls: []AppRequireUninstall{},
-		MenuItems:         []AppMenuItem{},
+	app := &App{}
+	configFile := filepath.Join(appDir, "config.yml")
+	if _, err := os.Stat(configFile); err == nil {
+		data, err := os.ReadFile(configFile)
+		if err == nil {
+			yaml.Unmarshal(data, &app)
+		}
 	}
+
+	app.ID = id
+
+	app.Name = getLocalizedValue(app.Name, global.Language)
+	if app.Name == "" {
+		app.Name = id
+	}
+
+	app.Description = getLocalizedValue(app.Description, global.Language)
 
 	iconFilename := findIcon(appDir)
 	if iconFilename != "" {
@@ -202,98 +180,96 @@ func NewApp(id string, appDir string) *App {
 		app.Icon = ""
 	}
 
-	app.DownloadURL = fmt.Sprintf("%s/api/%s/download/%s/latest", global.BaseUrl, global.APIVersion, id)
 	app.Versions = findVersions(appDir)
 
-	ymlFile := filepath.Join(appDir, "config.yml")
-	var appYamlConfig AppYamlConfig
-
-	if _, err := os.Stat(ymlFile); err == nil {
-		data, err := os.ReadFile(ymlFile)
-		if err == nil {
-			yaml.Unmarshal(data, &appYamlConfig)
-		}
-	}
-
-	app.Name = getLocalizedValue(appYamlConfig.Name, global.Language)
-	if app.Name == "" {
-		app.Name = id
-	}
-	app.Description = getLocalizedValue(appYamlConfig.Description, global.Language)
-
-	app.Tags = appYamlConfig.Tags
 	if app.Tags == nil {
 		app.Tags = []string{}
 	}
-	app.Author = appYamlConfig.Author
-	app.Website = appYamlConfig.Website
-	app.Github = appYamlConfig.Github
-	app.Document = appYamlConfig.Document
+
+	app.DownloadURL = fmt.Sprintf("%s/api/%s/download/%s/latest", global.BaseUrl, global.APIVersion, id)
 
 	// 处理 Fields
-	if appYamlConfig.Fields != nil {
-		for _, yamlField := range appYamlConfig.Fields {
-			appField := AppFieldConfig{
-				Name:        yamlField.Name,
-				Label:       getLocalizedValue(yamlField.Label, global.Language),
-				Placeholder: getLocalizedValue(yamlField.Placeholder, global.Language),
-				Type:        yamlField.Type,
-				Default:     yamlField.Default,
-				Required:    yamlField.Required,
-				Options:     []AppFieldOption{},
+	if app.Fields != nil {
+		fields := []FieldConfig{}
+		for _, field := range app.Fields {
+			field := FieldConfig{
+				Name:        field.Name,
+				Label:       getLocalizedValue(field.Label, global.Language),
+				Placeholder: getLocalizedValue(field.Placeholder, global.Language),
+				Type:        field.Type,
+				Default:     field.Default,
+				Required:    field.Required,
+				Options:     []FieldOption{},
 			}
-			if yamlField.Options != nil {
-				for _, yamlOption := range yamlField.Options {
-					appField.Options = append(appField.Options, AppFieldOption{
-						Label: getLocalizedValue(yamlOption.Label, global.Language),
-						Value: yamlOption.Value,
+			if field.Options != nil {
+				for _, option := range field.Options {
+					field.Options = append(field.Options, FieldOption{
+						Label: getLocalizedValue(option.Label, global.Language),
+						Value: option.Value,
 					})
 				}
 			}
-			app.Fields = append(app.Fields, appField)
+			fields = append(fields, field)
 		}
+		app.Fields = fields
 	}
 
 	// 处理 RequireUninstalls
-	if appYamlConfig.RequireUninstalls != nil {
-		for _, yamlRequire := range appYamlConfig.RequireUninstalls {
-			app.RequireUninstalls = append(app.RequireUninstalls, AppRequireUninstall{
-				Version: yamlRequire.Version,
-				Reason:  getLocalizedValue(yamlRequire.Reason, global.Language),
-			})
+	if app.RequireUninstalls != nil {
+		requireUninstalls := []RequireUninstall{}
+		for _, require := range app.RequireUninstalls {
+			operator, version := parseVersionOperator(require.Version)
+			// 如果配置中明确指定了操作符，则使用配置中的操作符
+			if require.Operator != "" {
+				operator = require.Operator
+			}
+			// 创建新的 RequireUninstall 实例
+			requireUninstall := RequireUninstall{
+				Version:  version,
+				Reason:   getLocalizedValue(require.Reason, global.Language),
+				Operator: operator,
+			}
+			requireUninstalls = append(requireUninstalls, requireUninstall)
 		}
+		app.RequireUninstalls = requireUninstalls
 	}
 
 	// 处理 MenuItems
-	if appYamlConfig.MenuItems != nil {
-		for _, yamlMenu := range appYamlConfig.MenuItems {
-			appMenuItem := AppMenuItem{
-				Location:    yamlMenu.Location,
-				Label:       getLocalizedValue(yamlMenu.Label, global.Language),
-				URL:         yamlMenu.URL,
-				Transparent: yamlMenu.Transparent, // 默认为 false，直接赋值
+	if app.MenuItems != nil {
+		menuItems := []MenuItem{}
+		for _, menu := range app.MenuItems {
+			appMenuItem := MenuItem{
+				Location:    menu.Location,
+				Label:       getLocalizedValue(menu.Label, global.Language),
+				URL:         menu.URL,
+				Transparent: menu.Transparent, // 默认为 false，直接赋值
 			}
 
-			if yamlMenu.Icon != "" {
-				appMenuItem.Icon = fmt.Sprintf("%s/api/%s/icons/%s/%s", global.BaseUrl, global.APIVersion, id, filepath.Clean(yamlMenu.Icon))
+			if menu.Icon != "" {
+				// 使用 filepath.Clean 来处理相对路径，确保路径的正确性
+				cleanedIconPath := filepath.Clean(menu.Icon)
+				appMenuItem.Icon = fmt.Sprintf("%s/api/%s/icons/%s/%s", global.BaseUrl, global.APIVersion, id, cleanedIconPath)
 			} else {
 				appMenuItem.Icon = ""
 			}
 
 			// 处理 AutoDarkTheme (默认 true)
-			appMenuItem.AutoDarkTheme = true
-			if yamlMenu.AutoDarkTheme != nil {
-				appMenuItem.AutoDarkTheme = *yamlMenu.AutoDarkTheme
+			appMenuItem.AutoDarkTheme = menu.AutoDarkTheme
+			if appMenuItem.AutoDarkTheme == nil {
+				defaultTrue := true
+				appMenuItem.AutoDarkTheme = &defaultTrue
 			}
 
 			// 处理 KeepAlive (默认 true)
-			appMenuItem.KeepAlive = true
-			if yamlMenu.KeepAlive != nil {
-				appMenuItem.KeepAlive = *yamlMenu.KeepAlive
+			appMenuItem.KeepAlive = menu.KeepAlive
+			if appMenuItem.KeepAlive == nil {
+				defaultTrue := true
+				appMenuItem.KeepAlive = &defaultTrue
 			}
 
-			app.MenuItems = append(app.MenuItems, appMenuItem)
+			menuItems = append(menuItems, appMenuItem)
 		}
+		app.MenuItems = menuItems
 	}
 
 	return app
