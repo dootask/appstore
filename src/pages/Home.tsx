@@ -2,13 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { Asterisk, ChevronDown, Globe, UserCircle, Zap, Sparkles, ArrowRight, Heart, Filter, Folder, Activity, Wallet, Sun, Moon } from 'lucide-react';
 import i18n from '@/i18n';
 import Dropdown from '@/components/custom/dropdown';
+import { 
+  supportedLanguagesMap, 
+  languageOptionsForDropdown, 
+  setTheme, 
+  setLanguage 
+} from '@/store/config';
 
 const AppDisplayCard: React.FC<{
   title: string;
   rating: number;
   users: string;
   downloads: string;
-  icon: React.ReactElement<{ className?: string, size?: number | string }>; // More specific type for icon
+  icon: React.ReactElement<{ className?: string, size?: number | string }>;
   bgColorClass: string;
   iconColorClass: string;
   buttonBgClass: string;
@@ -55,50 +61,24 @@ const AppDisplayCard: React.FC<{
   );
 };
 
-const supportedLanguagesMap: Record<string, string> = {
-  'de': 'Deutsch',
-  'en': 'English',
-  'fr': 'Français',
-  'id': 'Indonesia',
-  'ja': '日本語',
-  'ko': '한국어',
-  'ru': 'Русский',
-  'zh-CHT': '繁體中文',
-  'zh': '简体中文'
-};
-
-const languageOptionsForDropdown = Object.entries(supportedLanguagesMap).map(([value, label]) => ({label, value}));
-
 const Home: React.FC = () => {
-  const [currentTheme, setCurrentTheme] = useState(() => {
+  const [currentTheme, setCurrentThemeLocal] = useState(() => {
     if (typeof window !== 'undefined') {
       return document.body.classList.contains('dark') ? 'dark' : 'light';
     }
     return 'light';
   });
 
-  const [currentLanguage, setCurrentLanguage] = useState(i18n.language);
-  const [currentLanguageLabel, setCurrentLanguageLabel] = useState(supportedLanguagesMap[i18n.language] || i18n.language);
+  const [currentLanguage, setCurrentLanguageLocal] = useState(i18n.language);
+  const [currentLanguageLabel, setCurrentLanguageLabelLocal] = useState(supportedLanguagesMap[i18n.language] || i18n.language);
 
-  const toggleTheme = () => {
-    const bodyClassList = document.body.classList;
-    let newTheme: 'light' | 'dark';
-    if (bodyClassList.contains('dark')) {
-      bodyClassList.remove('dark');
-      newTheme = 'light';
-    } else {
-      bodyClassList.add('dark');
-      newTheme = 'dark';
-    }
-    setCurrentTheme(newTheme);
-    localStorage.setItem('theme', newTheme);
+  const toggleThemeHandler = () => {
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+    setTheme(newTheme);
   };
 
-  const handleLanguageChange = (langCode: string) => {
-    if (supportedLanguagesMap[langCode]) {
-      i18n.changeLanguage(langCode);
-      localStorage.setItem('language', langCode);
-    }
+  const handleLanguageChangeHandler = (langCode: string) => {
+    setLanguage(langCode);
   };
 
   useEffect(() => {
@@ -107,10 +87,10 @@ const Home: React.FC = () => {
         if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
           const newThemeOnBody = document.body.classList.contains('dark') ? 'dark' : 'light';
           if (newThemeOnBody !== currentTheme) {
-            setCurrentTheme(newThemeOnBody);
+            setCurrentThemeLocal(newThemeOnBody);
             const storedTheme = localStorage.getItem('theme');
             if (newThemeOnBody !== storedTheme) {
-              localStorage.setItem('theme', newThemeOnBody);
+                localStorage.setItem('theme', newThemeOnBody);
             }
           }
         }
@@ -121,8 +101,8 @@ const Home: React.FC = () => {
     }
 
     const i18nLanguageChanged = (lng: string) => {
-      setCurrentLanguage(lng);
-      setCurrentLanguageLabel(supportedLanguagesMap[lng] || lng);
+      setCurrentLanguageLocal(lng);
+      setCurrentLanguageLabelLocal(supportedLanguagesMap[lng] || lng);
     };
     i18n.on('languageChanged', i18nLanguageChanged);
 
@@ -153,20 +133,20 @@ const Home: React.FC = () => {
           </nav>
           <div className="flex items-center space-x-4 flex-1 justify-end">
             <Dropdown
-              options={languageOptionsForDropdown}
-              defaultValue={currentLanguage}
-              onChange={handleLanguageChange}
+              options={languageOptionsForDropdown} // Imported
+              defaultValue={currentLanguage} // Local state
+              onChange={handleLanguageChangeHandler} // Use new handler
               className="flex items-center text-sm p-2 py-3 gap-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white cursor-pointer"
             >
               <Globe className="w-5 h-5 flex-shrink-0" />
-              <span className="hidden lg:block">{currentLanguageLabel}</span>
+              <span className="hidden lg:block">{currentLanguageLabel}</span> {/* Local state for label */}
             </Dropdown>
             <button
-              onClick={toggleTheme}
+              onClick={toggleThemeHandler} // Use new handler
               className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white p-2 rounded-md cursor-pointer"
-              aria-label={currentTheme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
+              aria-label={currentTheme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'} // Local state
             >
-              {currentTheme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+              {currentTheme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />} {/* Local state */}
             </button>
             <a href="#" className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
               <UserCircle className="w-8 h-8" />
@@ -193,8 +173,8 @@ const Home: React.FC = () => {
               placeholder="Search API, Apps & Plugin"
               className="w-full py-4 px-6 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-white"
             />
-            <div className="absolute right-3 top-1/2 transform -translate-y-1/2 bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 text-xs rounded px-2 py-1 font-mono">
-              ⌘ F
+            <div className="absolute right-3 top-1/2 transform -translate-y-1/2 bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 text-xs rounded px-2.5 h-7 font-mono flex items-center gap-1.5">
+              <span className="text-base">⌘</span> F
             </div>
           </div>
         </div>
