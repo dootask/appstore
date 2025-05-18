@@ -4,7 +4,7 @@ const (
 	// 默认配置
 	DefaultPort     = "8080"
 	DefaultMode     = "debug"
-	DefaultLanguage = "en" // 默认语言
+	DefaultLanguage = "en"
 
 	// API 版本
 	APIVersion = "v1"
@@ -12,10 +12,8 @@ const (
 	// 响应码
 	CodeSuccess = 200
 	CodeError   = 500
-)
 
-// 运行模式
-const (
+	// 运行模式
 	ModeDebug   = "debug"
 	ModeRelease = "release"
 )
@@ -23,5 +21,5 @@ const (
 // 全局变量
 var (
 	WorkDir  string
-	Language string // 当前请求的语言
+	Language string
 )

@@ -38,33 +38,28 @@ func init() {
 }
 
 func runPre(cmd *cobra.Command, args []string) {
-	// 设置gin运行模式
 	if mode == global.ModeRelease {
 		gin.SetMode(gin.ReleaseMode)
 	} else {
 		gin.SetMode(gin.DebugMode)
 	}
 
-	// 转换为绝对路径
 	absPath, err := filepath.Abs(global.WorkDir)
 	if err != nil {
 		fmt.Printf("转换工作目录路径失败: %v\n", err)
 		os.Exit(1)
 	}
 
-	// 检查目录是否存在
 	if !utils.IsDirExists(absPath) {
 		fmt.Printf("工作目录不存在: %s\n", absPath)
 		os.Exit(1)
 	}
 
-	// 更新工作目录为绝对路径
 	global.WorkDir = absPath
 	fmt.Printf("工作目录: %s\n", global.WorkDir)
 }
 
-// findLatestVersion determines the latest version from a given app's directory.
-// It reuses the logic from models.findVersions internally for consistency.
+// findLatestVersionForApp 获取应用的最新版本
 func findLatestVersionForApp(appId string) (string, error) {
 	appRootPath := utils.JoinPath(global.WorkDir, "apps", appId)
 	if !utils.IsDirExists(appRootPath) {
@@ -94,21 +89,19 @@ func findLatestVersionForApp(appId string) (string, error) {
 	return versions[len(versions)-1], nil
 }
 
+// getAppsFromDir 从目录获取所有应用信息
 func getAppsFromDir() ([]*models.App, error) {
 	appsParentDir := utils.JoinPath(global.WorkDir, "apps")
 
-	// 检查apps目录是否存在
 	if !utils.IsDirExists(appsParentDir) {
 		return nil, fmt.Errorf("apps目录不存在: %s", appsParentDir)
 	}
 
-	// 获取所有子目录 (即每个app的目录名，也就是appID)
 	appIDs, err := utils.GetSubDirs(appsParentDir)
 	if err != nil {
 		return nil, err
 	}
 
-	// 转换为App对象
 	var apps []*models.App
 	for _, appID := range appIDs {
 		appDir := utils.JoinPath(appsParentDir, appID)
@@ -118,6 +111,7 @@ func getAppsFromDir() ([]*models.App, error) {
 	return apps, nil
 }
 
+// routeList 获取应用列表
 func routeList(c *gin.Context) {
 	apps, err := getAppsFromDir()
 	if err != nil {
@@ -125,14 +119,12 @@ func routeList(c *gin.Context) {
 		return
 	}
 
-	// Determine scheme and host for full URLs
 	scheme := "http"
 	if c.Request.TLS != nil || c.GetHeader("X-Forwarded-Proto") == "https" {
 		scheme = "https"
 	}
 	host := c.Request.Host
 
-	// Update Icon paths to be full URLs
 	for _, app := range apps {
 		if app.Icon != "" {
 			app.Icon = fmt.Sprintf("%s://%s%s", scheme, host, app.Icon)
@@ -145,19 +137,16 @@ func routeList(c *gin.Context) {
 	response.SuccessWithData(c, apps)
 }
 
-// routeAppIcon handles requests for serving application icons.
+// routeAppIcon 处理应用图标请求
 func routeAppIcon(c *gin.Context) {
 	appId := c.Param("appId")
 	iconFilename := c.Param("iconFilename")
 
-	// Basic validation for empty parameters
 	if appId == "" || iconFilename == "" {
 		c.String(http.StatusBadRequest, "App ID and icon filename are required")
 		return
 	}
 
-	// Security: Clean and validate path components to prevent path traversal.
-	// filepath.Clean resolves ".." but we also explicitly forbid "..".
 	cleanedAppId := filepath.Clean(appId)
 	cleanedIconFilename := filepath.Clean(iconFilename)
 
@@ -167,21 +156,17 @@ func routeAppIcon(c *gin.Context) {
 		return
 	}
 
-	// Construct the full path to the icon file.
-	// Example: /path/to/workdir/apps/app1/logo.svg
 	iconPath := utils.JoinPath(global.WorkDir, "apps", cleanedAppId, cleanedIconFilename)
 
-	// Check if the file exists before attempting to serve it.
 	if _, err := os.Stat(iconPath); os.IsNotExist(err) {
 		c.String(http.StatusNotFound, "Icon not found")
 		return
 	}
 
-	// Serve the file. Gin's c.File() automatically sets the Content-Type header.
 	c.File(iconPath)
 }
 
-// routeAppDownload handles requests for downloading an application's directory as tar.gz.
+// routeAppDownload 处理应用下载请求
 func routeAppDownload(c *gin.Context) {
 	appId := c.Param("appId")
 	versionParam := strings.TrimPrefix(c.Param("version"), "/")
@@ -203,8 +188,8 @@ func routeAppDownload(c *gin.Context) {
 	}
 
 	var downloadFilename string
-	var effectiveVersion string = versionParam                // This is the version string we intend to include, or empty for all
-	versionRegex := regexp.MustCompile(`^v?\d+(\.\d+){1,2}$`) // For identifying version dirs
+	effectiveVersion := versionParam
+	versionRegex := regexp.MustCompile(`^v?\d+(\.\d+){1,2}$`)
 
 	if versionParam == "latest" {
 		latestV, err := findLatestVersionForApp(cleanedAppId)
@@ -214,20 +199,18 @@ func routeAppDownload(c *gin.Context) {
 		}
 		effectiveVersion = latestV
 		downloadFilename = fmt.Sprintf("%s-%s.tar.gz", cleanedAppId, effectiveVersion)
-	} else if versionParam != "" { // Specific version provided
-		// Validate the user-provided version string format if it's not 'latest'
+	} else if versionParam != "" {
 		cleanedVersion := filepath.Clean(effectiveVersion)
 		if cleanedVersion != effectiveVersion || strings.Contains(cleanedVersion, "..") || strings.Contains(cleanedVersion, "/") || strings.Contains(cleanedVersion, "\\") || !versionRegex.MatchString(cleanedVersion) {
 			c.String(http.StatusBadRequest, "Invalid or malformed version parameter")
 			return
 		}
-		// Check if this specific version directory exists
 		if !utils.IsDirExists(utils.JoinPath(appRootPath, cleanedVersion)) {
 			c.String(http.StatusNotFound, fmt.Sprintf("Specified version %s not found for app %s", cleanedVersion, cleanedAppId))
 			return
 		}
 		downloadFilename = fmt.Sprintf("%s-%s.tar.gz", cleanedAppId, cleanedVersion)
-	} else { // No version provided, download all
+	} else {
 		downloadFilename = fmt.Sprintf("%s.tar.gz", cleanedAppId)
 	}
 
@@ -250,28 +233,21 @@ func routeAppDownload(c *gin.Context) {
 		if err != nil {
 			return err
 		}
-		if relPath == "." { // Skip the root directory itself
+		if relPath == "." { // 跳过根目录
 			return nil
 		}
 
-		// 判断是否包含此路径
-		if effectiveVersion != "" { // 指定版本（或latest）的情况
-			// 我们不需要单独使用isCurrentVersionDir变量，直接在条件判断中使用
-
-			// 判断是否为其他版本目录（如果是目录且符合版本格式但不是当前指定版本）
-			versionRegex := regexp.MustCompile(`^v?\d+(\.\d+){1,2}$`)
+		// 当指定了版本时，只保留非版本目录的文件和指定版本的目录
+		if effectiveVersion != "" {
+			// 判断是否为版本目录
 			parts := strings.Split(relPath, string(filepath.Separator))
-			isOtherVersionDir := false
-
-			if len(parts) > 0 && info.IsDir() && versionRegex.MatchString(parts[0]) && parts[0] != effectiveVersion {
-				isOtherVersionDir = true
+			if len(parts) > 0 && info.IsDir() && versionRegex.MatchString(parts[0]) {
+				// 如果是版本目录，但不是指定的版本，则跳过
+				if parts[0] != effectiveVersion {
+					return filepath.SkipDir
+				}
 			}
-
-			// 跳过其他版本目录，但包含当前版本目录和非版本目录的文件
-			if isOtherVersionDir {
-				return filepath.SkipDir // 跳过其他版本目录
-			}
-		} // 如果没有指定版本，包含所有文件（默认行为）
+		}
 
 		header, err := tar.FileInfoHeader(info, info.Name())
 		if err != nil {
@@ -314,12 +290,10 @@ func runServer(cmd *cobra.Command, args []string) {
 		// 获取应用列表
 		v1.GET("/list", routeList)
 		v1.GET("/icons/:appId/:iconFilename", routeAppIcon)
-		// Consolidated download route using a catch-all for version
 		v1.GET("/apps/:appId/download/*version", routeAppDownload)
 	}
 
 	// 启动服务器
-	fmt.Printf("服务器启动在 http://localhost:%s (模式: %s)\n", global.DefaultPort, gin.Mode())
 	r.Run(":" + global.DefaultPort)
 }
 
