@@ -1,15 +1,15 @@
 package main
 
 import (
-  "fmt"
-  "os"
+	"fmt"
+	"os"
 
-  "appstore/server/cmd"
+	"appstore/server/cmd"
 )
 
 func main() {
-  if err := cmd.Execute(); err != nil {
-    fmt.Println(err)
-    os.Exit(1)
-  }
+	if err := cmd.Execute(); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 }
