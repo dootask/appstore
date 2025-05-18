@@ -32,6 +32,20 @@ export interface AppInfo {
   require_uninstalls: RequireUninstall[];
 }
 
+export interface AppPublicInfo {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  versions: string[];
+  tags: string[];
+  author: string;
+  website: string;
+  github: string;
+  document: string;
+  download_url: string;
+}
+
 export interface AppConfig {
   install_at: string;
   install_num: number;
