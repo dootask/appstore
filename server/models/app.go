@@ -136,8 +136,7 @@ func findIcon(appId string) string {
 func findVersions(appId string) []string {
 	appDir := filepath.Join(global.WorkDir, "apps", appId)
 
-	var versions []string
-
+	versions := []string{}
 	entries, err := utils.GetSubDirs(appDir)
 	if err != nil {
 		return versions
@@ -208,7 +207,7 @@ func NewApps() []*App {
 		return nil
 	}
 
-	var apps []*App
+	apps := []*App{}
 	for _, appId := range appIds {
 		apps = append(apps, NewApp(appId))
 	}
@@ -254,7 +253,7 @@ func NewApp(appId string) *App {
 	app.DownloadURL = fmt.Sprintf("%s/api/%s/download/%s/latest", global.BaseUrl, global.APIVersion, app.ID)
 
 	// 处理 Fields
-	var fields []FieldConfig
+	fields := []FieldConfig{}
 	if app.Fields != nil {
 		for _, field := range app.Fields {
 			field := FieldConfig{
@@ -280,7 +279,7 @@ func NewApp(appId string) *App {
 	app.Fields = fields
 
 	// 处理 RequireUninstalls
-	var requireUninstalls []RequireUninstall
+	requireUninstalls := []RequireUninstall{}
 	if app.RequireUninstalls != nil {
 		for _, require := range app.RequireUninstalls {
 			operator, version := parseVersionOperator(require.Version)
@@ -300,7 +299,7 @@ func NewApp(appId string) *App {
 	app.RequireUninstalls = requireUninstalls
 
 	// 处理 MenuItems
-	var menuItems []MenuItem
+	menuItems := []MenuItem{}
 	if app.MenuItems != nil {
 		for _, menu := range app.MenuItems {
 			appMenuItem := MenuItem{

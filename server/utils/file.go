@@ -16,7 +16,7 @@ func IsDirExists(path string) bool {
 
 // GetSubDirs 获取指定目录下的所有子目录
 func GetSubDirs(dir string) ([]string, error) {
-	var dirs []string
+	dirs := []string{}
 	entries, err := os.ReadDir(dir)
 	if err != nil {
 		return nil, fmt.Errorf("读取目录失败: %v", err)
