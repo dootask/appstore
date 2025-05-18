@@ -29,6 +29,7 @@ type App struct {
 	Fields            []FieldConfig      `yaml:"fields" json:"fields"`
 	RequireUninstalls []RequireUninstall `yaml:"require_uninstalls" json:"require_uninstalls"`
 	MenuItems         []MenuItem         `yaml:"menu_items" json:"menu_items"`
+	Config            *AppConfig         `yaml:"config,omitempty" json:"config,omitempty"`
 }
 
 // FieldConfig 定义应用的可配置字段结构
@@ -64,6 +65,22 @@ type MenuItem struct {
 	Transparent   bool        `yaml:"transparent" json:"transparent"`
 	AutoDarkTheme *bool       `yaml:"autoDarkTheme" json:"autoDarkTheme"`
 	KeepAlive     *bool       `yaml:"keepAlive" json:"keepAlive"`
+}
+
+// AppConfig 应用配置结构
+type AppConfig struct {
+	InstallAt      string                 `yaml:"install_at" json:"install_at"`
+	InstallNum     int                    `yaml:"install_num" json:"install_num"`
+	InstallVersion string                 `yaml:"install_version" json:"install_version"`
+	Status         string                 `yaml:"status" json:"status"` // installing, installed, uninstalling, not_installed, error
+	Params         map[string]interface{} `yaml:"params" json:"params"`
+	Resources      AppConfigResources     `yaml:"resources" json:"resources"`
+}
+
+// AppConfigResources 应用配置资源结构
+type AppConfigResources struct {
+	CPULimit    int `yaml:"cpu_limit" json:"cpu_limit"`
+	MemoryLimit int `yaml:"memory_limit" json:"memory_limit"`
 }
 
 // getLocalizedValue 获取多语言字符串值
@@ -114,7 +131,7 @@ func findIcon(appDir string) string {
 
 // findVersions 查找应用版本列表
 func findVersions(appDir string) []string {
-	versions := []string{}
+	var versions []string
 	versionRegex := regexp.MustCompile(`^v?\d+(\.\d+){1,2}$`)
 
 	entries, err := os.ReadDir(appDir)
@@ -154,29 +171,51 @@ func parseVersionOperator(version string) (string, string) {
 	return "=", version
 }
 
+// getAppConfig 获取应用的配置文件内容
+func getAppConfig(appId string) *AppConfig {
+	appConfig := &AppConfig{}
+	configFile := filepath.Join(global.WorkDir, "config", appId, "config.yml")
+	if _, err := os.Stat(configFile); err == nil {
+		data, err := os.ReadFile(configFile)
+		if err == nil {
+			_ = yaml.Unmarshal(data, &appConfig)
+		}
+	}
+
+	if appConfig.Status == "" {
+		appConfig.Status = "not_installed"
+	}
+
+	if appConfig.Params == nil {
+		appConfig.Params = make(map[string]interface{})
+	}
+
+	return appConfig
+}
+
 // NewApp 创建新的应用实例
-func NewApp(id string, appDir string) *App {
+func NewApp(appDir string) *App {
 	app := &App{}
 	configFile := filepath.Join(appDir, "config.yml")
 	if _, err := os.Stat(configFile); err == nil {
 		data, err := os.ReadFile(configFile)
 		if err == nil {
-			yaml.Unmarshal(data, &app)
+			_ = yaml.Unmarshal(data, &app)
 		}
 	}
 
-	app.ID = id
+	app.ID = filepath.Base(appDir)
 
 	app.Name = getLocalizedValue(app.Name, global.Language)
 	if app.Name == "" {
-		app.Name = id
+		app.Name = app.ID
 	}
 
 	app.Description = getLocalizedValue(app.Description, global.Language)
 
 	iconFilename := findIcon(appDir)
 	if iconFilename != "" {
-		app.Icon = fmt.Sprintf("%s/api/%s/icons/%s/%s", global.BaseUrl, global.APIVersion, id, iconFilename)
+		app.Icon = fmt.Sprintf("%s/api/%s/icons/%s/%s", global.BaseUrl, global.APIVersion, app.ID, iconFilename)
 	} else {
 		app.Icon = ""
 	}
@@ -187,7 +226,7 @@ func NewApp(id string, appDir string) *App {
 		app.Tags = []string{}
 	}
 
-	app.DownloadURL = fmt.Sprintf("%s/api/%s/download/%s/latest", global.BaseUrl, global.APIVersion, id)
+	app.DownloadURL = fmt.Sprintf("%s/api/%s/download/%s/latest", global.BaseUrl, global.APIVersion, app.ID)
 
 	// 处理 Fields
 	fields := []FieldConfig{}
@@ -249,7 +288,7 @@ func NewApp(id string, appDir string) *App {
 			if menu.Icon != "" {
 				// 使用 filepath.Clean 来处理相对路径，确保路径的正确性
 				cleanedIconPath := filepath.Clean(menu.Icon)
-				appMenuItem.Icon = fmt.Sprintf("%s/api/%s/icons/%s/%s", global.BaseUrl, global.APIVersion, id, cleanedIconPath)
+				appMenuItem.Icon = fmt.Sprintf("%s/api/%s/icons/%s/%s", global.BaseUrl, global.APIVersion, app.ID, cleanedIconPath)
 			} else {
 				appMenuItem.Icon = ""
 			}
@@ -272,6 +311,8 @@ func NewApp(id string, appDir string) *App {
 		}
 	}
 	app.MenuItems = menuItems
+
+	app.Config = getAppConfig(filepath.Join(app.ID))
 
 	return app
 }

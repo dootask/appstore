@@ -105,7 +105,7 @@ func getAppsFromDir() ([]*models.App, error) {
 	var apps []*models.App
 	for _, appID := range appIDs {
 		appDir := utils.JoinPath(appsParentDir, appID)
-		apps = append(apps, models.NewApp(appID, appDir))
+		apps = append(apps, models.NewApp(appDir))
 	}
 
 	return apps, nil
@@ -117,7 +117,7 @@ func getAppFromDir(appId string) (*models.App, error) {
 	if !utils.IsDirExists(appDir) {
 		return nil, fmt.Errorf("application directory for %s not found", appId)
 	}
-	return models.NewApp(appId, appDir), nil
+	return models.NewApp(appDir), nil
 }
 
 // getAppReadmeFromDir 从目录获取应用自述文件
