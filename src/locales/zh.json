@@ -86,5 +86,40 @@
     "success_description": "应用「{{app}}」已卸载成功",
     "title": "卸载应用",
     "uninstall_starting": "应用「{{app}}」开始卸载..."
+  },
+  "home": {
+    "header": {
+      "category": "应用分类",
+      "support": "支持",
+      "themeToggleLight": "切换到浅色主题",
+      "themeToggleDark": "切换到深色主题"
+    },
+    "hero": {
+      "seriesBAnnouncement": "我们B轮融资获得250万美元",
+      "titlePart1": "获得您",
+      "titlePart2": "想要的应用程序",
+      "titlePart3": "以促进增长",
+      "searchPlaceholder": "搜索 API、应用和插件"
+    },
+    "marketplace": {
+      "title": "探索市场",
+      "featuredButton": "精选",
+      "popularButton": "热门"
+    },
+    "appDisplayCard": {
+      "totalUsers": "总用户数",
+      "downloads": "下载量",
+      "downloadAppButton": "下载应用",
+      "getButton": "获取"
+    },
+    "appTitles": {
+      "fileManager": "文件管理器",
+      "analyticsData": "分析数据",
+      "walletFeature": "钱包功能"
+    },
+    "footer": {
+      "copyright": "© {{year}} DooTask.com. 保留所有权利。",
+      "illustrativeDesign": "说明性设计基于用户提供的图像。"
+    }
   }
 }

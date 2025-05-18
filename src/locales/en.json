@@ -86,5 +86,40 @@
     "success_description": "The app «{{app}}» has been uninstalled successfully",
     "title": "Uninstall App",
     "uninstall_starting": "Starting to uninstall app «{{app}}»..."
+  },
+  "home": {
+    "header": {
+      "category": "Category",
+      "support": "Support",
+      "themeToggleLight": "Switch to light theme",
+      "themeToggleDark": "Switch to dark theme"
+    },
+    "hero": {
+      "seriesBAnnouncement": "We Raised $2.5M in Series B",
+      "titlePart1": "Get the",
+      "titlePart2": "Application you",
+      "titlePart3": "Want for Growth",
+      "searchPlaceholder": "Search API, Apps & Plugin"
+    },
+    "marketplace": {
+      "title": "Explore Marketplace",
+      "featuredButton": "Featured",
+      "popularButton": "Popular"
+    },
+    "appDisplayCard": {
+      "totalUsers": "Total Users",
+      "downloads": "Downloads",
+      "downloadAppButton": "Download APP",
+      "getButton": "Get"
+    },
+    "appTitles": {
+      "fileManager": "File Manager",
+      "analyticsData": "Analytics Data",
+      "walletFeature": "Wallet Feature"
+    },
+    "footer": {
+      "copyright": "© {{year}} DooTask.com. All rights reserved.",
+      "illustrativeDesign": "Illustrative design based on user-provided image."
+    }
   }
 }
