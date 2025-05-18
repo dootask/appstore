@@ -1,4 +1,3 @@
-import i18n from "@/i18n";
 import { useEffect, useRef, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { useTranslation } from "react-i18next";
@@ -31,8 +30,6 @@ const Store = () => {
   const detailTimerRef = useRef<NodeJS.Timeout>(null)
 
   useEffect(() => {
-    // 设置语言
-    i18n.changeLanguage(props.languageName)
     // 获取应用列表数据
     fetchApps();
     // 拦截返回事件

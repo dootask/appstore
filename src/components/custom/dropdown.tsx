@@ -1,5 +1,5 @@
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
-import { Ellipsis } from 'lucide-react'
+import { Check, Ellipsis } from 'lucide-react'
 import { type ReactNode, useEffect, useState } from 'react'
 import { cn } from "@/lib/utils.ts";
 
@@ -11,12 +11,13 @@ export interface DropdownItem {
 
 export interface DropdownProps {
   options: DropdownItem[]
-  slot?: ReactNode
+  defaultValue?: string
   className?: string
+  children?: ReactNode;
   onChange?: (value: string) => void
 }
 
-export default function Dropdown({options, slot, className, onChange, ...props}: DropdownProps) {
+export default function Dropdown({options, defaultValue, className, onChange, children, ...props}: DropdownProps) {
   const [items, setItems] = useState<DropdownItem[][]>([])
 
   useEffect(() => {
@@ -41,7 +42,7 @@ export default function Dropdown({options, slot, className, onChange, ...props}:
         'flex items-center rounded-full text-gray-400 hover:text-gray-600 focus:outline-hidden',
         className
       )} {...props}>
-        {slot || <Ellipsis aria-hidden="true" className="size-5"/>}
+        {children ? children : <Ellipsis aria-hidden="true" className="size-5"/>}
       </MenuButton>
 
       <MenuItems
@@ -52,8 +53,9 @@ export default function Dropdown({options, slot, className, onChange, ...props}:
           <div key={index} className="py-2">
             {group.map((item, itemIndex) => (
               <MenuItem key={itemIndex}>
-                <div className="block px-4 py-2 text-sm cursor-pointer text-gray-700 data-focus:bg-gray-100 data-focus:text-gray-900 dark:text-zinc-300 dark:data-focus:bg-zinc-700 dark:data-focus:text-zinc-100 data-focus:outline-hidden max-w-full overflow-hidden whitespace-nowrap text-ellipsis" onClick={() => handleChange(item.value)}>
+                <div className="flex items-center px-4 py-2 text-sm cursor-pointer text-gray-700 data-focus:bg-gray-100 data-focus:text-gray-900 dark:text-zinc-300 dark:data-focus:bg-zinc-700 dark:data-focus:text-zinc-100 data-focus:outline-hidden max-w-full overflow-hidden whitespace-nowrap text-ellipsis" onClick={() => handleChange(item.value)}>
                   {item.label}
+                  {(defaultValue && defaultValue === item.value) && <Check className="w-4 h-4 ml-auto" />}
                 </div>
               </MenuItem>
             ))}

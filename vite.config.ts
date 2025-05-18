@@ -10,6 +10,9 @@ export default defineConfig(({ mode }) => {
   
   return {
     base: env.VITE_BASE_PATH || '/',
+    server: {
+      host: '0.0.0.0'
+    },
     plugins: [react(), tailwindcss()],
     resolve: {
       alias: {
