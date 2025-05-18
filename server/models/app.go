@@ -26,20 +26,20 @@ type App struct {
 	Github            string             `yaml:"github" json:"github"`
 	Document          string             `yaml:"document" json:"document"`
 	DownloadURL       string             `yaml:"download_url" json:"download_url"`
-	Fields            []FieldConfig      `yaml:"fields,omitempty" json:"fields,omitempty"`
-	RequireUninstalls []RequireUninstall `yaml:"require_uninstalls,omitempty" json:"require_uninstalls,omitempty"`
-	MenuItems         []MenuItem         `yaml:"menu_items,omitempty" json:"menu_items,omitempty"`
+	Fields            []FieldConfig      `yaml:"fields" json:"fields"`
+	RequireUninstalls []RequireUninstall `yaml:"require_uninstalls" json:"require_uninstalls"`
+	MenuItems         []MenuItem         `yaml:"menu_items" json:"menu_items"`
 }
 
 // FieldConfig 定义应用的可配置字段结构
 type FieldConfig struct {
 	Name        string        `yaml:"name" json:"name"`
 	Label       interface{}   `yaml:"label" json:"label"`
-	Placeholder interface{}   `yaml:"placeholder,omitempty" json:"placeholder,omitempty"`
+	Placeholder interface{}   `yaml:"placeholder" json:"placeholder"`
 	Type        string        `yaml:"type" json:"type"`
-	Default     interface{}   `yaml:"default,omitempty" json:"default,omitempty"`
-	Required    bool          `yaml:"required,omitempty" json:"required,omitempty"`
-	Options     []FieldOption `yaml:"options,omitempty" json:"options,omitempty"`
+	Default     interface{}   `yaml:"default" json:"default"`
+	Required    bool          `yaml:"required" json:"required"`
+	Options     []FieldOption `yaml:"options" json:"options"`
 }
 
 // FieldOption 定义字段配置中的选项结构
@@ -51,8 +51,8 @@ type FieldOption struct {
 // RequireUninstall 定义需要先卸载的版本结构
 type RequireUninstall struct {
 	Version  string      `yaml:"version" json:"version"`
-	Reason   interface{} `yaml:"reason,omitempty" json:"reason,omitempty"`
-	Operator string      `yaml:"operator,omitempty" json:"operator"`
+	Reason   interface{} `yaml:"reason" json:"reason"`
+	Operator string      `yaml:"operator" json:"operator"`
 }
 
 // MenuItem 定义应用菜单入口结构
@@ -60,10 +60,10 @@ type MenuItem struct {
 	Location      string      `yaml:"location" json:"location"`
 	Label         interface{} `yaml:"label" json:"label"`
 	URL           string      `yaml:"url" json:"url"`
-	Icon          string      `yaml:"icon,omitempty" json:"icon,omitempty"`
-	Transparent   bool        `yaml:"transparent,omitempty" json:"transparent"`
-	AutoDarkTheme *bool       `yaml:"autoDarkTheme,omitempty" json:"autoDarkTheme"`
-	KeepAlive     *bool       `yaml:"keepAlive,omitempty" json:"keepAlive"`
+	Icon          string      `yaml:"icon" json:"icon"`
+	Transparent   bool        `yaml:"transparent" json:"transparent"`
+	AutoDarkTheme *bool       `yaml:"autoDarkTheme" json:"autoDarkTheme"`
+	KeepAlive     *bool       `yaml:"keepAlive" json:"keepAlive"`
 }
 
 // getLocalizedValue 获取多语言字符串值
@@ -190,8 +190,8 @@ func NewApp(id string, appDir string) *App {
 	app.DownloadURL = fmt.Sprintf("%s/api/%s/download/%s/latest", global.BaseUrl, global.APIVersion, id)
 
 	// 处理 Fields
+	fields := []FieldConfig{}
 	if app.Fields != nil {
-		fields := []FieldConfig{}
 		for _, field := range app.Fields {
 			field := FieldConfig{
 				Name:        field.Name,
@@ -212,12 +212,12 @@ func NewApp(id string, appDir string) *App {
 			}
 			fields = append(fields, field)
 		}
-		app.Fields = fields
 	}
+	app.Fields = fields
 
 	// 处理 RequireUninstalls
+	requireUninstalls := []RequireUninstall{}
 	if app.RequireUninstalls != nil {
-		requireUninstalls := []RequireUninstall{}
 		for _, require := range app.RequireUninstalls {
 			operator, version := parseVersionOperator(require.Version)
 			// 如果配置中明确指定了操作符，则使用配置中的操作符
@@ -232,12 +232,12 @@ func NewApp(id string, appDir string) *App {
 			}
 			requireUninstalls = append(requireUninstalls, requireUninstall)
 		}
-		app.RequireUninstalls = requireUninstalls
 	}
+	app.RequireUninstalls = requireUninstalls
 
 	// 处理 MenuItems
+	menuItems := []MenuItem{}
 	if app.MenuItems != nil {
-		menuItems := []MenuItem{}
 		for _, menu := range app.MenuItems {
 			appMenuItem := MenuItem{
 				Location:    menu.Location,
@@ -270,8 +270,8 @@ func NewApp(id string, appDir string) *App {
 
 			menuItems = append(menuItems, appMenuItem)
 		}
-		app.MenuItems = menuItems
 	}
+	app.MenuItems = menuItems
 
 	return app
 }

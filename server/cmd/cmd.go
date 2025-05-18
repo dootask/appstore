@@ -182,7 +182,7 @@ func routeAppIcon(c *gin.Context) {
 		return
 	}
 
-	if strings.Contains(cleanedIconPath, "..") || filepath.IsAbs(cleanedIconPath) {
+	if strings.Contains(cleanedIconPath, "..") {
 		c.String(http.StatusBadRequest, "Invalid icon path")
 		return
 	}
