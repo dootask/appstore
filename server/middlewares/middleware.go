@@ -1,6 +1,7 @@
 package middlewares
 
 import (
+	"fmt"
 	"strings"
 
 	"appstore/server/global"
@@ -8,19 +9,26 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// LanguageMiddleware 是一个处理请求语言的中间件
-func LanguageMiddleware() gin.HandlerFunc {
+// Middleware 是一个处理请求的中间件
+func Middleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		// 基础地址
+		scheme := "http"
+		if c.Request.TLS != nil || c.GetHeader("X-Forwarded-Proto") == "https" {
+			scheme = "https"
+		}
+		host := c.Request.Host
+		global.BaseUrl = fmt.Sprintf("%s://%s", scheme, host)
+
+		// 语言偏好
 		langHeader := c.GetHeader("Accept-Language")
-		global.Language = global.DefaultLanguage // 默认为DefaultLanguage
+		global.Language = global.DefaultLanguage
 
 		if langHeader != "" {
-			// 简单处理，取第一个语言偏好
-			// 例如：en-US,en;q=0.9,zh-CN;q=0.8,zh;q=0.7
 			langs := strings.Split(langHeader, ",")
 			if len(langs) > 0 {
 				firstLang := strings.Split(langs[0], ";")[0]
-				firstLang = strings.Split(firstLang, "-")[0] // 取语言代码，如 en, zh
+				firstLang = strings.Split(firstLang, "-")[0]
 				if firstLang != "" {
 					global.Language = strings.ToLower(firstLang)
 				}

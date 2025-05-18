@@ -118,27 +118,7 @@ func routeList(c *gin.Context) {
 		response.ErrorWithDetail(c, global.CodeError, "获取应用列表失败", err)
 		return
 	}
-
-	scheme := "http"
-	if c.Request.TLS != nil || c.GetHeader("X-Forwarded-Proto") == "https" {
-		scheme = "https"
-	}
-	host := c.Request.Host
-
-	for _, app := range apps {
-		if app.Icon != "" {
-			app.Icon = fmt.Sprintf("%s://%s%s", scheme, host, app.Icon)
-		}
-		if app.DownloadURL != "" {
-			app.DownloadURL = fmt.Sprintf("%s://%s%s", scheme, host, app.DownloadURL)
-		}
-		for i := range app.MenuItems {
-			if app.MenuItems[i].Icon != "" {
-				app.MenuItems[i].Icon = fmt.Sprintf("%s://%s%s", scheme, host, app.MenuItems[i].Icon)
-			}
-		}
-	}
-
+	
 	response.SuccessWithData(c, apps)
 }
 
@@ -291,7 +271,7 @@ func runServer(cmd *cobra.Command, args []string) {
 	r := gin.Default()
 
 	// 注册语言中间件
-	r.Use(middlewares.LanguageMiddleware())
+	r.Use(middlewares.Middleware())
 
 	// 创建v1路由组
 	v1 := r.Group("/api/" + global.APIVersion)

@@ -197,12 +197,12 @@ func NewApp(id string, appDir string) *App {
 
 	iconFilename := findIcon(appDir)
 	if iconFilename != "" {
-		app.Icon = fmt.Sprintf("/api/%s/icons/%s/%s", global.APIVersion, id, iconFilename)
+		app.Icon = fmt.Sprintf("%s/api/%s/icons/%s/%s", global.BaseUrl, global.APIVersion, id, iconFilename)
 	} else {
 		app.Icon = ""
 	}
 
-	app.DownloadURL = fmt.Sprintf("/api/%s/download/%s/latest", global.APIVersion, id)
+	app.DownloadURL = fmt.Sprintf("%s/api/%s/download/%s/latest", global.BaseUrl, global.APIVersion, id)
 	app.Versions = findVersions(appDir)
 
 	ymlFile := filepath.Join(appDir, "config.yml")
@@ -275,7 +275,7 @@ func NewApp(id string, appDir string) *App {
 			}
 
 			if yamlMenu.Icon != "" {
-				appMenuItem.Icon = fmt.Sprintf("/api/%s/icons/%s/%s", global.APIVersion, id, filepath.Clean(yamlMenu.Icon))
+				appMenuItem.Icon = fmt.Sprintf("%s/api/%s/icons/%s/%s", global.BaseUrl, global.APIVersion, id, filepath.Clean(yamlMenu.Icon))
 			} else {
 				appMenuItem.Icon = ""
 			}

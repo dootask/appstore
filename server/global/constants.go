@@ -22,4 +22,5 @@ const (
 var (
 	WorkDir  string
 	Language string
+	BaseUrl  string
 )
