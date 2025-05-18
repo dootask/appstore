@@ -403,11 +403,37 @@ func GetLog(appId string, limit int) string {
 	return strings.Join(lines, "\n")
 }
 
-// FindLatestVersionForApp 获取应用的最新版本
-func FindLatestVersionForApp(appId string) (string, error) {
+// FindLatestVersion 获取应用的最新版本
+func FindLatestVersion(appId string) (string, error) {
 	versions := findVersions(appId)
 	if len(versions) == 0 {
 		return "", fmt.Errorf("no versions found for app %s", appId)
 	}
 	return versions[len(versions)-1], nil
+}
+
+// FindResource 查找应用资源文件
+func FindResource(appId, resourcePath string) (string, error) {
+	if appId == "" || resourcePath == "" {
+		return "", fmt.Errorf("appId and resourcePath are required")
+	}
+
+	cleanedAppId := filepath.Clean(appId)
+	cleanedIconPath := filepath.Clean(strings.TrimPrefix(resourcePath, "/"))
+
+	if cleanedAppId != appId || strings.Contains(cleanedAppId, "..") || strings.Contains(cleanedAppId, "/") || strings.Contains(cleanedAppId, "\\") {
+		return "", fmt.Errorf("invalid appId")
+	}
+
+	if strings.Contains(cleanedIconPath, "..") || filepath.IsAbs(cleanedIconPath) {
+		return "", fmt.Errorf("invalid icon path")
+	}
+
+	iconFullPath := filepath.Join(global.WorkDir, "apps", cleanedAppId, cleanedIconPath)
+
+	if _, err := os.Stat(iconFullPath); os.IsNotExist(err) {
+		return "", fmt.Errorf("icon not found")
+	}
+
+	return iconFullPath, nil
 }

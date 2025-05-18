@@ -123,34 +123,13 @@ func routeAppLog(c *gin.Context) {
 // routeAppIcon 处理应用图标请求
 func routeAppIcon(c *gin.Context) {
 	appId := c.Param("appId")
-	iconPath := strings.TrimPrefix(c.Param("iconPath"), "/")
-
-	if appId == "" || iconPath == "" {
-		c.String(http.StatusBadRequest, "App ID and icon path are required")
+	iconPath := c.Param("iconPath")
+	resourcePath, err := models.FindResource(appId, iconPath)
+	if err != nil {
+		c.String(http.StatusBadRequest, err.Error())
 		return
 	}
-
-	cleanedAppId := filepath.Clean(appId)
-	cleanedIconPath := filepath.Clean(iconPath)
-
-	if cleanedAppId != appId || strings.Contains(cleanedAppId, "..") || strings.Contains(cleanedAppId, "/") || strings.Contains(cleanedAppId, "\\") {
-		c.String(http.StatusBadRequest, "Invalid App ID")
-		return
-	}
-
-	if strings.Contains(cleanedIconPath, "..") || filepath.IsAbs(cleanedIconPath) {
-		c.String(http.StatusBadRequest, "Invalid icon path")
-		return
-	}
-
-	iconFullPath := filepath.Join(global.WorkDir, "apps", cleanedAppId, cleanedIconPath)
-
-	if _, err := os.Stat(iconFullPath); os.IsNotExist(err) {
-		c.String(http.StatusNotFound, "Icon not found")
-		return
-	}
-
-	c.File(iconFullPath)
+	c.File(resourcePath)
 }
 
 // routeAppDownload 处理应用下载请求
@@ -179,7 +158,7 @@ func routeAppDownload(c *gin.Context) {
 	versionRegex := regexp.MustCompile(`^v?\d+(\.\d+){1,2}$`)
 
 	if versionParam == "latest" {
-		latestV, err := models.FindLatestVersionForApp(cleanedAppId)
+		latestV, err := models.FindLatestVersion(cleanedAppId)
 		if err != nil {
 			c.String(http.StatusNotFound, fmt.Sprintf("Could not determine latest version for %s: %v", cleanedAppId, err))
 			return
