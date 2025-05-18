@@ -7,21 +7,10 @@ import (
 	"regexp"
 	"sort"
 
-	"appstore/api/global"
+	"appstore/server/global"
 
 	"gopkg.in/yaml.v3"
 )
-
-// AppConfig 应用配置文件结构
-type AppConfig struct {
-	Name        interface{} `yaml:"name"`
-	Description interface{} `yaml:"description"`
-	Tags        []string    `yaml:"tags"`
-	Author      string      `yaml:"author"`
-	Website     string      `yaml:"website"`
-	Github      string      `yaml:"github"`
-	Document    string      `yaml:"document"`
-}
 
 // App 应用信息结构
 type App struct {
@@ -36,6 +25,17 @@ type App struct {
 	Github      string   `json:"github"`
 	Document    string   `json:"document"`
 	DownloadURL string   `json:"download_url"`
+}
+
+// AppYamlConfig 应用配置文件结构
+type AppYamlConfig struct {
+	Name        interface{} `yaml:"name"`
+	Description interface{} `yaml:"description"`
+	Tags        []string    `yaml:"tags"`
+	Author      string      `yaml:"author"`
+	Website     string      `yaml:"website"`
+	Github      string      `yaml:"github"`
+	Document    string      `yaml:"document"`
 }
 
 // getLocalizedValue 获取多语言字符串值
@@ -128,30 +128,30 @@ func NewApp(id string, appDir string) *App {
 	app.DownloadURL = fmt.Sprintf("/api/%s/apps/%s/download/latest", global.APIVersion, id)
 	app.Versions = findVersions(appDir)
 
-	configFile := filepath.Join(appDir, "config.yml")
-	var appConfig AppConfig
+	ymlFile := filepath.Join(appDir, "config.yml")
+	var appYamlConfig AppYamlConfig
 
-	if _, err := os.Stat(configFile); err == nil {
-		data, err := os.ReadFile(configFile)
+	if _, err := os.Stat(ymlFile); err == nil {
+		data, err := os.ReadFile(ymlFile)
 		if err == nil {
-			yaml.Unmarshal(data, &appConfig)
+			yaml.Unmarshal(data, &appYamlConfig)
 		}
 	}
 
-	app.Name = getLocalizedValue(appConfig.Name, global.Language)
+	app.Name = getLocalizedValue(appYamlConfig.Name, global.Language)
 	if app.Name == "" {
 		app.Name = id
 	}
-	app.Description = getLocalizedValue(appConfig.Description, global.Language)
+	app.Description = getLocalizedValue(appYamlConfig.Description, global.Language)
 
-	app.Tags = appConfig.Tags
+	app.Tags = appYamlConfig.Tags
 	if app.Tags == nil {
 		app.Tags = []string{}
 	}
-	app.Author = appConfig.Author
-	app.Website = appConfig.Website
-	app.Github = appConfig.Github
-	app.Document = appConfig.Document
+	app.Author = appYamlConfig.Author
+	app.Website = appYamlConfig.Website
+	app.Github = appYamlConfig.Github
+	app.Document = appYamlConfig.Document
 
 	return app
 }

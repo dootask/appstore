@@ -1,4 +1,4 @@
-module appstore/api
+module appstore/server
 
 go 1.21
 

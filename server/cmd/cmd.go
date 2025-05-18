@@ -1,303 +1,303 @@
 package cmd
 
 import (
-	"archive/tar"
-	"compress/gzip"
-	"fmt"
-	"io"
-	"net/http"
-	"os"
-	"path/filepath"
-	"regexp"
-	"sort"
-	"strings"
+  "archive/tar"
+  "compress/gzip"
+  "fmt"
+  "io"
+  "net/http"
+  "os"
+  "path/filepath"
+  "regexp"
+  "sort"
+  "strings"
 
-	"appstore/api/global"
-	"appstore/api/middlewares"
-	"appstore/api/models"
-	"appstore/api/response"
-	"appstore/api/utils"
+  "appstore/server/global"
+  "appstore/server/middlewares"
+  "appstore/server/models"
+  "appstore/server/response"
+  "appstore/server/utils"
 
-	"github.com/gin-gonic/gin"
-	"github.com/spf13/cobra"
+  "github.com/gin-gonic/gin"
+  "github.com/spf13/cobra"
 )
 
 var (
-	mode    string
-	rootCmd = &cobra.Command{
-		Use:    "appstore",
-		Short:  "DooTask应用商店后端服务",
-		PreRun: runPre,
-		Run:    runServer,
-	}
+  mode    string
+  rootCmd = &cobra.Command{
+    Use:    "appstore",
+    Short:  "DooTask应用商店后端服务",
+    PreRun: runPre,
+    Run:    runServer,
+  }
 )
 
 func init() {
-	rootCmd.PersistentFlags().StringVarP(&global.WorkDir, "work-dir", "w", ".", "工作目录路径")
-	rootCmd.PersistentFlags().StringVarP(&mode, "mode", "m", global.DefaultMode, "运行模式 (debug/release)")
+  rootCmd.PersistentFlags().StringVarP(&global.WorkDir, "work-dir", "w", ".", "工作目录路径")
+  rootCmd.PersistentFlags().StringVarP(&mode, "mode", "m", global.DefaultMode, "运行模式 (debug/release)")
 }
 
 func runPre(cmd *cobra.Command, args []string) {
-	if mode == global.ModeRelease {
-		gin.SetMode(gin.ReleaseMode)
-	} else {
-		gin.SetMode(gin.DebugMode)
-	}
+  if mode == global.ModeRelease {
+    gin.SetMode(gin.ReleaseMode)
+  } else {
+    gin.SetMode(gin.DebugMode)
+  }
 
-	absPath, err := filepath.Abs(global.WorkDir)
-	if err != nil {
-		fmt.Printf("转换工作目录路径失败: %v\n", err)
-		os.Exit(1)
-	}
+  absPath, err := filepath.Abs(global.WorkDir)
+  if err != nil {
+    fmt.Printf("转换工作目录路径失败: %v\n", err)
+    os.Exit(1)
+  }
 
-	if !utils.IsDirExists(absPath) {
-		fmt.Printf("工作目录不存在: %s\n", absPath)
-		os.Exit(1)
-	}
+  if !utils.IsDirExists(absPath) {
+    fmt.Printf("工作目录不存在: %s\n", absPath)
+    os.Exit(1)
+  }
 
-	global.WorkDir = absPath
-	fmt.Printf("工作目录: %s\n", global.WorkDir)
+  global.WorkDir = absPath
+  fmt.Printf("工作目录: %s\n", global.WorkDir)
 }
 
 // findLatestVersionForApp 获取应用的最新版本
 func findLatestVersionForApp(appId string) (string, error) {
-	appRootPath := utils.JoinPath(global.WorkDir, "apps", appId)
-	if !utils.IsDirExists(appRootPath) {
-		return "", fmt.Errorf("application directory for %s not found", appId)
-	}
-	versions := []string{}
-	versionRegex := regexp.MustCompile(`^v?\d+(\.\d+){1,2}$`)
-	entries, err := os.ReadDir(appRootPath)
-	if err != nil {
-		return "", err
-	}
-	for _, entry := range entries {
-		if entry.IsDir() {
-			dirName := entry.Name()
-			if versionRegex.MatchString(dirName) {
-				composePath := filepath.Join(appRootPath, dirName, "docker-compose.yml")
-				if _, err := os.Stat(composePath); err == nil {
-					versions = append(versions, dirName)
-				}
-			}
-		}
-	}
-	if len(versions) == 0 {
-		return "", fmt.Errorf("no valid versions found for app %s", appId)
-	}
-	sort.Strings(versions)
-	return versions[len(versions)-1], nil
+  appRootPath := utils.JoinPath(global.WorkDir, "apps", appId)
+  if !utils.IsDirExists(appRootPath) {
+    return "", fmt.Errorf("application directory for %s not found", appId)
+  }
+  versions := []string{}
+  versionRegex := regexp.MustCompile(`^v?\d+(\.\d+){1,2}$`)
+  entries, err := os.ReadDir(appRootPath)
+  if err != nil {
+    return "", err
+  }
+  for _, entry := range entries {
+    if entry.IsDir() {
+      dirName := entry.Name()
+      if versionRegex.MatchString(dirName) {
+        composePath := filepath.Join(appRootPath, dirName, "docker-compose.yml")
+        if _, err := os.Stat(composePath); err == nil {
+          versions = append(versions, dirName)
+        }
+      }
+    }
+  }
+  if len(versions) == 0 {
+    return "", fmt.Errorf("no valid versions found for app %s", appId)
+  }
+  sort.Strings(versions)
+  return versions[len(versions)-1], nil
 }
 
 // getAppsFromDir 从目录获取所有应用信息
 func getAppsFromDir() ([]*models.App, error) {
-	appsParentDir := utils.JoinPath(global.WorkDir, "apps")
+  appsParentDir := utils.JoinPath(global.WorkDir, "apps")
 
-	if !utils.IsDirExists(appsParentDir) {
-		return nil, fmt.Errorf("apps目录不存在: %s", appsParentDir)
-	}
+  if !utils.IsDirExists(appsParentDir) {
+    return nil, fmt.Errorf("apps目录不存在: %s", appsParentDir)
+  }
 
-	appIDs, err := utils.GetSubDirs(appsParentDir)
-	if err != nil {
-		return nil, err
-	}
+  appIDs, err := utils.GetSubDirs(appsParentDir)
+  if err != nil {
+    return nil, err
+  }
 
-	var apps []*models.App
-	for _, appID := range appIDs {
-		appDir := utils.JoinPath(appsParentDir, appID)
-		apps = append(apps, models.NewApp(appID, appDir))
-	}
+  var apps []*models.App
+  for _, appID := range appIDs {
+    appDir := utils.JoinPath(appsParentDir, appID)
+    apps = append(apps, models.NewApp(appID, appDir))
+  }
 
-	return apps, nil
+  return apps, nil
 }
 
 // routeList 获取应用列表
 func routeList(c *gin.Context) {
-	apps, err := getAppsFromDir()
-	if err != nil {
-		response.ErrorWithDetail(c, global.CodeError, "获取应用列表失败", err)
-		return
-	}
+  apps, err := getAppsFromDir()
+  if err != nil {
+    response.ErrorWithDetail(c, global.CodeError, "获取应用列表失败", err)
+    return
+  }
 
-	scheme := "http"
-	if c.Request.TLS != nil || c.GetHeader("X-Forwarded-Proto") == "https" {
-		scheme = "https"
-	}
-	host := c.Request.Host
+  scheme := "http"
+  if c.Request.TLS != nil || c.GetHeader("X-Forwarded-Proto") == "https" {
+    scheme = "https"
+  }
+  host := c.Request.Host
 
-	for _, app := range apps {
-		if app.Icon != "" {
-			app.Icon = fmt.Sprintf("%s://%s%s", scheme, host, app.Icon)
-		}
-		if app.DownloadURL != "" {
-			app.DownloadURL = fmt.Sprintf("%s://%s%s", scheme, host, app.DownloadURL)
-		}
-	}
+  for _, app := range apps {
+    if app.Icon != "" {
+      app.Icon = fmt.Sprintf("%s://%s%s", scheme, host, app.Icon)
+    }
+    if app.DownloadURL != "" {
+      app.DownloadURL = fmt.Sprintf("%s://%s%s", scheme, host, app.DownloadURL)
+    }
+  }
 
-	response.SuccessWithData(c, apps)
+  response.SuccessWithData(c, apps)
 }
 
 // routeAppIcon 处理应用图标请求
 func routeAppIcon(c *gin.Context) {
-	appId := c.Param("appId")
-	iconFilename := c.Param("iconFilename")
+  appId := c.Param("appId")
+  iconFilename := c.Param("iconFilename")
 
-	if appId == "" || iconFilename == "" {
-		c.String(http.StatusBadRequest, "App ID and icon filename are required")
-		return
-	}
+  if appId == "" || iconFilename == "" {
+    c.String(http.StatusBadRequest, "App ID and icon filename are required")
+    return
+  }
 
-	cleanedAppId := filepath.Clean(appId)
-	cleanedIconFilename := filepath.Clean(iconFilename)
+  cleanedAppId := filepath.Clean(appId)
+  cleanedIconFilename := filepath.Clean(iconFilename)
 
-	if cleanedAppId != appId || strings.Contains(cleanedAppId, "..") || strings.Contains(cleanedAppId, "/") || strings.Contains(cleanedAppId, "\\") ||
-		cleanedIconFilename != iconFilename || strings.Contains(cleanedIconFilename, "..") || strings.Contains(cleanedIconFilename, "/") || strings.Contains(cleanedIconFilename, "\\") {
-		c.String(http.StatusBadRequest, "Invalid path components")
-		return
-	}
+  if cleanedAppId != appId || strings.Contains(cleanedAppId, "..") || strings.Contains(cleanedAppId, "/") || strings.Contains(cleanedAppId, "\\") ||
+    cleanedIconFilename != iconFilename || strings.Contains(cleanedIconFilename, "..") || strings.Contains(cleanedIconFilename, "/") || strings.Contains(cleanedIconFilename, "\\") {
+    c.String(http.StatusBadRequest, "Invalid path components")
+    return
+  }
 
-	iconPath := utils.JoinPath(global.WorkDir, "apps", cleanedAppId, cleanedIconFilename)
+  iconPath := utils.JoinPath(global.WorkDir, "apps", cleanedAppId, cleanedIconFilename)
 
-	if _, err := os.Stat(iconPath); os.IsNotExist(err) {
-		c.String(http.StatusNotFound, "Icon not found")
-		return
-	}
+  if _, err := os.Stat(iconPath); os.IsNotExist(err) {
+    c.String(http.StatusNotFound, "Icon not found")
+    return
+  }
 
-	c.File(iconPath)
+  c.File(iconPath)
 }
 
 // routeAppDownload 处理应用下载请求
 func routeAppDownload(c *gin.Context) {
-	appId := c.Param("appId")
-	versionParam := strings.TrimPrefix(c.Param("version"), "/")
+  appId := c.Param("appId")
+  versionParam := strings.TrimPrefix(c.Param("version"), "/")
 
-	if appId == "" {
-		c.String(http.StatusBadRequest, "App ID is required")
-		return
-	}
-	cleanedAppId := filepath.Clean(appId)
-	if cleanedAppId != appId || strings.Contains(cleanedAppId, "..") || strings.Contains(cleanedAppId, "/") || strings.Contains(cleanedAppId, "\\") {
-		c.String(http.StatusBadRequest, "Invalid App ID")
-		return
-	}
+  if appId == "" {
+    c.String(http.StatusBadRequest, "App ID is required")
+    return
+  }
+  cleanedAppId := filepath.Clean(appId)
+  if cleanedAppId != appId || strings.Contains(cleanedAppId, "..") || strings.Contains(cleanedAppId, "/") || strings.Contains(cleanedAppId, "\\") {
+    c.String(http.StatusBadRequest, "Invalid App ID")
+    return
+  }
 
-	appRootPath := utils.JoinPath(global.WorkDir, "apps", cleanedAppId)
-	if !utils.IsDirExists(appRootPath) {
-		c.String(http.StatusNotFound, fmt.Sprintf("Application directory not found: %s", appRootPath))
-		return
-	}
+  appRootPath := utils.JoinPath(global.WorkDir, "apps", cleanedAppId)
+  if !utils.IsDirExists(appRootPath) {
+    c.String(http.StatusNotFound, fmt.Sprintf("Application directory not found: %s", appRootPath))
+    return
+  }
 
-	var downloadFilename string
-	effectiveVersion := versionParam
-	versionRegex := regexp.MustCompile(`^v?\d+(\.\d+){1,2}$`)
+  var downloadFilename string
+  effectiveVersion := versionParam
+  versionRegex := regexp.MustCompile(`^v?\d+(\.\d+){1,2}$`)
 
-	if versionParam == "latest" {
-		latestV, err := findLatestVersionForApp(cleanedAppId)
-		if err != nil {
-			c.String(http.StatusNotFound, fmt.Sprintf("Could not determine latest version for %s: %v", cleanedAppId, err))
-			return
-		}
-		effectiveVersion = latestV
-		downloadFilename = fmt.Sprintf("%s-%s.tar.gz", cleanedAppId, effectiveVersion)
-	} else if versionParam != "" {
-		cleanedVersion := filepath.Clean(effectiveVersion)
-		if cleanedVersion != effectiveVersion || strings.Contains(cleanedVersion, "..") || strings.Contains(cleanedVersion, "/") || strings.Contains(cleanedVersion, "\\") || !versionRegex.MatchString(cleanedVersion) {
-			c.String(http.StatusBadRequest, "Invalid or malformed version parameter")
-			return
-		}
-		if !utils.IsDirExists(utils.JoinPath(appRootPath, cleanedVersion)) {
-			c.String(http.StatusNotFound, fmt.Sprintf("Specified version %s not found for app %s", cleanedVersion, cleanedAppId))
-			return
-		}
-		downloadFilename = fmt.Sprintf("%s-%s.tar.gz", cleanedAppId, cleanedVersion)
-	} else {
-		downloadFilename = fmt.Sprintf("%s.tar.gz", cleanedAppId)
-	}
+  if versionParam == "latest" {
+    latestV, err := findLatestVersionForApp(cleanedAppId)
+    if err != nil {
+      c.String(http.StatusNotFound, fmt.Sprintf("Could not determine latest version for %s: %v", cleanedAppId, err))
+      return
+    }
+    effectiveVersion = latestV
+    downloadFilename = fmt.Sprintf("%s-%s.tar.gz", cleanedAppId, effectiveVersion)
+  } else if versionParam != "" {
+    cleanedVersion := filepath.Clean(effectiveVersion)
+    if cleanedVersion != effectiveVersion || strings.Contains(cleanedVersion, "..") || strings.Contains(cleanedVersion, "/") || strings.Contains(cleanedVersion, "\\") || !versionRegex.MatchString(cleanedVersion) {
+      c.String(http.StatusBadRequest, "Invalid or malformed version parameter")
+      return
+    }
+    if !utils.IsDirExists(utils.JoinPath(appRootPath, cleanedVersion)) {
+      c.String(http.StatusNotFound, fmt.Sprintf("Specified version %s not found for app %s", cleanedVersion, cleanedAppId))
+      return
+    }
+    downloadFilename = fmt.Sprintf("%s-%s.tar.gz", cleanedAppId, cleanedVersion)
+  } else {
+    downloadFilename = fmt.Sprintf("%s.tar.gz", cleanedAppId)
+  }
 
-	c.Header("Content-Description", "File Transfer")
-	c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", downloadFilename))
-	c.Header("Content-Type", "application/gzip")
-	c.Header("Transfer-Encoding", "chunked")
+  c.Header("Content-Description", "File Transfer")
+  c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", downloadFilename))
+  c.Header("Content-Type", "application/gzip")
+  c.Header("Transfer-Encoding", "chunked")
 
-	gw := gzip.NewWriter(c.Writer)
-	defer gw.Close()
-	tw := tar.NewWriter(gw)
-	defer tw.Close()
+  gw := gzip.NewWriter(c.Writer)
+  defer gw.Close()
+  tw := tar.NewWriter(gw)
+  defer tw.Close()
 
-	err := filepath.Walk(appRootPath, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
+  err := filepath.Walk(appRootPath, func(path string, info os.FileInfo, err error) error {
+    if err != nil {
+      return err
+    }
 
-		relPath, err := filepath.Rel(appRootPath, path)
-		if err != nil {
-			return err
-		}
-		if relPath == "." { // 跳过根目录
-			return nil
-		}
+    relPath, err := filepath.Rel(appRootPath, path)
+    if err != nil {
+      return err
+    }
+    if relPath == "." { // 跳过根目录
+      return nil
+    }
 
-		// 当指定了版本时，只保留非版本目录的文件和指定版本的目录
-		if effectiveVersion != "" {
-			// 判断是否为版本目录
-			parts := strings.Split(relPath, string(filepath.Separator))
-			if len(parts) > 0 && info.IsDir() && versionRegex.MatchString(parts[0]) {
-				// 如果是版本目录，但不是指定的版本，则跳过
-				if parts[0] != effectiveVersion {
-					return filepath.SkipDir
-				}
-			}
-		}
+    // 当指定了版本时，只保留非版本目录的文件和指定版本的目录
+    if effectiveVersion != "" {
+      // 判断是否为版本目录
+      parts := strings.Split(relPath, string(filepath.Separator))
+      if len(parts) > 0 && info.IsDir() && versionRegex.MatchString(parts[0]) {
+        // 如果是版本目录，但不是指定的版本，则跳过
+        if parts[0] != effectiveVersion {
+          return filepath.SkipDir
+        }
+      }
+    }
 
-		header, err := tar.FileInfoHeader(info, info.Name())
-		if err != nil {
-			return err
-		}
-		header.Name = filepath.ToSlash(relPath)
+    header, err := tar.FileInfoHeader(info, info.Name())
+    if err != nil {
+      return err
+    }
+    header.Name = filepath.ToSlash(relPath)
 
-		if err := tw.WriteHeader(header); err != nil {
-			return err
-		}
+    if err := tw.WriteHeader(header); err != nil {
+      return err
+    }
 
-		if !info.IsDir() {
-			f, err := os.Open(path)
-			if err != nil {
-				return err
-			}
-			defer f.Close()
-			if _, err := io.Copy(tw, f); err != nil {
-				return err
-			}
-		}
-		return nil
-	})
+    if !info.IsDir() {
+      f, err := os.Open(path)
+      if err != nil {
+        return err
+      }
+      defer f.Close()
+      if _, err := io.Copy(tw, f); err != nil {
+        return err
+      }
+    }
+    return nil
+  })
 
-	if err != nil {
-		fmt.Printf("Error during tar.gz creation for %s (version: %s): %v\n", cleanedAppId, effectiveVersion, err)
-	}
+  if err != nil {
+    fmt.Printf("Error during tar.gz creation for %s (version: %s): %v\n", cleanedAppId, effectiveVersion, err)
+  }
 }
 
 func runServer(cmd *cobra.Command, args []string) {
-	// 创建默认的gin路由引擎
-	r := gin.Default()
+  // 创建默认的gin路由引擎
+  r := gin.Default()
 
-	// 注册语言中间件
-	r.Use(middlewares.LanguageMiddleware())
+  // 注册语言中间件
+  r.Use(middlewares.LanguageMiddleware())
 
-	// 创建v1路由组
-	v1 := r.Group("/api/" + global.APIVersion)
-	{
-		// 获取应用列表
-		v1.GET("/list", routeList)
-		v1.GET("/icons/:appId/:iconFilename", routeAppIcon)
-		v1.GET("/apps/:appId/download/*version", routeAppDownload)
-	}
+  // 创建v1路由组
+  v1 := r.Group("/api/" + global.APIVersion)
+  {
+    // 获取应用列表
+    v1.GET("/list", routeList)
+    v1.GET("/icons/:appId/:iconFilename", routeAppIcon)
+    v1.GET("/apps/:appId/download/*version", routeAppDownload)
+  }
 
-	// 启动服务器
-	r.Run(":" + global.DefaultPort)
+  // 启动服务器
+  r.Run(":" + global.DefaultPort)
 }
 
 // Execute 执行命令
 func Execute() error {
-	return rootCmd.Execute()
+  return rootCmd.Execute()
 }
