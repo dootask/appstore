@@ -164,6 +164,14 @@ func routeAppReadme(c *gin.Context) {
 	})
 }
 
+// routeAppLog 获取应用日志
+func routeAppLog(c *gin.Context) {
+	appId := c.Param("appId")
+	response.SuccessWithData(c, gin.H{
+		"log": models.GetLog(appId, 200),
+	})
+}
+
 // routeAppIcon 处理应用图标请求
 func routeAppIcon(c *gin.Context) {
 	appId := c.Param("appId")
@@ -321,7 +329,8 @@ func runServer(cmd *cobra.Command, args []string) {
 		v1.GET("/list", routeList)                            // 获取应用列表
 		v1.GET("/one/:appId", routeAppOne)                    // 获取单个应用
 		v1.GET("/readme/:appId", routeAppReadme)              // 获取应用自述文件
-		v1.GET("/icons/:appId/*iconPath", routeAppIcon)       // 查看应用图标
+		v1.GET("/log/:appId", routeAppLog)                    // 获取应用日志
+		v1.GET("/icon/:appId/*iconPath", routeAppIcon)        // 查看应用图标
 		v1.GET("/download/:appId/*version", routeAppDownload) // 下载应用压缩包
 	}
 
