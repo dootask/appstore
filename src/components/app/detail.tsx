@@ -1,18 +1,18 @@
-import type { AppItem, AppStatus } from "@/types/app"
-import type { AppLogRef } from "@/components/app-log.tsx"
-import { Button } from "@/components/ui/button"
+import type { AppItem, AppStatus } from "@/types/app.ts"
+import type { AppLogRef } from "@/components/app/log.tsx"
+import { Button } from "@/components/ui/button.tsx"
 import { ScrollArea } from "@/components/ui/scroll-area.tsx";
 import { ExternalLink, Loader2, LoaderCircle, RefreshCw } from "lucide-react"
 import { useTranslation } from "react-i18next";
 import { requestAPI } from "@dootask/tools";
 import { useEffect, useState, useRef } from "react";
-import { Skeleton } from "./ui/skeleton";
+import { Skeleton } from "@/components/ui/skeleton.tsx";
 import ReactMarkdown from "react-markdown"
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
 import { darcula as SyntaxStyle } from 'react-syntax-highlighter/dist/esm/styles/prism'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
-import { AppLog } from "@/components/app-log.tsx";
-import { eventOn } from "@/lib/events";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs.tsx";
+import { AppLog } from "@/components/app/log.tsx";
+import { eventOn } from "@/lib/events.ts";
 import { useAppStore } from "@/lib/store.ts";
 
 interface AppDetailProps {

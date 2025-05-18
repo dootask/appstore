@@ -1,6 +1,6 @@
 import { requestAPI } from "@dootask/tools";
 import { useEffect, useState, useRef, forwardRef, useImperativeHandle } from "react";
-import { Skeleton } from "./ui/skeleton";
+import { Skeleton } from "@/components/ui/skeleton.tsx";
 import { useTranslation } from "react-i18next";
 import type { AppItem } from "@/types/app.ts";
 import { useAppStore } from "@/lib/store.ts";

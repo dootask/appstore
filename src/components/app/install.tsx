@@ -1,19 +1,19 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { ScrollArea } from "./ui/scroll-area"
+import { Button } from "@/components/ui/button.tsx"
+import { Input } from "@/components/ui/input.tsx"
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form.tsx"
+import { ScrollArea } from "@/components/ui/scroll-area.tsx"
 import { useTranslation } from "react-i18next"
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import { requestAPI } from "@dootask/tools";
-import { eventEmit } from "@/lib/events";
+import { eventEmit } from "@/lib/events.ts";
 import { Alert } from "@/components/custom/prompt";
-import { useAppStore } from "@/lib/store"
-import Select from "@/components/custom/select"
-import { compareVersions } from "@/lib/utils"
+import { useAppStore } from "@/lib/store.ts"
+import Select from "@/components/custom/select.tsx"
+import { compareVersions } from "@/lib/utils.ts"
 
 interface AppInstallProps {
   appName: string

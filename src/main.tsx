@@ -1,10 +1,10 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import './styles/index.css'
-import App from './App.tsx'
+import '@/styles/index.css'
+import App from '@/App.tsx'
 import { props } from '@dootask/tools'
 import { BrowserRouter } from 'react-router-dom'
-import './i18n.ts'
+import '@/i18n.ts'
 
 // 设置主题
 if (props.themeName === 'dark') {

@@ -1,5 +1,5 @@
-import {Input} from "@/components/ui/input";
-import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input.tsx";
+import {Button} from "@/components/ui/button.tsx";
 import {Search} from "lucide-react";
 import {type ChangeEvent, useState} from "react";
 import {useTranslation} from "react-i18next";
