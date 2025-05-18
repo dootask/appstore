@@ -1,7 +1,7 @@
 package response
 
 import (
-	"appstore/backend/global"
+	"appstore/api/global"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

@@ -7,7 +7,7 @@ import (
 	"regexp"
 	"sort"
 
-	"appstore/backend/global"
+	"appstore/api/global"
 
 	"gopkg.in/yaml.v3"
 )

@@ -12,11 +12,11 @@ import (
 	"sort"
 	"strings"
 
-	"appstore/backend/global"
-	"appstore/backend/middlewares"
-	"appstore/backend/models"
-	"appstore/backend/response"
-	"appstore/backend/utils"
+	"appstore/api/global"
+	"appstore/api/middlewares"
+	"appstore/api/models"
+	"appstore/api/response"
+	"appstore/api/utils"
 
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/cobra"

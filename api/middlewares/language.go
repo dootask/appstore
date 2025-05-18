@@ -3,7 +3,7 @@ package middlewares
 import (
 	"strings"
 
-	"appstore/backend/global"
+	"appstore/api/global"
 
 	"github.com/gin-gonic/gin"
 )

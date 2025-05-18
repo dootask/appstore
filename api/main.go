@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"appstore/backend/cmd"
+	"appstore/api/cmd"
 )
 
 func main() {

@@ -1,4 +1,4 @@
-module appstore/backend
+module appstore/api
 
 go 1.21
 
