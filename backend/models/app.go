@@ -1,39 +1,41 @@
 package models
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"regexp"
 	"sort"
 
-	"appstore/backend/global" // Assuming utils.IsDirExists exists or we add it
+	"appstore/backend/global"
 
 	"gopkg.in/yaml.v3"
 )
 
 // AppConfig 代表 config.yml 的结构
 type AppConfig struct {
-	Name        interface{} `yaml:"name"`        // 应用名称（支持多语言，可以是string或map）
-	Description interface{} `yaml:"description"` // 应用描述（支持多语言，可以是string或map）
-	Tags        []string    `yaml:"tags"`        // 应用标签
-	Author      string      `yaml:"author"`      // 作者名称
-	Website     string      `yaml:"website"`     // 网站地址
-	Github      string      `yaml:"github"`      // GitHub 仓库地址（可选）
-	Document    string      `yaml:"document"`    // 文档地址（可选）
+	Name        interface{} `yaml:"name"`
+	Description interface{} `yaml:"description"`
+	Tags        []string    `yaml:"tags"`
+	Author      string      `yaml:"author"`
+	Website     string      `yaml:"website"`
+	Github      string      `yaml:"github"`
+	Document    string      `yaml:"document"`
 }
 
 // App 应用信息结构体，用于API响应
 type App struct {
 	ID          string   `json:"id"`
-	Name        string   `json:"name"`        // 最终选择的语言版本
-	Description string   `json:"description"` // 最终选择的语言版本
-	Icon        string   `json:"icon"`
-	Versions    []string `json:"versions"` // 改为 versions 数组
+	Name        string   `json:"name"`
+	Description string   `json:"description"`
+	Icon        string   `json:"icon"` // 将是完整的URL路径, 但在这里先生成相对路径
+	Versions    []string `json:"versions"`
 	Tags        []string `json:"tags"`
 	Author      string   `json:"author"`
 	Website     string   `json:"website"`
 	Github      string   `json:"github"`
 	Document    string   `json:"document"`
+	DownloadURL string   `json:"download_url"` // 新增下载地址字段
 }
 
 // getLocalizedValue 从 interface{} 中获取指定语言的字符串值
@@ -80,7 +82,7 @@ func findIcon(appDir string) string {
 	for _, candidate := range iconCandidates {
 		iconPath := filepath.Join(appDir, candidate)
 		if _, err := os.Stat(iconPath); err == nil {
-			return candidate // 返回相对路径的文件名
+			return candidate
 		}
 	}
 	return ""
@@ -121,10 +123,17 @@ func NewApp(id string, appDir string) *App {
 		Versions: []string{},
 	}
 
-	// 查找图标
-	app.Icon = findIcon(appDir)
+	iconFilename := findIcon(appDir)
+	if iconFilename != "" {
+		// 生成相对路径，将在handler中转换为完整URL
+		app.Icon = fmt.Sprintf("/api/%s/icons/%s/%s", global.APIVersion, id, iconFilename)
+	} else {
+		app.Icon = "" // 确保空字符串而不是nil
+	}
 
-	// 查找版本
+	// 设置下载URL的相对路径
+	app.DownloadURL = fmt.Sprintf("/api/%s/apps/%s/download/latest", global.APIVersion, id)
+
 	app.Versions = findVersions(appDir)
 
 	configFile := filepath.Join(appDir, "config.yml")
