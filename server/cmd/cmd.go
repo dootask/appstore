@@ -132,6 +132,11 @@ func routeList(c *gin.Context) {
     if app.DownloadURL != "" {
       app.DownloadURL = fmt.Sprintf("%s://%s%s", scheme, host, app.DownloadURL)
     }
+    for i := range app.MenuItems {
+      if app.MenuItems[i].Icon != "" {
+        app.MenuItems[i].Icon = fmt.Sprintf("%s://%s%s", scheme, host, app.MenuItems[i].Icon)
+      }
+    }
   }
 
   response.SuccessWithData(c, apps)
@@ -140,30 +145,34 @@ func routeList(c *gin.Context) {
 // routeAppIcon 处理应用图标请求
 func routeAppIcon(c *gin.Context) {
   appId := c.Param("appId")
-  iconFilename := c.Param("iconFilename")
+  iconPath := c.Param("iconPath")
 
-  if appId == "" || iconFilename == "" {
-    c.String(http.StatusBadRequest, "App ID and icon filename are required")
+  if appId == "" || iconPath == "" {
+    c.String(http.StatusBadRequest, "App ID and icon path are required")
     return
   }
 
   cleanedAppId := filepath.Clean(appId)
-  cleanedIconFilename := filepath.Clean(iconFilename)
+  cleanedIconPath := filepath.Clean(iconPath)
 
-  if cleanedAppId != appId || strings.Contains(cleanedAppId, "..") || strings.Contains(cleanedAppId, "/") || strings.Contains(cleanedAppId, "\\") ||
-    cleanedIconFilename != iconFilename || strings.Contains(cleanedIconFilename, "..") || strings.Contains(cleanedIconFilename, "/") || strings.Contains(cleanedIconFilename, "\\") {
-    c.String(http.StatusBadRequest, "Invalid path components")
+  if cleanedAppId != appId || strings.Contains(cleanedAppId, "..") || strings.Contains(cleanedAppId, "/") || strings.Contains(cleanedAppId, "\\") {
+    c.String(http.StatusBadRequest, "Invalid App ID")
     return
   }
 
-  iconPath := utils.JoinPath(global.WorkDir, "apps", cleanedAppId, cleanedIconFilename)
+  if strings.Contains(cleanedIconPath, "..") || filepath.IsAbs(cleanedIconPath) {
+    c.String(http.StatusBadRequest, "Invalid icon path")
+    return
+  }
 
-  if _, err := os.Stat(iconPath); os.IsNotExist(err) {
+  iconFullPath := utils.JoinPath(global.WorkDir, "apps", cleanedAppId, cleanedIconPath)
+
+  if _, err := os.Stat(iconFullPath); os.IsNotExist(err) {
     c.String(http.StatusNotFound, "Icon not found")
     return
   }
 
-  c.File(iconPath)
+  c.File(iconFullPath)
 }
 
 // routeAppDownload 处理应用下载请求
@@ -289,8 +298,8 @@ func runServer(cmd *cobra.Command, args []string) {
   {
     // 获取应用列表
     v1.GET("/list", routeList)
-    v1.GET("/icons/:appId/:iconFilename", routeAppIcon)
-    v1.GET("/apps/:appId/download/*version", routeAppDownload)
+    v1.GET("/icons/:appId/*iconPath", routeAppIcon)
+    v1.GET("/download/:appId/*version", routeAppDownload)
   }
 
   // 启动服务器
