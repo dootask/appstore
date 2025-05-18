@@ -13,7 +13,7 @@ import { darcula as SyntaxStyle } from 'react-syntax-highlighter/dist/esm/styles
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs.tsx";
 import { AppLog } from "@/components/app/log.tsx";
 import { eventOn } from "@/lib/events.ts";
-import { useAppStore } from "@/lib/store.ts";
+import { useAppStore } from "@/store/app";
 
 interface AppDetailProps {
   appName: string

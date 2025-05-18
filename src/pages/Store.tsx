@@ -11,7 +11,7 @@ import { AppDetail } from "@/components/app/detail.tsx"
 import { beforeClose } from "@/lib/utils.ts";
 import { AppInstall } from '@/components/app/install.tsx';
 import PromptPortal, { Alert, Notice } from "@/components/custom/prompt";
-import { useAppStore } from '@/lib/store';
+import { useAppStore } from '@/store/app';
 import Dropdown from "@/components/custom/dropdown.tsx";
 import Drawer from "@/components/custom/drawer.tsx";
 

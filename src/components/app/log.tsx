@@ -3,7 +3,7 @@ import { useEffect, useState, useRef, forwardRef, useImperativeHandle } from "re
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 import { useTranslation } from "react-i18next";
 import type { AppItem } from "@/types/app.ts";
-import { useAppStore } from "@/lib/store.ts";
+import { useAppStore } from "@/store/app";
 
 interface AppLogProps {
   appName: string

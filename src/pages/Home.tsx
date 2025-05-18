@@ -69,10 +69,9 @@ const supportedLanguagesMap: Record<string, string> = {
 
 const languageOptionsForDropdown = Object.entries(supportedLanguagesMap).map(([value, label]) => ({label, value}));
 
-const Main: React.FC = () => {
+const Home: React.FC = () => {
   const [currentTheme, setCurrentTheme] = useState(() => {
     if (typeof window !== 'undefined') {
-      // Initialize from document.body class, which should be set by main.tsx
       return document.body.classList.contains('dark') ? 'dark' : 'light';
     }
     return 'light';
@@ -92,27 +91,23 @@ const Main: React.FC = () => {
       newTheme = 'dark';
     }
     setCurrentTheme(newTheme);
-    localStorage.setItem('theme', newTheme); // Save to localStorage
+    localStorage.setItem('theme', newTheme);
   };
 
   const handleLanguageChange = (langCode: string) => {
     if (supportedLanguagesMap[langCode]) {
       i18n.changeLanguage(langCode);
       localStorage.setItem('language', langCode);
-      // setCurrentLanguage will be updated by the event listener
     }
   };
 
   useEffect(() => {
-    // This observer syncs the component state if document.body.class changes externally.
-    // It also ensures localStorage is updated if the change didn't originate from toggleTheme.
     const observer = new MutationObserver((mutationsList) => {
       for (const mutation of mutationsList) {
         if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
           const newThemeOnBody = document.body.classList.contains('dark') ? 'dark' : 'light';
           if (newThemeOnBody !== currentTheme) {
             setCurrentTheme(newThemeOnBody);
-            // If the change was external, also update localStorage to reflect the new body state.
             const storedTheme = localStorage.getItem('theme');
             if (newThemeOnBody !== storedTheme) {
               localStorage.setItem('theme', newThemeOnBody);
@@ -135,7 +130,7 @@ const Main: React.FC = () => {
       observer.disconnect();
       i18n.off('languageChanged', i18nLanguageChanged);
     };
-  }, [currentTheme]); // Rerun if currentTheme changes to keep observer logic consistent
+  }, [currentTheme]);
 
   return (
     <div className="bg-white dark:bg-black text-gray-900 dark:text-white min-h-screen">
@@ -271,4 +266,4 @@ const Main: React.FC = () => {
   );
 }
 
-export default Main;
+export default Home;

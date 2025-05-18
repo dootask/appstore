@@ -11,7 +11,7 @@ import { useState } from "react";
 import { requestAPI } from "@dootask/tools";
 import { eventEmit } from "@/lib/events.ts";
 import { Alert } from "@/components/custom/prompt";
-import { useAppStore } from "@/lib/store.ts"
+import { useAppStore } from "@/store/app"
 import Select from "@/components/custom/select.tsx"
 import { compareVersions } from "@/lib/utils.ts"
 
