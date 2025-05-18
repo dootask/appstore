@@ -1,12 +1,12 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Home from '@/pages/Home';
-import Store from '@/pages/Store';
+import Internal from '@/pages/Internal';
 
 function App() {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
-      <Route path="/store" element={<Store />} />
+      <Route path="/internal" element={<Internal />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

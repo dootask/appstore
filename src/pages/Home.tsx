@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronDown, Globe, UserCircle, Zap, Sparkles, ArrowRight, Heart, Filter, Folder, Activity, Wallet, Sun, Moon } from 'lucide-react';
 import i18n from '@/i18n';
+import LogoIcon from '@/assets/logo.svg'
 import Dropdown from '@/components/custom/dropdown';
 import {
   supportedLanguagesMap,
@@ -143,10 +144,7 @@ const Home: React.FC = () => {
       <header className="px-8 md:px-16 h-17 flex items-center">
         <div className="container mx-auto flex items-center">
           <div className="flex items-center space-x-2 flex-1 justify-start">
-            <svg className="w-7 h-7" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
-              <path d="M827.733333 243.2c-46.933333-46.933333-106.666667-81.066667-170.666666-98.133333-29.866667-8.533333-68.266667-12.8-98.133334-12.8H85.333333v192l132.266667 132.266666V264.533333H554.666667c34.133333 0 68.266667 8.533333 98.133333 21.333334 29.866667 12.8 55.466667 29.866667 76.8 51.2 46.933333 46.933333 72.533333 106.666667 72.533333 174.933333s-25.6 128-72.533333 174.933333c-46.933333 46.933333-106.666667 72.533333-174.933333 72.533334H409.6L273.066667 896H554.666667c209.066667 0 379.733333-170.666667 379.733333-379.733333 4.266667-110.933333-38.4-204.8-106.666667-273.066667z" fill="#8BCF70"></path>
-              <path d="M657.066667 320V512l-247.466667 247.466667-132.266667 132.266666L85.333333 704V512l136.533334 136.533333 55.466666 55.466667z" fill="#FFDD33"></path>
-            </svg>
+            <img src={LogoIcon} alt="Logo" className="w-7 h-7" />
             <span className="text-lg font-semibold text-gray-500 dark:text-gray-400">App Store</span>
           </div>
           <nav className="hidden md:flex items-center space-x-6 flex-1 justify-center min-w-0">

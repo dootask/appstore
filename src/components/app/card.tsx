@@ -1,6 +1,6 @@
 import {Badge} from "@/components/ui/badge.tsx";
 import {Card, CardContent, CardHeader} from "@/components/ui/card.tsx";
-import Icon from '@/assets/icon.svg'
+import AppIcon from '@/assets/app.svg'
 import {useTranslation} from "react-i18next";
 import type { AppStatus } from "@/types/app.ts";
 
@@ -32,7 +32,7 @@ export function AppCard({icon, title, description, status, upgradeable, category
                 </div>
               ) : (
                 <div className="relative h-10 w-10">
-                  <img src={Icon} alt={title} className="object-cover rounded-md" />
+                  <img src={AppIcon} alt={title} className="object-cover rounded-md" />
                 </div>
               )}
             </div>
