@@ -72,7 +72,7 @@ func runServer(*cobra.Command, []string) {
 		v1.GET("/one/:appId", routeAppOne)                    // 获取单个应用
 		v1.GET("/readme/:appId", routeAppReadme)              // 获取应用自述文件
 		v1.GET("/log/:appId", routeAppLog)                    // 获取应用日志
-		v1.GET("/icon/:appId/*iconPath", routeAppIcon)        // 查看应用图标
+		v1.GET("/asset/:appId/*assetPath", routeAppAsset)     // 查看应用资源
 		v1.GET("/download/:appId/*version", routeAppDownload) // 下载应用压缩包
 	}
 
@@ -120,16 +120,16 @@ func routeAppLog(c *gin.Context) {
 	})
 }
 
-// routeAppIcon 处理应用图标请求
-func routeAppIcon(c *gin.Context) {
+// routeAppAsset 处理应用资源请求
+func routeAppAsset(c *gin.Context) {
 	appId := c.Param("appId")
-	iconPath := c.Param("iconPath")
-	resourcePath, err := models.FindResource(appId, iconPath)
+	assetPath := c.Param("assetPath")
+	filePath, err := models.FindAsset(appId, assetPath)
 	if err != nil {
 		c.String(http.StatusBadRequest, err.Error())
 		return
 	}
-	c.File(resourcePath)
+	c.File(filePath)
 }
 
 // routeAppDownload 处理应用下载请求

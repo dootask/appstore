@@ -239,7 +239,7 @@ func NewApp(appId string) *App {
 
 	iconFilename := findIcon(app.ID)
 	if iconFilename != "" {
-		app.Icon = fmt.Sprintf("%s/api/%s/icon/%s/%s", global.BaseUrl, global.APIVersion, app.ID, iconFilename)
+		app.Icon = fmt.Sprintf("%s/api/%s/asset/%s/%s", global.BaseUrl, global.APIVersion, app.ID, iconFilename)
 	} else {
 		app.Icon = ""
 	}
@@ -312,7 +312,7 @@ func NewApp(appId string) *App {
 			if menu.Icon != "" {
 				// 使用 filepath.Clean 来处理相对路径，确保路径的正确性
 				cleanedIconPath := filepath.Clean(menu.Icon)
-				appMenuItem.Icon = fmt.Sprintf("%s/api/%s/icons/%s/%s", global.BaseUrl, global.APIVersion, app.ID, cleanedIconPath)
+				appMenuItem.Icon = fmt.Sprintf("%s/api/%s/asset/%s/%s", global.BaseUrl, global.APIVersion, app.ID, cleanedIconPath)
 			} else {
 				appMenuItem.Icon = ""
 			}
@@ -412,28 +412,28 @@ func FindLatestVersion(appId string) (string, error) {
 	return versions[len(versions)-1], nil
 }
 
-// FindResource 查找应用资源文件
-func FindResource(appId, resourcePath string) (string, error) {
-	if appId == "" || resourcePath == "" {
-		return "", fmt.Errorf("appId and resourcePath are required")
+// FindAsset 查找应用资源文件
+func FindAsset(appId, assetPath string) (string, error) {
+	if appId == "" || assetPath == "" {
+		return "", fmt.Errorf("appId and assetPath are required")
 	}
 
 	cleanedAppId := filepath.Clean(appId)
-	cleanedIconPath := filepath.Clean(strings.TrimPrefix(resourcePath, "/"))
+	cleanedAssetPath := filepath.Clean(strings.TrimPrefix(assetPath, "/"))
 
 	if cleanedAppId != appId || strings.Contains(cleanedAppId, "..") || strings.Contains(cleanedAppId, "/") || strings.Contains(cleanedAppId, "\\") {
 		return "", fmt.Errorf("invalid appId")
 	}
 
-	if strings.Contains(cleanedIconPath, "..") || filepath.IsAbs(cleanedIconPath) {
-		return "", fmt.Errorf("invalid icon path")
+	if strings.Contains(cleanedAssetPath, "..") || filepath.IsAbs(cleanedAssetPath) {
+		return "", fmt.Errorf("invalid asset path")
 	}
 
-	iconFullPath := filepath.Join(global.WorkDir, "apps", cleanedAppId, cleanedIconPath)
+	assetFullPath := filepath.Join(global.WorkDir, "apps", cleanedAppId, cleanedAssetPath)
 
-	if _, err := os.Stat(iconFullPath); os.IsNotExist(err) {
-		return "", fmt.Errorf("icon not found")
+	if _, err := os.Stat(assetFullPath); os.IsNotExist(err) {
+		return "", fmt.Errorf("asset not found")
 	}
 
-	return iconFullPath, nil
+	return assetFullPath, nil
 }
