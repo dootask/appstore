@@ -1,0 +1,16 @@
+services:
+  office:
+    image: "onlyoffice/documentserver:8.2.2.1"
+    restart: unless-stopped
+    volumes:
+      - ./etc/documentserver/default.json:/etc/onlyoffice/documentserver/default.json
+      - ./resources/require.js:/var/www/onlyoffice/documentserver/web-apps/vendor/requirejs/require.js
+      - ./resources/common/main/resources/img/header:/var/www/onlyoffice/documentserver/web-apps/apps/common/main/resources/img/header
+      - ./resources/documenteditor/main/resources/css/app.css:/var/www/onlyoffice/documentserver/web-apps/apps/documenteditor/main/resources/css/app.css
+      - ./resources/documenteditor/mobile/css/526.caf35c11a8d72ca5ac85.css:/var/www/onlyoffice/documentserver/web-apps/apps/documenteditor/mobile/css/526.caf35c11a8d72ca5ac85.css
+      - ./resources/presentationeditor/main/resources/css/app.css:/var/www/onlyoffice/documentserver/web-apps/apps/presentationeditor/main/resources/css/app.css
+      - ./resources/presentationeditor/mobile/css/923.f9cf19de1a25c2e7bf8b.css:/var/www/onlyoffice/documentserver/web-apps/apps/presentationeditor/mobile/css/923.f9cf19de1a25c2e7bf8b.css
+      - ./resources/spreadsheeteditor/main/resources/css/app.css:/var/www/onlyoffice/documentserver/web-apps/apps/spreadsheeteditor/main/resources/css/app.css
+      - ./resources/spreadsheeteditor/mobile/css/611.1bef49f175e18fc085db.css:/var/www/onlyoffice/documentserver/web-apps/apps/spreadsheeteditor/mobile/css/611.1bef49f175e18fc085db.css
+    environment:
+      JWT_SECRET: ${APP_KEY}
