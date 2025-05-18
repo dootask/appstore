@@ -111,6 +111,24 @@ func getAppsFromDir() ([]*models.App, error) {
 	return apps, nil
 }
 
+// getAppFromDir 从目录获取应用信息
+func getAppFromDir(appId string) (*models.App, error) {
+	appDir := utils.JoinPath(global.WorkDir, "apps", appId)
+	if !utils.IsDirExists(appDir) {
+		return nil, fmt.Errorf("application directory for %s not found", appId)
+	}
+	return models.NewApp(appId, appDir), nil
+}
+
+// getAppReadmeFromDir 从目录获取应用自述文件
+func getAppReadmeFromDir(appId string) (string, error) {
+	appDir := utils.JoinPath(global.WorkDir, "apps", appId)
+	if !utils.IsDirExists(appDir) {
+		return "", fmt.Errorf("application directory for %s not found", appId)
+	}
+	return models.GetReadme(appDir), nil
+}
+
 // routeList 获取应用列表
 func routeList(c *gin.Context) {
 	apps, err := getAppsFromDir()
@@ -118,8 +136,32 @@ func routeList(c *gin.Context) {
 		response.ErrorWithDetail(c, global.CodeError, "获取应用列表失败", err)
 		return
 	}
-	
+
 	response.SuccessWithData(c, apps)
+}
+
+// routeAppOne 获取应用详情
+func routeAppOne(c *gin.Context) {
+	appId := c.Param("appId")
+	app, err := getAppFromDir(appId)
+	if err != nil {
+		response.ErrorWithDetail(c, global.CodeError, "获取应用详情失败", err)
+		return
+	}
+	response.SuccessWithData(c, app)
+}
+
+// routeAppReadme 获取应用自述文件
+func routeAppReadme(c *gin.Context) {
+	appId := c.Param("appId")
+	content, err := getAppReadmeFromDir(appId)
+	if err != nil {
+		response.ErrorWithDetail(c, global.CodeError, "获取应用自述文件失败", err)
+		return
+	}
+	response.SuccessWithData(c, gin.H{
+		"content": content,
+	})
 }
 
 // routeAppIcon 处理应用图标请求
@@ -276,10 +318,11 @@ func runServer(cmd *cobra.Command, args []string) {
 	// 创建v1路由组
 	v1 := r.Group("/api/" + global.APIVersion)
 	{
-		// 获取应用列表
-		v1.GET("/list", routeList)
-		v1.GET("/icons/:appId/*iconPath", routeAppIcon)
-		v1.GET("/download/:appId/*version", routeAppDownload)
+		v1.GET("/list", routeList)                            // 获取应用列表
+		v1.GET("/one/:appId", routeAppOne)                    // 获取单个应用
+		v1.GET("/readme/:appId", routeAppReadme)              // 获取应用自述文件
+		v1.GET("/icons/:appId/*iconPath", routeAppIcon)       // 查看应用图标
+		v1.GET("/download/:appId/*version", routeAppDownload) // 下载应用压缩包
 	}
 
 	// 启动服务器

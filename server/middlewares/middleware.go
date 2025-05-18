@@ -21,9 +21,8 @@ func Middleware() gin.HandlerFunc {
 		global.BaseUrl = fmt.Sprintf("%s://%s", scheme, host)
 
 		// 语言偏好
-		langHeader := c.GetHeader("Accept-Language")
 		global.Language = global.DefaultLanguage
-
+		langHeader := c.GetHeader("Accept-Language")
 		if langHeader != "" {
 			langs := strings.Split(langHeader, ",")
 			if len(langs) > 0 {
@@ -34,6 +33,7 @@ func Middleware() gin.HandlerFunc {
 				}
 			}
 		}
+
 		c.Next()
 	}
 }

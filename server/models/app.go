@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"sort"
+	"strings"
 
 	"appstore/server/global"
 
@@ -273,4 +274,45 @@ func NewApp(id string, appDir string) *App {
 	}
 
 	return app
+}
+
+// GetReadme 获取应用的自述文件内容
+func GetReadme(appDir string) string {
+	// 定义可能的 README 文件名模式
+	patterns := []string{
+		fmt.Sprintf("README_%s.md", global.Language),
+		fmt.Sprintf("README-%s.md", global.Language),
+		fmt.Sprintf("README.%s.md", global.Language),
+	}
+	if global.Language == "zh-cht" {
+		patterns = append(patterns, "README_TW.md", "README-TW.md", "README.TW.md")
+	}
+	patterns = append(patterns, "README.md")
+
+	// 获取目录中的所有文件
+	entries, err := os.ReadDir(appDir)
+	if err != nil {
+		return ""
+	}
+
+	// 创建一个映射来存储文件名（小写）到实际文件名的映射
+	fileMap := make(map[string]string)
+	for _, entry := range entries {
+		if !entry.IsDir() {
+			fileMap[strings.ToLower(entry.Name())] = entry.Name()
+		}
+	}
+
+	// 按优先级尝试读取文件
+	for _, pattern := range patterns {
+		lowerPattern := strings.ToLower(pattern)
+		if actualName, exists := fileMap[lowerPattern]; exists {
+			readmePath := filepath.Join(appDir, actualName)
+			if content, err := os.ReadFile(readmePath); err == nil {
+				return string(content)
+			}
+		}
+	}
+
+	return ""
 }
