@@ -1,6 +1,7 @@
 package models
 
 import (
+	"appstore/server/global"
 	"appstore/server/utils"
 	"fmt"
 	"os"
@@ -8,8 +9,6 @@ import (
 	"regexp"
 	"sort"
 	"strings"
-
-	"appstore/server/global"
 
 	"gopkg.in/yaml.v3"
 )
@@ -164,22 +163,6 @@ func findVersions(appId string) []string {
 	return versions
 }
 
-// parseVersionOperator 解析版本字符串中的操作符
-func parseVersionOperator(version string) (string, string) {
-	// 匹配操作符和版本号
-	re := regexp.MustCompile(`^\s*([<>=!]*)\s*(.+)$`)
-	matches := re.FindStringSubmatch(version)
-	if len(matches) == 3 {
-		operator := matches[1]
-		versionNum := matches[2]
-		if operator == "" {
-			operator = "="
-		}
-		return operator, versionNum
-	}
-	return "=", version
-}
-
 // NewApps 创建应用实例列表
 func NewApps() []*App {
 	appsDir := filepath.Join(global.WorkDir, "apps")
@@ -268,7 +251,7 @@ func NewApp(appId string) *App {
 	requireUninstalls := []RequireUninstall{}
 	if app.RequireUninstalls != nil {
 		for _, require := range app.RequireUninstalls {
-			operator, version := parseVersionOperator(require.Version)
+			operator, version := utils.ParseVersionOperator(require.Version)
 			// 如果配置中明确指定了操作符，则使用配置中的操作符
 			if require.Operator != "" {
 				operator = require.Operator
@@ -349,6 +332,20 @@ func GetAppConfig(appId string) *AppConfig {
 	return appConfig
 }
 
+// SaveAppConfig 保存应用配置
+func SaveAppConfig(appId string, appConfig *AppConfig) error {
+	configFile := filepath.Join(global.WorkDir, "config", appId, "config.yml")
+	data, err := yaml.Marshal(appConfig)
+	if err != nil {
+		return err
+	}
+	if err := os.WriteFile(configFile, data, 0644); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // GetReadme 获取应用的自述文件内容
 func GetReadme(appId string) string {
 	// 定义可能的 README 文件名模式
@@ -415,7 +412,7 @@ func GetLog(appId string, limit int) string {
 func FindLatestVersion(appId string) (string, error) {
 	versions := findVersions(appId)
 	if len(versions) == 0 {
-		return "", fmt.Errorf("no versions found for app %s", appId)
+		return "", fmt.Errorf("未找到应用 %s 的版本", appId)
 	}
 	return versions[len(versions)-1], nil
 }
@@ -423,24 +420,24 @@ func FindLatestVersion(appId string) (string, error) {
 // FindAsset 查找应用资源文件
 func FindAsset(appId, assetPath string) (string, error) {
 	if appId == "" || assetPath == "" {
-		return "", fmt.Errorf("appId and assetPath are required")
+		return "", fmt.Errorf("参数错误")
 	}
 
 	cleanedAppId := filepath.Clean(appId)
 	cleanedAssetPath := filepath.Clean(strings.TrimPrefix(assetPath, "/"))
 
 	if cleanedAppId != appId || strings.Contains(cleanedAppId, "..") || strings.Contains(cleanedAppId, "/") || strings.Contains(cleanedAppId, "\\") {
-		return "", fmt.Errorf("invalid appId")
+		return "", fmt.Errorf("无效的参数")
 	}
 
 	if strings.Contains(cleanedAssetPath, "..") || filepath.IsAbs(cleanedAssetPath) {
-		return "", fmt.Errorf("invalid asset path")
+		return "", fmt.Errorf("无效的参数")
 	}
 
 	assetFullPath := filepath.Join(global.WorkDir, "apps", cleanedAppId, cleanedAssetPath)
 
 	if _, err := os.Stat(assetFullPath); os.IsNotExist(err) {
-		return "", fmt.Errorf("asset not found")
+		return "", fmt.Errorf("未找到资源文件")
 	}
 
 	return assetFullPath, nil

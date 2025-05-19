@@ -1,6 +1,11 @@
 package cmd
 
 import (
+	"appstore/server/global"
+	"appstore/server/middlewares"
+	"appstore/server/models"
+	"appstore/server/response"
+	"appstore/server/utils"
 	"archive/tar"
 	"compress/gzip"
 	"fmt"
@@ -10,12 +15,6 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
-
-	"appstore/server/global"
-	"appstore/server/middlewares"
-	"appstore/server/models"
-	"appstore/server/response"
-	"appstore/server/utils"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
@@ -148,18 +147,18 @@ func routeAppDownload(c *gin.Context) {
 	versionParam := strings.TrimPrefix(c.Param("version"), "/")
 
 	if appId == "" {
-		c.String(http.StatusBadRequest, "App ID is required")
+		c.String(http.StatusBadRequest, "App ID 不能为空")
 		return
 	}
 	cleanedAppId := filepath.Clean(appId)
 	if cleanedAppId != appId || strings.Contains(cleanedAppId, "..") || strings.Contains(cleanedAppId, "/") || strings.Contains(cleanedAppId, "\\") {
-		c.String(http.StatusBadRequest, "Invalid App ID")
+		c.String(http.StatusBadRequest, "无效的App ID")
 		return
 	}
 
 	appRootPath := filepath.Join(global.WorkDir, "apps", cleanedAppId)
 	if !utils.IsDirExists(appRootPath) {
-		c.String(http.StatusNotFound, fmt.Sprintf("Application directory not found: %s", appRootPath))
+		c.String(http.StatusNotFound, fmt.Sprintf("未找到应用目录: %s", appRootPath))
 		return
 	}
 
@@ -170,7 +169,7 @@ func routeAppDownload(c *gin.Context) {
 	if versionParam == "latest" {
 		latestV, err := models.FindLatestVersion(cleanedAppId)
 		if err != nil {
-			c.String(http.StatusNotFound, fmt.Sprintf("Could not determine latest version for %s: %v", cleanedAppId, err))
+			c.String(http.StatusNotFound, fmt.Sprintf("无法确定应用 %s 的最新版本: %v", cleanedAppId, err))
 			return
 		}
 		effectiveVersion = latestV
@@ -178,11 +177,11 @@ func routeAppDownload(c *gin.Context) {
 	} else if versionParam != "" {
 		cleanedVersion := filepath.Clean(effectiveVersion)
 		if cleanedVersion != effectiveVersion || strings.Contains(cleanedVersion, "..") || strings.Contains(cleanedVersion, "/") || strings.Contains(cleanedVersion, "\\") || !versionRegex.MatchString(cleanedVersion) {
-			c.String(http.StatusBadRequest, "Invalid or malformed version parameter")
+			c.String(http.StatusBadRequest, "无效或格式错误的版本参数")
 			return
 		}
 		if !utils.IsDirExists(filepath.Join(appRootPath, cleanedVersion)) {
-			c.String(http.StatusNotFound, fmt.Sprintf("Specified version %s not found for app %s", cleanedVersion, cleanedAppId))
+			c.String(http.StatusNotFound, fmt.Sprintf("未找到应用 %s 的指定版本 %s", cleanedAppId, cleanedVersion))
 			return
 		}
 		downloadFilename = fmt.Sprintf("%s-%s.tar.gz", cleanedAppId, cleanedVersion)
@@ -246,7 +245,7 @@ func routeAppDownload(c *gin.Context) {
 	})
 
 	if err != nil {
-		fmt.Printf("Error during tar.gz creation for %s (version: %s): %v\n", cleanedAppId, effectiveVersion, err)
+		fmt.Printf("创建 %s (版本: %s) 的 tar.gz 文件时发生错误: %v\n", cleanedAppId, effectiveVersion, err)
 	}
 }
 
@@ -259,19 +258,98 @@ func routeInternalInstall(c *gin.Context) {
 	if err := response.CheckBindAndValidate(&req, c); err != nil {
 		return
 	}
+
+	// 处理latest版本
 	if req.Version == "latest" {
 		latestV, err := models.FindLatestVersion(req.AppID)
 		if err != nil {
-			response.ErrorWithDetail(c, global.CodeError, "Could not determine latest version for "+req.AppID, err)
+			response.ErrorWithDetail(c, global.CodeError, "无法确定应用 "+req.AppID+" 的最新版本", err)
 			return
 		}
 		req.Version = latestV
 	}
-	c.String(http.StatusOK, "Hello, World!")
+
+	// 获取当前应用配置
+	appConfig := models.GetAppConfig(req.AppID)
+
+	// 判断当前状态
+	if appConfig.Status == "installing" || appConfig.Status == "uninstalling" {
+		response.ErrorWithDetail(c, global.CodeError, "应用正在执行中，请稍后再试", nil)
+		return
+	}
+
+	// 检查是否需要先卸载
+	if appConfig.Status == "installed" && appConfig.InstallVersion != "" {
+		app := models.NewApp(req.AppID)
+		for _, require := range app.RequireUninstalls {
+			if utils.CheckVersionRequirement(appConfig.InstallVersion, require.Operator, require.Version) {
+				response.ErrorWithDetail(c, global.CodeError, fmt.Sprintf("更新版本 %s，需要先卸载已安装的版本%s", req.Version, require.Reason.(string)), fmt.Errorf(require.Reason.(string)))
+				return
+			}
+		}
+	}
+
+	// 创建配置目录
+	configDir := filepath.Join(global.WorkDir, "config", req.AppID)
+	if err := os.MkdirAll(configDir, 0755); err != nil {
+		response.ErrorWithDetail(c, global.CodeError, "创建配置目录失败", err)
+		return
+	}
+
+	// 更新配置
+	appConfig.InstallVersion = req.Version
+	appConfig.Params = req.Params
+	appConfig.Resources = req.Resources
+
+	// 保存配置到文件
+	if err := models.SaveAppConfig(req.AppID, appConfig); err != nil {
+		response.ErrorWithDetail(c, global.CodeError, "保存配置失败", err)
+		return
+	}
+
+	// 生成docker-compose.yml文件
+	if err := models.GenerateDockerCompose(req.AppID, req.Version, appConfig); err != nil {
+		response.ErrorWithDetail(c, global.CodeError, "生成docker-compose.yml失败", err)
+		return
+	}
+
+	// 生成nginx配置文件
+	if err := models.GenerateNginxConfig(req.AppID, req.Version, appConfig); err != nil {
+		response.ErrorWithDetail(c, global.CodeError, "生成nginx配置失败", err)
+		return
+	}
+
+	// 执行docker-compose up命令
+	if err := models.RunDockerCompose(req.AppID, "up"); err != nil {
+		response.ErrorWithDetail(c, global.CodeError, "启动应用失败", err)
+		return
+	}
+
+	response.SuccessWithMsg(c, "应用安装中...")
 }
 
 func routeInternalUninstall(c *gin.Context) {
-	c.String(http.StatusOK, "Hello, World!")
+	appId := c.Param("appId")
+
+	// 获取当前应用配置
+	appConfig := models.GetAppConfig(appId)
+
+	// 判断当前状态
+	if appConfig.Status != "installed" {
+		response.ErrorWithDetail(c, global.CodeError, "应用未安装，无需卸载", nil)
+		return
+	}
+
+	// 删除nginx配置
+	models.DeleteNginxConfig(appId)
+
+	// 执行docker-compose down命令
+	if err := models.RunDockerCompose(appId, "down"); err != nil {
+		response.ErrorWithDetail(c, global.CodeError, "卸载应用失败", err)
+		return
+	}
+
+	response.SuccessWithMsg(c, "应用卸载中...")
 }
 
 func routeInternalInstalled(c *gin.Context) {

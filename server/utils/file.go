@@ -14,6 +14,15 @@ func IsDirExists(path string) bool {
 	return info.IsDir()
 }
 
+// IsFileExists 检查文件是否存在
+func IsFileExists(path string) bool {
+	info, err := os.Stat(path)
+	if err != nil {
+		return false
+	}
+	return !info.IsDir()
+}
+
 // GetSubDirs 获取指定目录下的所有子目录
 func GetSubDirs(dir string) ([]string, error) {
 	dirs := []string{}
