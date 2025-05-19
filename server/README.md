@@ -33,7 +33,10 @@ go run main.go -w /path/to/workdir -m release
 swag init -g cmd/cmd.go
 
 # 如果提示错误，请先安装 swag
-go install github.com/swaggo/swag/v2/cmd/swag@latest
+go install github.com/swaggo/swag/cmd/swag@latest
+
+# 还是不行可以尝试下面命令
+export PATH=$PATH:$(go env GOPATH)/bin && swag init -g cmd/cmd.go
 ```
 
 ## 目录结构

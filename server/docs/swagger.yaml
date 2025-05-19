@@ -391,4 +391,19 @@ paths:
       summary: 获取应用自述文件
       tags:
       - 应用
+  /sources.list:
+    get:
+      consumes:
+      - application/json
+      description: 获取应用商店源列表压缩包
+      produces:
+      - application/zip
+      responses:
+        "200":
+          description: sources.list.zip
+          schema:
+            type: file
+      summary: 应用商店源列表
+      tags:
+      - 资源
 swagger: "2.0"

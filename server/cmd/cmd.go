@@ -18,6 +18,7 @@ import (
 	"regexp"
 	"slices"
 	"strings"
+	"time"
 
 	_ "appstore/server/docs"
 
@@ -134,6 +135,9 @@ func runServer(*cobra.Command, []string) {
 			internal.POST("/apps/download", routeInternalDownloadByURL) // 通过URL下载应用
 		}
 	}
+
+	// 应用商店源列表
+	r.GET("/sources.list", routeSourcesList)
 
 	// 添加Swagger文档路由
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
@@ -771,4 +775,125 @@ func routeInternalDownloadByURL(c *gin.Context) {
 	response.SuccessWithData(c, gin.H{
 		"id": appId,
 	})
+}
+
+// @Summary 应用商店源列表
+// @Description 获取应用商店源列表压缩包
+// @Tags 资源
+// @Accept json
+// @Produce application/zip
+// @Success 200 {file} binary "sources.list.zip"
+// @Router /sources.list [get]
+func routeSourcesList(c *gin.Context) {
+	// 获取当前日期作为文件名
+	currentDate := time.Now().Format("20060102")
+	sourcesDir := filepath.Join(global.WorkDir, "temp", "sources_list")
+	tarFile := filepath.Join(sourcesDir, currentDate+".tar.gz")
+
+	// 如果文件已存在，直接下载
+	if utils.IsFileExists(tarFile) {
+		c.Header("Content-Description", "File Transfer")
+		c.Header("Content-Disposition", "attachment; filename=sources.list.tar.gz")
+		c.Header("Content-Type", "application/gzip")
+		c.File(tarFile)
+		return
+	}
+
+	// 获取apps目录
+	appsDir := filepath.Join(global.WorkDir, "apps")
+	if !utils.IsDirExists(appsDir) {
+		c.String(http.StatusInternalServerError, "apps目录不存在")
+		return
+	}
+
+	// 获取所有子目录
+	appIds, err := utils.GetSubDirs(appsDir)
+	if err != nil {
+		c.String(http.StatusInternalServerError, "获取应用列表失败")
+		return
+	}
+
+	// 清空并创建临时目录
+	if utils.IsDirExists(sourcesDir) {
+		if err := os.RemoveAll(sourcesDir); err != nil {
+			c.String(http.StatusInternalServerError, "清理临时目录失败")
+			return
+		}
+	}
+	if err := os.MkdirAll(sourcesDir, 0755); err != nil {
+		c.String(http.StatusInternalServerError, "创建临时目录失败")
+		return
+	}
+
+	// 创建tar.gz文件
+	file, err := os.Create(tarFile)
+	if err != nil {
+		c.String(http.StatusInternalServerError, "创建压缩文件失败")
+		return
+	}
+	defer file.Close()
+
+	// 创建gzip写入器
+	gw := gzip.NewWriter(file)
+	defer gw.Close()
+
+	// 创建tar写入器
+	tw := tar.NewWriter(gw)
+	defer tw.Close()
+
+	// 遍历每个应用目录
+	for _, appId := range appIds {
+		appDir := filepath.Join(appsDir, appId)
+		err := filepath.Walk(appDir, func(path string, info os.FileInfo, err error) error {
+			if err != nil {
+				return err
+			}
+
+			// 获取相对路径
+			relPath, err := filepath.Rel(appsDir, path)
+			if err != nil {
+				return err
+			}
+
+			// 创建tar文件头
+			header, err := tar.FileInfoHeader(info, info.Name())
+			if err != nil {
+				return err
+			}
+			header.Name = filepath.ToSlash(relPath)
+
+			// 写入文件头
+			if err := tw.WriteHeader(header); err != nil {
+				return err
+			}
+
+			// 如果是目录，跳过写入内容
+			if info.IsDir() {
+				return nil
+			}
+
+			// 如果是文件，写入文件内容
+			file, err := os.Open(path)
+			if err != nil {
+				return err
+			}
+			defer file.Close()
+
+			_, err = io.Copy(tw, file)
+			return err
+		})
+
+		if err != nil {
+			c.String(http.StatusInternalServerError, "打包文件失败")
+			return
+		}
+	}
+
+	// 设置响应头
+	c.Header("Content-Description", "File Transfer")
+	c.Header("Content-Disposition", "attachment; filename=sources.list.tar.gz")
+	c.Header("Content-Type", "application/gzip")
+
+	// 发送文件
+	c.File(tarFile)
 }

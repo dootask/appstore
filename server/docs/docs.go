@@ -380,6 +380,29 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/sources.list": {
+            "get": {
+                "description": "获取应用商店源列表压缩包",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/zip"
+                ],
+                "tags": [
+                    "资源"
+                ],
+                "summary": "应用商店源列表",
+                "responses": {
+                    "200": {
+                        "description": "sources.list.zip",
+                        "schema": {
+                            "type": "file"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
