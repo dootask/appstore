@@ -238,17 +238,19 @@ func RunDockerCompose(appId, action string) error {
 
 		if status == "installed" {
 			// 重启nginx
-			_, _ = logFile.WriteString("nginx reload starting...\n")
-			time.Sleep(2 * time.Second)
-			out, err := ReloadNginx(appId)
-			if out != "" {
-				_, _ = logFile.WriteString("nginx reload result: " + out + "\n")
+			if hasNginxConfig, _ := HasNginxConfig(appId); hasNginxConfig {
+				_, _ = logFile.WriteString("nginx reload starting...\n")
+				time.Sleep(2 * time.Second)
+				out, err := ReloadNginx(appId)
+				if out != "" {
+					_, _ = logFile.WriteString("nginx reload result: " + out + "\n")
+				}
+				if err != nil {
+					_, _ = logFile.WriteString("nginx reload failed: " + err.Error() + "\n")
+					status = "error"
+				}
+				_, _ = logFile.WriteString("nginx reload end\n")
 			}
-			if err != nil {
-				_, _ = logFile.WriteString("nginx reload failed: " + err.Error() + "\n")
-				status = "error"
-			}
-			_, _ = logFile.WriteString("nginx reload end\n")
 		}
 
 		// 更新应用状态

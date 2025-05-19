@@ -16,7 +16,11 @@ func GenerateNginxConfig(appId string, version string, config *AppConfig) error 
 	templatePath := filepath.Join(global.WorkDir, "apps", appId, version, "nginx.conf")
 	templateData, err := os.ReadFile(templatePath)
 	if err != nil {
-		return fmt.Errorf("读取nginx配置模板失败: %v", err)
+		if os.IsNotExist(err) {
+			return nil
+		} else {
+			return fmt.Errorf("读取nginx配置模板失败: %v", err)
+		}
 	}
 
 	// 生成新的nginx配置文件
@@ -30,16 +34,14 @@ func GenerateNginxConfig(appId string, version string, config *AppConfig) error 
 
 // DeleteNginxConfig 删除nginx配置
 func DeleteNginxConfig(appId string) {
-	nginxConfigPath := filepath.Join(global.WorkDir, "config", appId, "nginx.conf")
-	if utils.IsFileExists(nginxConfigPath) {
+	if hasNginxConfig, nginxConfigPath := HasNginxConfig(appId); hasNginxConfig {
 		os.Remove(nginxConfigPath)
 	}
 }
 
 // ReloadNginx 重启nginx
 func ReloadNginx(appId string) (string, error) {
-	nginxConfigPath := filepath.Join(global.WorkDir, "config", appId, "nginx.conf")
-	if !utils.IsFileExists(nginxConfigPath) {
+	if hasNginxConfig, _ := HasNginxConfig(appId); !hasNginxConfig {
 		return "", nil
 	}
 
@@ -54,10 +56,16 @@ func ReloadNginx(appId string) (string, error) {
 	out, err := utils.ExecWithTimeOut(nginxCmd, 20*time.Second)
 	if err != nil {
 		if out != "" {
-			return "Command execution failed with output", fmt.Errorf(out)
+			return "Command execution failed with output", fmt.Errorf("%s", out)
 		}
 		return "Command execution failed", err
 	}
 
 	return out, nil
+}
+
+// HasNginxConfig 是否有nginx配置
+func HasNginxConfig(appId string) (bool, string) {
+	nginxConfigPath := filepath.Join(global.WorkDir, "config", appId, "nginx.conf")
+	return utils.IsFileExists(nginxConfigPath), nginxConfigPath
 }
