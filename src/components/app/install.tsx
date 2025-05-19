@@ -120,8 +120,8 @@ export function AppInstall({appId, onClose}: AppInstallProps) {
     }).catch((error) => {
       Alert({
         type: "warning",
-        title: t('install.install_failed'),
-        description: error.msg,
+        title: t('install.install_failed', {app: app.name}),
+        description: error.message,
         showCancel: false,
         onConfirm: () => {
           setInstalling(false)

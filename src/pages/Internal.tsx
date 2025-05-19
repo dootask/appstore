@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { useTranslation } from "react-i18next";
-import { props, backApp, interceptBack, requestAPI } from "@dootask/tools";
+import { props, backApp, interceptBack } from "@dootask/tools";
 import { ChevronLeft, ChevronRight, LoaderCircle, RefreshCw } from "lucide-react";
 import { AppSearch } from '@/components/app/search.tsx';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -14,6 +14,7 @@ import { useAppStore } from '@/store/app';
 import Dropdown from "@/components/custom/dropdown.tsx";
 import Drawer from "@/components/custom/drawer.tsx";
 import type { App } from "@/types/api.ts";
+import { InternalApi } from "@/lib";
 
 const Internal = () => {
   const {t} = useTranslation();
@@ -212,12 +213,7 @@ const Internal = () => {
       showCancel: true,
       onConfirm: async () => {
         // 确认卸载
-        await requestAPI({
-          url: "apps/uninstall",
-          data: {
-            app_name: app.name
-          }
-        }).then(() => {
+        await InternalApi.uninstallApp(app.id).then(() => {
           // 卸载成功
           setOpenDetail(false);
           setOpenInstall(false);
@@ -226,7 +222,7 @@ const Internal = () => {
           Alert({
             type: "warning",
             title: t('uninstall.error'),
-            description: t('uninstall.error_description', {app: app.name, error: error.msg || t('common.unknown_error')}),
+            description: t('uninstall.error_description', {app: app.name, error: error.message || t('common.unknown_error')}),
             showCancel: false,
           })
         }).finally(() => {
@@ -245,9 +241,7 @@ const Internal = () => {
         type: "text",
         title: t('install.updating_app_list'),
       })
-      requestAPI({
-        url: "apps/list/update",
-      }).then(() => {
+      InternalApi.updateAppList().then(() => {
         Notice({
           type: "success",
           title: t('install.update_app_list_success'),
@@ -257,7 +251,7 @@ const Internal = () => {
         Notice({
           type: "error",
           title: t('install.update_app_list_failure'),
-          description: t('install.update_app_list_failure_description', {error: error.msg || t('common.unknown_error')}),
+          description: t('install.update_app_list_failure_description', {error: error.message || t('common.unknown_error')}),
         })
       }).finally(() => {
         off()
@@ -272,16 +266,20 @@ const Internal = () => {
           if (!value) {
             return;
           }
-          await requestAPI({
-            url: "apps/install/url",
-            data: {
-              url: value
+          await InternalApi.downloadApp(value).then(async ({data}) => {
+            await fetchApps();
+            if (data) {
+              const app = apps.find(item => item.id === data.id);
+              if (app) {
+                setSelectedApp(app);
+                setOpenInstall(true);
+              }
             }
           }).catch((error) => {
             Alert({
               type: "warning",
               title: t('install.failure'),
-              description: t('install.failure_description', {app: value, error: error.msg || t('common.unknown_error')}),
+              description: t('install.failure_description', {app: value, error: error.message || t('common.unknown_error')}),
               showCancel: false,
             })
             throw error;
