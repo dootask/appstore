@@ -1,5 +1,5 @@
 import type { App, AppStatus } from "@/types/api"
-import type { AppLogRef } from "@/components/app/log.tsx"
+import type { AppLogRef } from "@/pages/internal/log"
 import { Button } from "@/components/ui/button.tsx"
 import { ScrollArea } from "@/components/ui/scroll-area.tsx";
 import { ExternalLink, Loader2, LoaderCircle, RefreshCw } from "lucide-react"
@@ -10,7 +10,7 @@ import ReactMarkdown from "react-markdown"
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
 import { darcula as SyntaxStyle } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs.tsx";
-import { AppLog } from "@/components/app/log.tsx";
+import { AppLog } from "@/pages/internal/log";
 import { eventOn } from "@/lib/events.ts";
 import { useAppStore } from "@/store/app";
 import { AppApi } from "@/lib";

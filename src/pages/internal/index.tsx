@@ -3,12 +3,12 @@ import { Button } from '@/components/ui/button'
 import { useTranslation } from "react-i18next";
 import { props, backApp, interceptBack } from "@dootask/tools";
 import { ChevronLeft, ChevronRight, LoaderCircle, RefreshCw } from "lucide-react";
-import { AppSearch } from '@/components/app/search.tsx';
+import { AppSearch } from '@/pages/internal/search';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { AppCard } from '@/components/app/card.tsx';
-import { AppDetail } from "@/components/app/detail.tsx"
+import { AppCard } from '@/pages/internal/card';
+import { AppDetail } from "@/pages/internal/detail"
 import { beforeClose } from "@/lib/utils.ts";
-import { AppInstall } from '@/components/app/install.tsx';
+import { AppInstall } from '@/pages/internal/install';
 import PromptPortal, { Alert, Notice } from "@/components/custom/prompt";
 import { useAppStore } from '@/store/app';
 import Dropdown from "@/components/custom/dropdown.tsx";
