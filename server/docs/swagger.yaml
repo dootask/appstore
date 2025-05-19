@@ -1,0 +1,376 @@
+basePath: /api/v1
+definitions:
+  models.App:
+    properties:
+      author:
+        type: string
+      config:
+        $ref: '#/definitions/models.AppConfig'
+      description:
+        type: string
+      document:
+        type: string
+      download_url:
+        type: string
+      fields:
+        items:
+          $ref: '#/definitions/models.FieldConfig'
+        type: array
+      github:
+        type: string
+      icon:
+        type: string
+      id:
+        type: string
+      menu_items:
+        items:
+          $ref: '#/definitions/models.MenuItem'
+        type: array
+      name:
+        type: string
+      require_uninstalls:
+        items:
+          $ref: '#/definitions/models.RequireUninstall'
+        type: array
+      tags:
+        items:
+          type: string
+        type: array
+      versions:
+        items:
+          type: string
+        type: array
+      website:
+        type: string
+    type: object
+  models.AppConfig:
+    properties:
+      install_at:
+        type: string
+      install_num:
+        type: integer
+      install_version:
+        type: string
+      params:
+        additionalProperties: true
+        type: object
+      resources:
+        $ref: '#/definitions/models.AppConfigResources'
+      status:
+        description: installing, installed, uninstalling, not_installed, error
+        type: string
+    type: object
+  models.AppConfigResources:
+    properties:
+      cpu_limit:
+        type: integer
+      memory_limit:
+        type: integer
+    type: object
+  models.AppInternalDownloadRequest:
+    properties:
+      url:
+        type: string
+    required:
+    - url
+    type: object
+  models.AppInternalInstallRequest:
+    properties:
+      appid:
+        type: string
+      params:
+        additionalProperties: true
+        type: object
+      resources:
+        $ref: '#/definitions/models.AppConfigResources'
+      version:
+        type: string
+    required:
+    - appid
+    type: object
+  models.AppInternalInstalledResponse:
+    properties:
+      menus:
+        items:
+          $ref: '#/definitions/models.MenuItem'
+        type: array
+      names:
+        items:
+          type: string
+        type: array
+    required:
+    - names
+    type: object
+  models.FieldConfig:
+    properties:
+      default: {}
+      label: {}
+      name:
+        type: string
+      options:
+        items:
+          $ref: '#/definitions/models.FieldOption'
+        type: array
+      placeholder: {}
+      required:
+        type: boolean
+      type:
+        type: string
+    type: object
+  models.FieldOption:
+    properties:
+      label: {}
+      value:
+        type: string
+    type: object
+  models.MenuItem:
+    properties:
+      autoDarkTheme:
+        type: boolean
+      icon:
+        type: string
+      keepAlive:
+        type: boolean
+      label: {}
+      location:
+        type: string
+      transparent:
+        type: boolean
+      url:
+        type: string
+    type: object
+  models.RequireUninstall:
+    properties:
+      operator:
+        type: string
+      reason: {}
+      version:
+        type: string
+    type: object
+  response.Response:
+    properties:
+      code:
+        type: integer
+      data: {}
+      message:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: support@dootask.com
+    name: DooTask团队
+    url: https://www.dootask.com
+  description: DooTask应用商店后端服务API文档
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  termsOfService: https://www.dootask.com
+  title: DooTask应用商店API
+  version: "1.0"
+paths:
+  /internal/apps/download:
+    post:
+      consumes:
+      - application/json
+      description: 通过URL下载并安装应用
+      parameters:
+      - description: 下载参数
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.AppInternalDownloadRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 通过URL下载应用
+      tags:
+      - 内部接口
+  /internal/apps/update:
+    get:
+      consumes:
+      - application/json
+      description: 从远程仓库更新应用列表
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 更新应用列表
+      tags:
+      - 内部接口
+  /internal/install:
+    post:
+      consumes:
+      - application/json
+      description: 安装或更新应用
+      parameters:
+      - description: 安装参数
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.AppInternalInstallRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 安装应用
+      tags:
+      - 内部接口
+  /internal/installed:
+    get:
+      consumes:
+      - application/json
+      description: 获取所有已安装的应用列表
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.AppInternalInstalledResponse'
+              type: object
+      summary: 获取已安装应用列表
+      tags:
+      - 内部接口
+  /internal/log/{appId}:
+    get:
+      consumes:
+      - application/json
+      description: 获取指定应用的运行日志
+      parameters:
+      - description: 应用ID
+        in: path
+        name: appId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  additionalProperties:
+                    type: string
+                  type: object
+              type: object
+      summary: 获取应用日志
+      tags:
+      - 内部接口
+  /internal/uninstall/{appId}:
+    get:
+      consumes:
+      - application/json
+      description: 卸载指定的应用
+      parameters:
+      - description: 应用ID
+        in: path
+        name: appId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 卸载应用
+      tags:
+      - 内部接口
+  /list:
+    get:
+      consumes:
+      - application/json
+      description: 获取所有可用的应用列表
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.App'
+                  type: array
+              type: object
+      summary: 获取应用列表
+      tags:
+      - 应用
+  /one/{appId}:
+    get:
+      consumes:
+      - application/json
+      description: 获取指定应用的详细信息
+      parameters:
+      - description: 应用ID
+        in: path
+        name: appId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.App'
+              type: object
+      summary: 获取应用详情
+      tags:
+      - 应用
+  /readme/{appId}:
+    get:
+      consumes:
+      - application/json
+      description: 获取指定应用的README文件内容
+      parameters:
+      - description: 应用ID
+        in: path
+        name: appId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  additionalProperties:
+                    type: string
+                  type: object
+              type: object
+      summary: 获取应用自述文件
+      tags:
+      - 应用
+swagger: "2.0"

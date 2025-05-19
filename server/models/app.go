@@ -97,6 +97,11 @@ type AppInternalInstalledResponse struct {
 	Menus []MenuItem `json:"menus" validate:"omitempty"`
 }
 
+// AppInternalDownloadRequest 通过URL下载应用的请求结构
+type AppInternalDownloadRequest struct {
+	URL string `json:"url" binding:"required"`
+}
+
 // getLocalizedValue 获取多语言字符串值
 func getLocalizedValue(data interface{}, lang string) string {
 	if data == nil {

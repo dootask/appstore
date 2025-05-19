@@ -19,11 +19,30 @@ import (
 	"slices"
 	"strings"
 
+	_ "appstore/server/docs"
+
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"github.com/spf13/cobra"
+	"github.com/swaggo/files"
+	"github.com/swaggo/gin-swagger"
 	"gopkg.in/yaml.v3"
 )
+
+// @title           DooTask应用商店API
+// @version         1.0
+// @description     DooTask应用商店后端服务API文档
+// @termsOfService  https://www.dootask.com
+
+// @contact.name   DooTask团队
+// @contact.url    https://www.dootask.com
+// @contact.email  support@dootask.com
+
+// @license.name  MIT
+// @license.url   https://opensource.org/licenses/MIT
+
+// @host      localhost:8080
+// @BasePath  /api/v1
 
 var (
 	mode    string
@@ -90,6 +109,9 @@ func runServer(*cobra.Command, []string) {
 		}
 	}
 
+	// 添加Swagger文档路由
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
 	// 启动服务器
 	err := r.Run(":" + global.DefaultPort)
 	if err != nil {
@@ -108,18 +130,38 @@ func Execute() error {
 // ****************************************************************************
 // ****************************************************************************
 
-// routeList 获取应用列表
+// @Summary 获取应用列表
+// @Description 获取所有可用的应用列表
+// @Tags 应用
+// @Accept json
+// @Produce json
+// @Success 200 {object} response.Response{data=[]models.App}
+// @Router /list [get]
 func routeList(c *gin.Context) {
 	response.SuccessWithData(c, models.NewApps())
 }
 
-// routeAppOne 获取应用详情
+// @Summary 获取应用详情
+// @Description 获取指定应用的详细信息
+// @Tags 应用
+// @Accept json
+// @Produce json
+// @Param appId path string true "应用ID"
+// @Success 200 {object} response.Response{data=models.App}
+// @Router /one/{appId} [get]
 func routeAppOne(c *gin.Context) {
 	appId := c.Param("appId")
 	response.SuccessWithData(c, models.NewApp(appId))
 }
 
-// routeAppReadme 获取应用自述文件
+// @Summary 获取应用自述文件
+// @Description 获取指定应用的README文件内容
+// @Tags 应用
+// @Accept json
+// @Produce json
+// @Param appId path string true "应用ID"
+// @Success 200 {object} response.Response{data=map[string]string}
+// @Router /readme/{appId} [get]
 func routeAppReadme(c *gin.Context) {
 	appId := c.Param("appId")
 	response.SuccessWithData(c, gin.H{
@@ -251,7 +293,14 @@ func routeAppDownload(c *gin.Context) {
 // ****************************************************************************
 // ****************************************************************************
 
-// routeInternalInstall 安装应用
+// @Summary 安装应用
+// @Description 安装或更新应用
+// @Tags 内部接口
+// @Accept json
+// @Produce json
+// @Param request body models.AppInternalInstallRequest true "安装参数"
+// @Success 200 {object} response.Response
+// @Router /internal/install [post]
 func routeInternalInstall(c *gin.Context) {
 	var req models.AppInternalInstallRequest
 	if err := response.CheckBindAndValidate(&req, c); err != nil {
@@ -327,7 +376,14 @@ func routeInternalInstall(c *gin.Context) {
 	response.SuccessWithMsg(c, "应用安装中...")
 }
 
-// routeInternalUninstall 卸载应用
+// @Summary 卸载应用
+// @Description 卸载指定的应用
+// @Tags 内部接口
+// @Accept json
+// @Produce json
+// @Param appId path string true "应用ID"
+// @Success 200 {object} response.Response
+// @Router /internal/uninstall/{appId} [get]
 func routeInternalUninstall(c *gin.Context) {
 	appId := c.Param("appId")
 
@@ -352,7 +408,13 @@ func routeInternalUninstall(c *gin.Context) {
 	response.SuccessWithMsg(c, "应用卸载中...")
 }
 
-// routeInternalInstalled 获取已安装应用列表
+// @Summary 获取已安装应用列表
+// @Description 获取所有已安装的应用列表
+// @Tags 内部接口
+// @Accept json
+// @Produce json
+// @Success 200 {object} response.Response{data=models.AppInternalInstalledResponse}
+// @Router /internal/installed [get]
 func routeInternalInstalled(c *gin.Context) {
 	apps := models.NewApps()
 	var resp models.AppInternalInstalledResponse
@@ -365,7 +427,14 @@ func routeInternalInstalled(c *gin.Context) {
 	response.SuccessWithData(c, resp)
 }
 
-// routeInternalLog 获取应用日志
+// @Summary 获取应用日志
+// @Description 获取指定应用的运行日志
+// @Tags 内部接口
+// @Accept json
+// @Produce json
+// @Param appId path string true "应用ID"
+// @Success 200 {object} response.Response{data=map[string]string}
+// @Router /internal/log/{appId} [get]
 func routeInternalLog(c *gin.Context) {
 	appId := c.Param("appId")
 	response.SuccessWithData(c, gin.H{
@@ -373,7 +442,13 @@ func routeInternalLog(c *gin.Context) {
 	})
 }
 
-// routeInternalUpdateList 更新应用列表
+// @Summary 更新应用列表
+// @Description 从远程仓库更新应用列表
+// @Tags 内部接口
+// @Accept json
+// @Produce json
+// @Success 200 {object} response.Response
+// @Router /internal/apps/update [get]
 func routeInternalUpdateList(c *gin.Context) {
 	// 临时目录
 	tempDir := filepath.Join(global.WorkDir, "temp", "sources")
@@ -505,11 +580,16 @@ func routeInternalUpdateList(c *gin.Context) {
 	response.SuccessWithData(c, results)
 }
 
-// routeInternalDownloadByURL 通过URL下载应用
+// @Summary 通过URL下载应用
+// @Description 通过URL下载并安装应用
+// @Tags 内部接口
+// @Accept json
+// @Produce json
+// @Param request body models.AppInternalDownloadRequest true "下载参数"
+// @Success 200 {object} response.Response
+// @Router /internal/apps/download [post]
 func routeInternalDownloadByURL(c *gin.Context) {
-	var req struct {
-		URL string `json:"url" binding:"required"`
-	}
+	var req models.AppInternalDownloadRequest
 	if err := response.CheckBindAndValidate(&req, c); err != nil {
 		return
 	}

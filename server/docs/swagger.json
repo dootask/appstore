@@ -1,0 +1,591 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "DooTask应用商店后端服务API文档",
+        "title": "DooTask应用商店API",
+        "termsOfService": "https://www.dootask.com",
+        "contact": {
+            "name": "DooTask团队",
+            "url": "https://www.dootask.com",
+            "email": "support@dootask.com"
+        },
+        "license": {
+            "name": "MIT",
+            "url": "https://opensource.org/licenses/MIT"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/api/v1",
+    "paths": {
+        "/internal/apps/download": {
+            "post": {
+                "description": "通过URL下载并安装应用",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "内部接口"
+                ],
+                "summary": "通过URL下载应用",
+                "parameters": [
+                    {
+                        "description": "下载参数",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.AppInternalDownloadRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/internal/apps/update": {
+            "get": {
+                "description": "从远程仓库更新应用列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "内部接口"
+                ],
+                "summary": "更新应用列表",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/internal/install": {
+            "post": {
+                "description": "安装或更新应用",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "内部接口"
+                ],
+                "summary": "安装应用",
+                "parameters": [
+                    {
+                        "description": "安装参数",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.AppInternalInstallRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/internal/installed": {
+            "get": {
+                "description": "获取所有已安装的应用列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "内部接口"
+                ],
+                "summary": "获取已安装应用列表",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.AppInternalInstalledResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/internal/log/{appId}": {
+            "get": {
+                "description": "获取指定应用的运行日志",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "内部接口"
+                ],
+                "summary": "获取应用日志",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "应用ID",
+                        "name": "appId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "additionalProperties": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/internal/uninstall/{appId}": {
+            "get": {
+                "description": "卸载指定的应用",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "内部接口"
+                ],
+                "summary": "卸载应用",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "应用ID",
+                        "name": "appId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/list": {
+            "get": {
+                "description": "获取所有可用的应用列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "应用"
+                ],
+                "summary": "获取应用列表",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/models.App"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/one/{appId}": {
+            "get": {
+                "description": "获取指定应用的详细信息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "应用"
+                ],
+                "summary": "获取应用详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "应用ID",
+                        "name": "appId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.App"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/readme/{appId}": {
+            "get": {
+                "description": "获取指定应用的README文件内容",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "应用"
+                ],
+                "summary": "获取应用自述文件",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "应用ID",
+                        "name": "appId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "additionalProperties": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "models.App": {
+            "type": "object",
+            "properties": {
+                "author": {
+                    "type": "string"
+                },
+                "config": {
+                    "$ref": "#/definitions/models.AppConfig"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "document": {
+                    "type": "string"
+                },
+                "download_url": {
+                    "type": "string"
+                },
+                "fields": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.FieldConfig"
+                    }
+                },
+                "github": {
+                    "type": "string"
+                },
+                "icon": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "menu_items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.MenuItem"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "require_uninstalls": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.RequireUninstall"
+                    }
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "versions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "website": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.AppConfig": {
+            "type": "object",
+            "properties": {
+                "install_at": {
+                    "type": "string"
+                },
+                "install_num": {
+                    "type": "integer"
+                },
+                "install_version": {
+                    "type": "string"
+                },
+                "params": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "resources": {
+                    "$ref": "#/definitions/models.AppConfigResources"
+                },
+                "status": {
+                    "description": "installing, installed, uninstalling, not_installed, error",
+                    "type": "string"
+                }
+            }
+        },
+        "models.AppConfigResources": {
+            "type": "object",
+            "properties": {
+                "cpu_limit": {
+                    "type": "integer"
+                },
+                "memory_limit": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.AppInternalDownloadRequest": {
+            "type": "object",
+            "required": [
+                "url"
+            ],
+            "properties": {
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.AppInternalInstallRequest": {
+            "type": "object",
+            "required": [
+                "appid"
+            ],
+            "properties": {
+                "appid": {
+                    "type": "string"
+                },
+                "params": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "resources": {
+                    "$ref": "#/definitions/models.AppConfigResources"
+                },
+                "version": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.AppInternalInstalledResponse": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "menus": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.MenuItem"
+                    }
+                },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "models.FieldConfig": {
+            "type": "object",
+            "properties": {
+                "default": {},
+                "label": {},
+                "name": {
+                    "type": "string"
+                },
+                "options": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.FieldOption"
+                    }
+                },
+                "placeholder": {},
+                "required": {
+                    "type": "boolean"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.FieldOption": {
+            "type": "object",
+            "properties": {
+                "label": {},
+                "value": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.MenuItem": {
+            "type": "object",
+            "properties": {
+                "autoDarkTheme": {
+                    "type": "boolean"
+                },
+                "icon": {
+                    "type": "string"
+                },
+                "keepAlive": {
+                    "type": "boolean"
+                },
+                "label": {},
+                "location": {
+                    "type": "string"
+                },
+                "transparent": {
+                    "type": "boolean"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.RequireUninstall": {
+            "type": "object",
+            "properties": {
+                "operator": {
+                    "type": "string"
+                },
+                "reason": {},
+                "version": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.Response": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {},
+                "message": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
