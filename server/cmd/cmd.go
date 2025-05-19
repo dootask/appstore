@@ -78,9 +78,9 @@ func runServer(*cobra.Command, []string) {
 		// 内部使用接口
 		internal := v1.Group("/internal")
 		{
-			internal.POST("/install", routeInternalInstall)     // 安装应用
-			internal.POST("/uninstall", routeInternalUninstall) // 卸载应用
-			internal.POST("/installed", routeInternalInstalled) // 获取已安装应用列表
+			internal.POST("/install", routeInternalInstall)           // 安装应用
+			internal.GET("/uninstall/:appId", routeInternalUninstall) // 卸载应用
+			internal.GET("/installed", routeInternalInstalled)        // 获取已安装应用列表
 		}
 	}
 
@@ -253,8 +253,9 @@ func routeAppDownload(c *gin.Context) {
 // ****************************************************************************
 // ****************************************************************************
 
+// routeInternalInstall 安装应用
 func routeInternalInstall(c *gin.Context) {
-	var req models.AppInternalInstallCreate
+	var req models.AppInternalInstallRequest
 	if err := response.CheckBindAndValidate(&req, c); err != nil {
 		return
 	}
@@ -328,6 +329,7 @@ func routeInternalInstall(c *gin.Context) {
 	response.SuccessWithMsg(c, "应用安装中...")
 }
 
+// routeInternalUninstall 卸载应用
 func routeInternalUninstall(c *gin.Context) {
 	appId := c.Param("appId")
 
@@ -352,6 +354,15 @@ func routeInternalUninstall(c *gin.Context) {
 	response.SuccessWithMsg(c, "应用卸载中...")
 }
 
+// routeInternalInstalled 获取已安装应用列表
 func routeInternalInstalled(c *gin.Context) {
-	c.String(http.StatusOK, "Hello, World!")
+	apps := models.NewApps()
+	var resp models.AppInternalInstalledResponse
+	for _, app := range apps {
+		if app.Config.Status == "installed" {
+			resp.Names = append(resp.Names, app.Name)
+			resp.Menus = append(resp.Menus, app.MenuItems...)
+		}
+	}
+	response.SuccessWithData(c, resp)
 }

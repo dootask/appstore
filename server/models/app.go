@@ -83,12 +83,18 @@ type AppConfigResources struct {
 	MemoryLimit int `yaml:"memory_limit" json:"memory_limit"`
 }
 
-// AppInternalInstallCreate 内部安装请求结构
-type AppInternalInstallCreate struct {
+// AppInternalInstallRequest 内部安装请求结构
+type AppInternalInstallRequest struct {
 	AppID     string                 `json:"appid" validate:"required"`
 	Version   string                 `json:"version" validate:"omitempty"`
 	Params    map[string]interface{} `json:"params" validate:"omitempty"`
 	Resources AppConfigResources     `json:"resources" validate:"omitempty"`
+}
+
+// AppInternalInstalledResponse 内部安装响应结构
+type AppInternalInstalledResponse struct {
+	Names []string   `json:"names" validate:"required"`
+	Menus []MenuItem `json:"menus" validate:"omitempty"`
 }
 
 // getLocalizedValue 获取多语言字符串值
