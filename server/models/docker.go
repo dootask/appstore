@@ -16,51 +16,14 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-// 禁止使用的服务名称
-var PROTECTED_NAMES = []string{
+// ProtectedNames 禁止使用的服务名称
+var ProtectedNames = []string{
 	"php",
 	"nginx",
 	"redis",
 	"mariadb",
 	"search",
 	"appstore",
-}
-
-// DockerCompose 定义docker-compose.yml的结构
-type DockerCompose struct {
-	Name     string                 `yaml:"name"`
-	Version  string                 `yaml:"version"`
-	Services map[string]Service     `yaml:"services"`
-	Volumes  map[string]interface{} `yaml:"volumes,omitempty"`
-	Networks map[string]interface{} `yaml:"networks,omitempty"`
-}
-
-// Service 定义服务配置
-type Service struct {
-	Image         string        `yaml:"image"`
-	ContainerName string        `yaml:"container_name"`
-	Restart       string        `yaml:"restart"`
-	Environment   []string      `yaml:"environment,omitempty"`
-	Volumes       []string      `yaml:"volumes,omitempty"`
-	Ports         []string      `yaml:"ports,omitempty"`
-	Networks      []string      `yaml:"networks,omitempty"`
-	Deploy        *DeployConfig `yaml:"deploy,omitempty"`
-}
-
-// DeployConfig 定义部署配置
-type DeployConfig struct {
-	Resources Resources `yaml:"resources"`
-}
-
-// Resources 定义资源限制
-type Resources struct {
-	Limits Limits `yaml:"limits"`
-}
-
-// Limits 定义资源限制值
-type Limits struct {
-	CPUs   string `yaml:"cpus,omitempty"`
-	Memory string `yaml:"memory,omitempty"`
 }
 
 // convertSourcePath 转换源路径
@@ -108,24 +71,30 @@ func GenerateDockerCompose(appId string, version string, config *AppConfig) erro
 	if err != nil {
 		return fmt.Errorf("读取docker-compose模板失败: %v", err)
 	}
+	composeData := string(templateData)
 
-	//处理环境变量
-	templateData = []byte(strings.ReplaceAll(string(templateData), "${HOST_PWD}", ""))
-	templateData = []byte(strings.ReplaceAll(string(templateData), "${PUBLIC_PATH}", "${HOST_PWD}/public"))
+	// 处理环境变量
+	composeData = strings.ReplaceAll(composeData, "${HOST_PWD}", "")
+	composeData = strings.ReplaceAll(composeData, "${PUBLIC_PATH}", "${HOST_PWD}/public")
 	if config.Params != nil {
 		for key, value := range config.Params {
-			templateData = []byte(strings.ReplaceAll(string(templateData), "${"+key+"}", fmt.Sprintf("%v", value)))
+			composeData = strings.ReplaceAll(composeData, "${"+key+"}", fmt.Sprintf("%v", value))
 		}
 	}
 
 	// 解析模板
-	var compose DockerCompose
-	if err := yaml.Unmarshal(templateData, &compose); err != nil {
+	composeMap := make(map[string]interface{})
+	if err = yaml.Unmarshal([]byte(composeData), &composeMap); err != nil {
 		return fmt.Errorf("解析docker-compose模板失败: %v", err)
 	}
 
+	// 检查services配置是否存在
+	if _, ok := composeMap["services"].(map[string]interface{}); !ok {
+		return fmt.Errorf("配置无效")
+	}
+
 	// 服务名称
-	compose.Name = "dootask-app-" + appId
+	composeMap["name"] = "dootask-app-" + appId
 
 	// 网络名称
 	networkName := "dootask-networks-" + os.Getenv("APP_ID")
@@ -139,69 +108,67 @@ func GenerateDockerCompose(appId string, version string, config *AppConfig) erro
 	}
 
 	// 加入网络
-	compose.Networks = map[string]interface{}{
+	composeMap["networks"] = map[string]interface{}{
 		networkName: map[string]interface{}{
 			"external": true,
 		},
 	}
 
 	// 处理服务配置
-	for serviceName, service := range compose.Services {
+	for serviceName, service := range composeMap["services"].(map[string]interface{}) {
+		serviceMap := service.(map[string]interface{})
+
 		// 检查服务名称是否被保护
-		if slices.Contains(PROTECTED_NAMES, serviceName) {
+		if slices.Contains(ProtectedNames, serviceName) {
 			return fmt.Errorf("服务名称 '%s' 被保护，不能使用", serviceName)
 		}
 
 		// 确保所有服务都有网络配置
-		service.Networks = []string{networkName}
+		serviceMap["networks"] = []string{networkName}
 
-		// 处理短语法挂载
-		if service.Volumes != nil {
-			convertedVolumes := make([]string, len(service.Volumes))
-			for i, volume := range service.Volumes {
-				convertedVolumes[i] = convertVolumePath(volume, versionPwd)
-			}
-			service.Volumes = convertedVolumes
-		}
-
-		// 处理长语法挂载
-		if service.Volumes != nil {
-			for i, volume := range service.Volumes {
-				if strings.Contains(volume, "source:") {
-					// 解析长语法
-					var volumeMap map[string]interface{}
-					if err := yaml.Unmarshal([]byte(volume), &volumeMap); err == nil {
-						if source, ok := volumeMap["source"].(string); ok {
-							// 转换源路径
-							volumeMap["source"] = convertSourcePath(source, versionPwd)
-							// 重新序列化
-							if newVolume, err := yaml.Marshal(volumeMap); err == nil {
-								service.Volumes[i] = string(newVolume)
-							}
-						}
+		// 处理挂载路径
+		if serviceMap["volumes"] != nil {
+			volumes := serviceMap["volumes"].([]interface{})
+			for i, volume := range volumes {
+				if volumeMap, ok := volume.(map[string]interface{}); ok {
+					// 处理长语法挂载
+					if source, ok := volumeMap["source"].(string); ok {
+						volumeMap["source"] = convertSourcePath(source, versionPwd)
 					}
+					volumes[i] = volumeMap
+				} else if volumeStr, ok := volume.(string); ok {
+					// 处理短语法挂载
+					volumes[i] = convertVolumePath(volumeStr, versionPwd)
 				}
 			}
+			serviceMap["volumes"] = volumes
 		}
 
 		// 资源限制
-		if config.Resources.CPULimit != "" || config.Resources.MemoryLimit != "" {
-			service.Deploy = &DeployConfig{
-				Resources: Resources{
-					Limits: Limits{
-						CPUs:   config.Resources.CPULimit,
-						Memory: config.Resources.MemoryLimit,
-					},
+		cpus := config.Resources.CPULimit
+		memory := config.Resources.MemoryLimit
+		if cpus == "" {
+			cpus = "0"
+		}
+		if memory == "" {
+			memory = "0"
+		}
+		serviceMap["deploy"] = map[string]interface{}{
+			"resources": map[string]interface{}{
+				"limits": map[string]interface{}{
+					"cpus":   cpus,
+					"memory": memory,
 				},
-			}
+			},
 		}
 
-		compose.Services[serviceName] = service
+		// 更新服务配置
+		composeMap["services"].(map[string]interface{})[serviceName] = serviceMap
 	}
 
 	// 生成新的docker-compose.yml
 	outputPath := filepath.Join(global.WorkDir, "config", appId, "docker-compose.yml")
-	outputData, err := yaml.Marshal(compose)
+	outputData, err := yaml.Marshal(composeMap)
 	if err != nil {
 		return fmt.Errorf("序列化docker-compose配置失败: %v", err)
 	}

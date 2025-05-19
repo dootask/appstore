@@ -77,6 +77,16 @@ func runPre(*cobra.Command, []string) {
 		os.Exit(1)
 	}
 
+	dirs := []string{"apps", "config", "log", "temp"}
+	for _, dir := range dirs {
+		if !utils.IsDirExists(filepath.Join(absPath, dir)) {
+			if err := os.MkdirAll(filepath.Join(absPath, dir), 0755); err != nil {
+				fmt.Printf("创建目录失败: %s\n", err)
+				os.Exit(1)
+			}
+		}
+	}
+
 	global.WorkDir = absPath
 	fmt.Printf("工作目录: %s\n", global.WorkDir)
 }
@@ -622,7 +632,7 @@ func routeInternalDownloadByURL(c *gin.Context) {
 	}
 
 	// 检查appId是否被保护
-	if slices.Contains(models.PROTECTED_NAMES, appId) {
+	if slices.Contains(models.ProtectedNames, appId) {
 		response.ErrorWithDetail(c, global.CodeError, fmt.Sprintf("服务名称 '%s' 被保护，不能使用", appId), nil)
 		return
 	}
