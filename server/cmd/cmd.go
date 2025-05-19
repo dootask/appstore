@@ -74,6 +74,14 @@ func runServer(*cobra.Command, []string) {
 		v1.GET("/log/:appId", routeAppLog)                    // 获取应用日志
 		v1.GET("/asset/:appId/*assetPath", routeAppAsset)     // 查看应用资源
 		v1.GET("/download/:appId/*version", routeAppDownload) // 下载应用压缩包
+
+		// 内部使用接口
+		internal := v1.Group("/internal")
+		{
+			internal.GET("/install", routeInternalInstall)     // 安装应用
+			internal.GET("/uninstall", routeInternalUninstall) // 卸载应用
+			internal.GET("/installed", routeInternalInstalled) // 获取已安装应用列表
+		}
 	}
 
 	// 启动服务器
@@ -199,16 +207,13 @@ func routeAppDownload(c *gin.Context) {
 		if err != nil {
 			return err
 		}
-		if relPath == "." { // 跳过根目录
+		if relPath == "." {
 			return nil
 		}
 
-		// 当指定了版本时，只保留非版本目录的文件和指定版本的目录
 		if effectiveVersion != "" {
-			// 判断是否为版本目录
 			parts := strings.Split(relPath, string(filepath.Separator))
 			if len(parts) > 0 && info.IsDir() && versionRegex.MatchString(parts[0]) {
-				// 如果是版本目录，但不是指定的版本，则跳过
 				if parts[0] != effectiveVersion {
 					return filepath.SkipDir
 				}
@@ -241,4 +246,20 @@ func routeAppDownload(c *gin.Context) {
 	if err != nil {
 		fmt.Printf("Error during tar.gz creation for %s (version: %s): %v\n", cleanedAppId, effectiveVersion, err)
 	}
+}
+
+// ****************************************************************************
+// ****************************************************************************
+// ****************************************************************************
+
+func routeInternalInstall(c *gin.Context) {
+	c.String(http.StatusOK, "Hello, World!")
+}
+
+func routeInternalUninstall(c *gin.Context) {
+	c.String(http.StatusOK, "Hello, World!")
+}
+
+func routeInternalInstalled(c *gin.Context) {
+	c.String(http.StatusOK, "Hello, World!")
 }
