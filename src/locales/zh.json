@@ -92,7 +92,8 @@
       "category": "应用分类",
       "support": "支持",
       "themeToggleLight": "切换到浅色主题",
-      "themeToggleDark": "切换到深色主题"
+      "themeToggleDark": "切换到深色主题",
+      "title": "DooTask 应用商店"
     },
     "hero": {
       "seriesBAnnouncement": "我们B轮融资获得250万美元",

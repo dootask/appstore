@@ -23,7 +23,7 @@ const AppDisplayCard: React.FC<{
   textColorClass: string;
   cardBgClass: string;
 }> = ({titleKey, rating, users, downloads, icon, bgColorClass, iconColorClass, buttonBgClass, textColorClass, cardBgClass}) => {
-  const { t } = useTranslation();
+  const {t} = useTranslation();
   const sizedIcon = React.cloneElement(icon, {
     className: `${icon.props.className || ''} w-7 h-7 ${iconColorClass}`.trim(),
     size: 28
@@ -65,7 +65,7 @@ const AppDisplayCard: React.FC<{
 };
 
 const Home: React.FC = () => {
-  const { t } = useTranslation();
+  const {t} = useTranslation();
   const [currentTheme, setCurrentThemeLocal] = useState(() => {
     if (typeof window !== 'undefined') {
       return document.body.classList.contains('dark') ? 'dark' : 'light';
@@ -94,7 +94,7 @@ const Home: React.FC = () => {
             setCurrentThemeLocal(newThemeOnBody);
             const storedTheme = localStorage.getItem('theme');
             if (newThemeOnBody !== storedTheme) {
-                localStorage.setItem('theme', newThemeOnBody);
+              localStorage.setItem('theme', newThemeOnBody);
             }
           }
         }
@@ -145,12 +145,13 @@ const Home: React.FC = () => {
         <div className="container mx-auto flex items-center">
           <div className="flex items-center space-x-2 flex-1 justify-start">
             <img src={LogoIcon} alt="Logo" className="w-7 h-7" />
-            <span className="text-lg font-semibold text-gray-500 dark:text-gray-400">App Store</span>
+            <span className="text-lg font-semibold text-gray-500 dark:text-gray-400">{t('home.header.title')}</span>
           </div>
           <nav className="hidden md:flex items-center space-x-6 flex-1 justify-center min-w-0">
-          <Dropdown
+            <Dropdown
               options={categoryOptions}
-              onChange={() => {}}
+              onChange={() => {
+              }}
               className="py-3 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white flex items-center truncate min-w-0 max-w-full cursor-pointer"
             >
               <span className='whitespace-nowrap overflow-hidden text-ellipsis'>{t('home.header.category')}</span>
@@ -158,7 +159,8 @@ const Home: React.FC = () => {
             </Dropdown>
             <Dropdown
               options={supportOptions}
-              onChange={() => {}}
+              onChange={() => {
+              }}
               className="py-3 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white flex items-center truncate min-w-0 max-w-full cursor-pointer"
             >
               <span className='whitespace-nowrap overflow-hidden text-ellipsis'>{t('home.header.support')}</span>

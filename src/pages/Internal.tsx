@@ -18,7 +18,7 @@ import { InternalApi } from "@/lib";
 
 const Internal = () => {
   const {t} = useTranslation();
-  const {apps, loading, categorys, fetchApps, fetchApp} = useAppStore();
+  const {apps, loading, categories, fetchApps, fetchApp} = useAppStore();
   const [selectedApp, setSelectedApp] = useState<App | null>(null)
   const [openDetail, setOpenDetail] = useState(false)
   const [openInstall, setOpenInstall] = useState(false)
@@ -116,11 +116,11 @@ const Internal = () => {
     let isFetching = false;
     fetchTimerRef.current = setInterval(async () => {
       if (isFetching) return;
-      
+
       const waitIds = apps
         .filter(item => ['installing', 'uninstalling'].includes(item.config.status))
         .map(item => item.id);
-      
+
       if (waitIds.length > 0) {
         isFetching = true;
         try {
@@ -140,10 +140,10 @@ const Internal = () => {
 
   useEffect(() => {
     // 如果当前选中的类别不在新的类别列表中，重置为 'all'
-    if (selectedCategory !== 'all' && !categorys.includes(selectedCategory)) {
+    if (selectedCategory !== 'all' && !categories.includes(selectedCategory)) {
       setSelectedCategory('all');
     }
-  }, [categorys, selectedCategory])
+  }, [categories, selectedCategory])
 
   useEffect(() => {
     if (!openDetail) {
@@ -355,13 +355,13 @@ const Internal = () => {
           </div>
 
           {/* 类别、列表 */}
-          {categorys.length > 0 && (
+          {categories.length > 0 && (
             <Tabs defaultValue="all" className="flex-1 gap-y-4 md:gap-y-5 lg:gap-y-6" value={selectedCategory} onValueChange={setSelectedCategory}>
 
               {/* 类别 */}
-              {categorys.length > 2 && (
+              {categories.length > 2 && (
                 <TabsList className="flex w-full md:max-w-md light:bg-gray-100">
-                  {categorys.map((cat) => (
+                  {categories.map((cat) => (
                     <TabsTrigger key={cat} value={cat} className="text-sm">
                       {cat === 'all' ? t('app.all') : cat}
                     </TabsTrigger>
@@ -370,7 +370,7 @@ const Internal = () => {
               )}
 
               {/* 列表 */}
-              {categorys.map((tabValue) => (
+              {categories.map((tabValue) => (
                 <TabsContent key={tabValue} value={tabValue}>
                   {loading && getFilteredApps().length === 0 ? (
                     <div className="text-center py-10">

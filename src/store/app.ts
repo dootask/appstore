@@ -8,12 +8,12 @@ interface AppStoreState {
   apps: App[];
   loading: boolean;
   setApps: (apps: App[]) => void;
-  
+
   fetchApps: (silence?: boolean, appIds?: string[]) => Promise<void>;
   fetchApp: (appId: string) => Promise<void>;
 
-  categorys: string[];
-  updateCategorys: () => void;  // 获取应用列表后，更新应用类别
+  categories: string[];
+  updateCategories: () => void;  // 获取应用列表后，更新应用类别
 }
 
 export const useAppStore = create<AppStoreState>((set, get) => ({
@@ -41,7 +41,7 @@ export const useAppStore = create<AppStoreState>((set, get) => ({
         } else {
           // 设置新列表
           set({apps: data});
-          get().updateCategorys();
+          get().updateCategories();
         }
       }
     } catch (e) {
@@ -71,13 +71,13 @@ export const useAppStore = create<AppStoreState>((set, get) => ({
     }
   },
 
-  categorys: ['all'],
-  updateCategorys: () => {
+  categories: ['all'],
+  updateCategories: () => {
     const {apps} = get();
     const allTags = apps.flatMap(app => app.tags || []);
     const uniqueTags = [...new Set(allTags)].filter(tag => tag.trim() !== '');
     const shuffledTags = uniqueTags.sort(() => Math.random() - 0.5);
     const limitedTags = shuffledTags.slice(0, 4);
-    set({categorys: ['all', ...limitedTags]});
+    set({categories: ['all', ...limitedTags]});
   },
 }));

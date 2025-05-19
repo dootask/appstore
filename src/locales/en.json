@@ -92,7 +92,8 @@
       "category": "Category",
       "support": "Support",
       "themeToggleLight": "Switch to light theme",
-      "themeToggleDark": "Switch to dark theme"
+      "themeToggleDark": "Switch to dark theme",
+      "title": "DooTask AppStore"
     },
     "hero": {
       "seriesBAnnouncement": "We Raised $2.5M in Series B",
