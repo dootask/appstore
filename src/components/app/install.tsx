@@ -8,23 +8,23 @@ import { ScrollArea } from "@/components/ui/scroll-area.tsx"
 import { useTranslation } from "react-i18next"
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
-import { requestAPI } from "@dootask/tools";
 import { eventEmit } from "@/lib/events.ts";
 import { Alert } from "@/components/custom/prompt";
 import { useAppStore } from "@/store/app"
 import Select from "@/components/custom/select.tsx"
 import { compareVersions } from "@/lib/utils.ts"
+import { InternalApi } from "@/lib";
 
 interface AppInstallProps {
-  appName: string
+  appId: string
   onClose?: () => void
 }
 
-export function AppInstall({appName, onClose}: AppInstallProps) {
+export function AppInstall({appId, onClose}: AppInstallProps) {
   const {t} = useTranslation()
   const [installing, setInstalling] = useState(false)
   const {apps} = useAppStore();
-  const app = apps.find(app => app.name === appName)
+  const app = apps.find(app => app.id === appId)
 
   if (!app) {
     return <div>App not found</div>
@@ -47,7 +47,7 @@ export function AppInstall({appName, onClose}: AppInstallProps) {
       }, {
         message: t('install.errors.memory_invalid')
       }),
-    ...app.info.fields.reduce((acc, field) => {
+    ...app.fields.reduce((acc, field) => {
       const schema = field.type === "number"
         ? z.coerce.number()
         : z.string();
@@ -66,12 +66,12 @@ export function AppInstall({appName, onClose}: AppInstallProps) {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: app.info.name,
+      name: app.name,
       version: "latest",
       cpuLimit: app.config.resources.cpu_limit || "0",
       memoryLimit: app.config.resources.memory_limit || "0",
       ...Object.fromEntries(
-        app.info.fields.map((field) => [field.name, field.default || ""])
+        app.fields.map((field) => [field.name, field.default || ""])
       ),
     } as FormValues,
   })
@@ -95,7 +95,7 @@ export function AppInstall({appName, onClose}: AppInstallProps) {
     }
 
     // 提取 params 字段
-    const params = app.info.fields.reduce((acc, field) => ({
+    const params = app.fields.reduce((acc, field) => ({
       ...acc,
       [field.name]: values[field.name as keyof FormValues],
     }), {})
@@ -111,14 +111,11 @@ export function AppInstall({appName, onClose}: AppInstallProps) {
     }
 
     setInstalling(true)
-    requestAPI({
-      url: `apps/install`,
-      method: 'post',
-      data: Object.assign(submitData, {
-        app_name: app.name,
-      }),
+    InternalApi.installApp({
+      ...submitData,
+      appid: appId,
     }).then(() => {
-      eventEmit("refreshLog", app.name)
+      eventEmit("refreshLog", appId)
       onClose?.()
     }).catch((error) => {
       Alert({
@@ -170,8 +167,8 @@ export function AppInstall({appName, onClose}: AppInstallProps) {
                           options={[
                             {id: 'latest', name: t('install.latest_version')},
                             ...app.versions.map(version => ({
-                              id: version.version,
-                              name: version.version
+                              id: version,
+                              name: version
                             }))
                           ]}
                           defaultValue={field.value}
@@ -192,35 +189,35 @@ export function AppInstall({appName, onClose}: AppInstallProps) {
             </div>
           </div>
 
-          {app.info.fields.length > 0 && (
+          {app.fields.length > 0 && (
             <div className="flex flex-col gap-5">
               <h3 className="text-lg font-medium text-foreground/90">{t('install.app_config')}</h3>
               <div className="flex flex-col gap-5">
-                {app.info.fields.map((field) => (
+                {app.fields.map((field) => (
                   <FormField
                     key={field.name}
                     control={form.control}
                     name={field.name as keyof FormValues}
                     render={({field: formField}) => (
                       <FormItem className="grid grid-cols-1 gap-3 sm:grid-cols-4 sm:items-start">
-                        <FormLabel className="sm:text-right min-h-9">{field.label}</FormLabel>
+                        <FormLabel className="sm:text-right min-h-9">{field.label + ""}</FormLabel>
                         <div className="sm:col-span-3">
                           <FormControl>
                             {field.type === "select" ? (
                               <Select
                                 options={field.options?.map(option => ({
                                   id: option.value,
-                                  name: option.label
+                                  name: option.label + ""
                                 })) || []}
                                 defaultValue={field.default?.toString()}
                                 onChange={(value) => formField.onChange(value.id)}
-                                placeholder={field.placeholder}
+                                placeholder={field.placeholder + ""}
                               />
                             ) : (
                               <Input
                                 {...formField}
                                 type={field.type === "number" ? "number" : "text"}
-                                placeholder={field.placeholder}
+                                placeholder={field.placeholder + ""}
                               />
                             )}
                           </FormControl>

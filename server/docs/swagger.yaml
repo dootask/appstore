@@ -38,6 +38,8 @@ definitions:
         items:
           type: string
         type: array
+      upgradeable:
+        type: boolean
       user_count:
         type: string
       versions:

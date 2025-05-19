@@ -1,15 +1,15 @@
 import { create } from 'zustand';
-import type { AppItem } from '@/types/app';
-import { requestAPI } from '@dootask/tools';
+import type { App } from '@/types/api';
 import { Alert } from '@/components/custom/prompt';
 import i18n from '@/i18n';
+import { AppApi } from "@/lib";
 
 interface AppStoreState {
-  apps: AppItem[];
+  apps: App[];
   loading: boolean;
-  setApps: (apps: AppItem[]) => void;
+  setApps: (apps: App[]) => void;
   fetchApps: (silence?: boolean) => Promise<void>;
-  updateOrAddApp: (app: AppItem) => void;
+  updateOrAddApp: (app: App) => void;
 
   categorys: string[];
   updateCategorys: () => void;  // 获取应用列表、添加应用后，更新应用类别
@@ -22,7 +22,7 @@ export const useAppStore = create<AppStoreState>((set, get) => ({
   fetchApps: async (silence = false) => {
     if (!silence) set({loading: true});
     try {
-      const {data} = await requestAPI({url: 'apps/list'});
+      const {data} = await AppApi.getAppList();
       if (data) {
         set({apps: data});
         get().updateCategorys();
@@ -43,7 +43,7 @@ export const useAppStore = create<AppStoreState>((set, get) => ({
   },
   updateOrAddApp: (app) => {
     const {apps} = get();
-    const idx = apps.findIndex(item => item.name === app.name);
+    const idx = apps.findIndex(item => item.id === app.id);
     if (idx > -1) {
       const newApps = [...apps];
       newApps[idx] = {...newApps[idx], ...app};
@@ -57,7 +57,7 @@ export const useAppStore = create<AppStoreState>((set, get) => ({
   categorys: ['all'],
   updateCategorys: () => {
     const {apps} = get();
-    const allTags = apps.flatMap(app => app.info.tags || []);
+    const allTags = apps.flatMap(app => app.tags || []);
     const uniqueTags = [...new Set(allTags)].filter(tag => tag.trim() !== '');
     const shuffledTags = uniqueTags.sort(() => Math.random() - 0.5);
     const limitedTags = shuffledTags.slice(0, 4);

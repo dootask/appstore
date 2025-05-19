@@ -6,7 +6,6 @@ import { ChevronLeft, ChevronRight, LoaderCircle, RefreshCw } from "lucide-react
 import { AppSearch } from '@/components/app/search.tsx';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AppCard } from '@/components/app/card.tsx';
-import type { AppItem } from "@/types/app.ts";
 import { AppDetail } from "@/components/app/detail.tsx"
 import { beforeClose } from "@/lib/utils.ts";
 import { AppInstall } from '@/components/app/install.tsx';
@@ -14,11 +13,12 @@ import PromptPortal, { Alert, Notice } from "@/components/custom/prompt";
 import { useAppStore } from '@/store/app';
 import Dropdown from "@/components/custom/dropdown.tsx";
 import Drawer from "@/components/custom/drawer.tsx";
+import type { App } from "@/types/api.ts";
 
-const Store = () => {
+const Internal = () => {
   const {t} = useTranslation();
   const {apps, loading, categorys, fetchApps} = useAppStore();
-  const [selectedApp, setSelectedApp] = useState<AppItem | null>(null)
+  const [selectedApp, setSelectedApp] = useState<App | null>(null)
   const [openDetail, setOpenDetail] = useState(false)
   const [openInstall, setOpenInstall] = useState(false)
   const [filter, setFilter] = useState('all');
@@ -41,7 +41,7 @@ const Store = () => {
     const unsubscribe = useAppStore.subscribe(
       ({apps}, {apps: prevApps}) => {
         apps.forEach(app => {
-          const prevApp = prevApps.find(p => p.name === app.name);
+          const prevApp = prevApps.find(p => p.id === app.id);
           if (prevApp && prevApp.config.status !== app.config.status) {
             if (app.config.status === 'installing') {
               const installType = prevApp.upgradeable ? 'upgrade' : 'install'
@@ -49,7 +49,7 @@ const Store = () => {
                 Notice({
                   type: "info",
                   title: t(`install.${installType}_title`),
-                  description: t(`install.${installType}_starting`, {app: app.info.name}),
+                  description: t(`install.${installType}_starting`, {app: app.name}),
                 }),
                 installType
               ]
@@ -62,14 +62,14 @@ const Store = () => {
               Notice({
                 type: "success",
                 title: t(`install.${installType}_title`),
-                description: t(`install.${installType}_success`, {app: app.info.name}),
+                description: t(`install.${installType}_success`, {app: app.name}),
               })
             } else if (app.config.status === 'uninstalling') {
               handlers.uninstaller = [
                 Notice({
                   type: "warning",
                   title: t('uninstall.title'),
-                  description: t('uninstall.uninstall_starting', {app: app.info.name}),
+                  description: t('uninstall.uninstall_starting', {app: app.name}),
                 }),
                 'uninstall'
               ]
@@ -81,7 +81,7 @@ const Store = () => {
               Notice({
                 type: "success",
                 title: t('uninstall.success'),
-                description: t('uninstall.success_description', {app: app.info.name}),
+                description: t('uninstall.success_description', {app: app.name}),
               })
             } else if (app.config.status === 'error') {
               if (prevApp.config.status === 'installing') {
@@ -90,7 +90,7 @@ const Store = () => {
                   Notice({
                     type: "error",
                     title: t(`install.${handlers.installer[1]}_title`),
-                    description: t(`install.${handlers.installer[1]}_failed`, {app: app.info.name})
+                    description: t(`install.${handlers.installer[1]}_failed`, {app: app.name})
                   })
                   handlers.installer = null
                 }
@@ -116,7 +116,7 @@ const Store = () => {
       if (apps.find(item => ['installing', 'uninstalling'].includes(item.config.status))) {
         fetchApps(true);
       }
-    }, 10000)
+    }, 5000)
     // 清理定时器
     return () => {
       if (fetchTimerRef.current) {
@@ -159,7 +159,7 @@ const Store = () => {
     // 按类别过滤
     if (selectedCategory !== 'all') {
       filtered = filtered.filter(app => {
-        const tags = app.info.tags || [];
+        const tags = app.tags || [];
         return tags.some(tag => tag.toLowerCase() === selectedCategory.toLowerCase());
       });
     }
@@ -169,9 +169,9 @@ const Store = () => {
       const keyword = searchKeyword.toLowerCase().trim();
       filtered = filtered.filter(app => {
         return (
-          app.info.name.toLowerCase().includes(keyword) ||
-          app.info.description.toLowerCase().includes(keyword) ||
-          (app.info.tags && app.info.tags.some(tag => tag.toLowerCase().includes(keyword)))
+          app.name.toLowerCase().includes(keyword) ||
+          app.description.toLowerCase().includes(keyword) ||
+          (app.tags && app.tags.some(tag => tag.toLowerCase().includes(keyword)))
         );
       });
     }
@@ -185,13 +185,13 @@ const Store = () => {
   };
 
   // 打开应用详情
-  const handleOpenApp = (app: AppItem) => {
+  const handleOpenApp = (app: App) => {
     setSelectedApp(app);
     setOpenDetail(true)
   }
 
   // 打开安装应用
-  const handleInstall = (app: AppItem) => {
+  const handleInstall = (app: App) => {
     if (['installing', 'uninstalling'].includes(app.config.status)) {
       // 如果应用正在安装或卸载，则直接返回
       return;
@@ -200,7 +200,7 @@ const Store = () => {
   }
 
   // 卸载应用
-  const handleUninstall = (app: AppItem) => {
+  const handleUninstall = (app: App) => {
     if (app.config.status !== 'installed') {
       // 如果应用未安装，则直接返回
       return;
@@ -208,7 +208,7 @@ const Store = () => {
     Alert({
       type: "warning",
       title: t('uninstall.title'),
-      description: t('uninstall.description', {app: app.info.name}),
+      description: t('uninstall.description', {app: app.name}),
       showCancel: true,
       onConfirm: async () => {
         // 确认卸载
@@ -226,7 +226,7 @@ const Store = () => {
           Alert({
             type: "warning",
             title: t('uninstall.error'),
-            description: t('uninstall.error_description', {app: app.info.name, error: error.msg || t('common.unknown_error')}),
+            description: t('uninstall.error_description', {app: app.name, error: error.msg || t('common.unknown_error')}),
             showCancel: false,
           })
         }).finally(() => {
@@ -370,12 +370,12 @@ const Store = () => {
                       {getFilteredApps().map((app) => (
                         <AppCard
                           key={app.name}
-                          icon={app.info.icon}
-                          title={app.info.name}
-                          description={app.info.description}
+                          icon={app.icon}
+                          title={app.name}
+                          description={app.description}
                           status={app.config.status}
                           upgradeable={app.upgradeable}
-                          category={app.info.tags?.length ? app.info.tags : []}
+                          category={app.tags?.length ? app.tags : []}
                           onOpen={() => handleOpenApp(app)}
                         />
                       ))}
@@ -431,7 +431,7 @@ const Store = () => {
         onOpenChange={setOpenDetail}
         title={t('app.detail')}
         className="rounded-l-xl w-[1000px] max-w-[90vw]">
-        {selectedApp && <AppDetail appName={selectedApp.name} onInstall={handleInstall} onUninstall={handleUninstall} />}
+        {selectedApp && <AppDetail appId={selectedApp.id} onInstall={handleInstall} onUninstall={handleUninstall} />}
       </Drawer>
 
       {/* 安装应用 */}
@@ -444,7 +444,7 @@ const Store = () => {
               t('app.install')
         }
         className="rounded-l-xl w-[600px] max-w-[80vw]">
-        {selectedApp && <AppInstall appName={selectedApp.name} onClose={() => setOpenInstall(false)} />}
+        {selectedApp && <AppInstall appId={selectedApp.id} onClose={() => setOpenInstall(false)} />}
       </Drawer>
 
       {/* 提示弹窗 */}
@@ -453,4 +453,4 @@ const Store = () => {
   )
 }
 
-export default Store
+export default Internal

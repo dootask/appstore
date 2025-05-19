@@ -416,6 +416,9 @@ const docTemplate = `{
                         "type": "string"
                     }
                 },
+                "upgradeable": {
+                    "type": "boolean"
+                },
                 "user_count": {
                     "type": "string"
                 },

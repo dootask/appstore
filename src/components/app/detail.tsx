@@ -1,10 +1,9 @@
-import type { AppItem, AppStatus } from "@/types/app.ts"
+import type { App, AppStatus } from "@/types/api"
 import type { AppLogRef } from "@/components/app/log.tsx"
 import { Button } from "@/components/ui/button.tsx"
 import { ScrollArea } from "@/components/ui/scroll-area.tsx";
 import { ExternalLink, Loader2, LoaderCircle, RefreshCw } from "lucide-react"
 import { useTranslation } from "react-i18next";
-import { requestAPI } from "@dootask/tools";
 import { useEffect, useState, useRef } from "react";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 import ReactMarkdown from "react-markdown"
@@ -14,50 +13,47 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs.t
 import { AppLog } from "@/components/app/log.tsx";
 import { eventOn } from "@/lib/events.ts";
 import { useAppStore } from "@/store/app";
+import { AppApi } from "@/lib";
 
 interface AppDetailProps {
-  appName: string
-  onInstall: (app: AppItem) => void
-  onUninstall: (app: AppItem) => void
+  appId: string
+  onInstall: (app: App) => void
+  onUninstall: (app: App) => void
 }
 
-export function AppDetail({appName, onInstall, onUninstall}: AppDetailProps) {
+export function AppDetail({appId, onInstall, onUninstall}: AppDetailProps) {
   const {t} = useTranslation()
   const {updateOrAddApp, apps} = useAppStore();
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState("detail")
+  const [appReadme, setAppReadme] = useState("")
   const [isRefreshing, setIsRefreshing] = useState(false)
   const appLogRef = useRef<AppLogRef>(null)
-  const app = apps.find(app => app.name === appName)
+  const app = apps.find(app => app.id === appId)
 
   if (!app) {
     return <div>App not found</div>
   }
 
   useEffect(() => {
-    requestAPI({
-      url: 'apps/info',
-      data: {
-        app_name: appName
-      }
-    }).then(({data}) => {
-      if (data && data.name === appName) {
-        updateOrAddApp(data)
+    AppApi.getAppReadme(appId).then(({data}) => {
+      if (data) {
+        setAppReadme(data.content)
       }
     }).catch((err) => {
       console.error(err)
     }).finally(() => {
       setLoading(false)
     })
-    const off = eventOn("refreshLog", (app_name: unknown) => {
-      if (app_name === appName) {
+    const off = eventOn("refreshLog", (value: unknown) => {
+      if (appId === value) {
         handleRefreshLog()
       }
     })
     return () => {
       off()
     }
-  }, [appName, updateOrAddApp]);
+  }, [appId, updateOrAddApp]);
 
   const handleRefreshLog = () => {
     setActiveTab('log')
@@ -69,10 +65,10 @@ export function AppDetail({appName, onInstall, onUninstall}: AppDetailProps) {
       {/* 顶部信息区 */}
       <div className="mx-6 mb-6 flex items-center justify-between">
         <div className="flex flex-1 items-start gap-4 mr-4">
-          <img src={app.info.icon} alt={app.info.name} className="w-16 h-16 rounded-lg object-cover"/>
+          <img src={app.icon} alt={app.name} className="w-16 h-16 rounded-lg object-cover"/>
           <div className="min-h-16 flex flex-col justify-center select-text">
-            <div className="text-2xl text-gray-700 dark:text-gray-100 font-bold mb-1">{app.info.name}</div>
-            <div className="text-gray-500 dark:text-gray-400 text-sm mb-1">{app.info.description}</div>
+            <div className="text-2xl text-gray-700 dark:text-gray-100 font-bold mb-1">{app.name}</div>
+            <div className="text-gray-500 dark:text-gray-400 text-sm mb-1">{app.description}</div>
           </div>
         </div>
         <div className="flex flex-col items-end gap-5 min-w-[120px]">
@@ -147,18 +143,18 @@ export function AppDetail({appName, onInstall, onUninstall}: AppDetailProps) {
             })()}
           </div>
           <div className="flex flex-wrap justify-end gap-3">
-            {app.info.website && (
-              <a href={app.info.website} target="_blank" rel="noopener noreferrer" className="text-xs text-gray-500 hover:text-blue-600 flex items-center gap-1">
+            {app.website && (
+              <a href={app.website} target="_blank" rel="noopener noreferrer" className="text-xs text-gray-500 hover:text-blue-600 flex items-center gap-1">
                 {t('common.website')} <ExternalLink size={14}/>
               </a>
             )}
-            {app.info.document && (
-              <a href={app.info.document} target="_blank" rel="noopener noreferrer" className="text-xs text-gray-500 hover:text-blue-600 flex items-center gap-1">
+            {app.document && (
+              <a href={app.document} target="_blank" rel="noopener noreferrer" className="text-xs text-gray-500 hover:text-blue-600 flex items-center gap-1">
                 {t('common.document')} <ExternalLink size={14}/>
               </a>
             )}
-            {app.info.github && (
-              <a href={app.info.github} target="_blank" rel="noopener noreferrer" className="text-xs text-gray-500 hover:text-blue-600 flex items-center gap-1">
+            {app.github && (
+              <a href={app.github} target="_blank" rel="noopener noreferrer" className="text-xs text-gray-500 hover:text-blue-600 flex items-center gap-1">
                 {t('common.open_community')} <ExternalLink size={14}/>
               </a>
             )}
@@ -167,7 +163,7 @@ export function AppDetail({appName, onInstall, onUninstall}: AppDetailProps) {
       </div>
 
       {/* 分割线 */}
-      <div className="mx-6 mb-3 border-b border-gray-200 dark:border-zinc-700"/>
+      <div className="mx-6 mb-4 border-b border-gray-200 dark:border-zinc-700"/>
 
       {/* 详情、日志 */}
       <Tabs defaultValue="detail" value={activeTab} className="flex-1 flex flex-col h-0" onValueChange={setActiveTab}>
@@ -197,11 +193,11 @@ export function AppDetail({appName, onInstall, onUninstall}: AppDetailProps) {
                   <Skeleton className="h-4 w-[40%]"/>
                 </div>
               ) : (
-                app.document ? (
+                appReadme ? (
                   <div className="flex w-full">
                     <div className="flex-1 w-0 prose app-markdown-body">
                       <ReactMarkdown
-                        children={app.document}
+                        children={appReadme}
                         components={{
                           code(props) {
                             const {children, className, ...rest} = props
@@ -249,7 +245,7 @@ export function AppDetail({appName, onInstall, onUninstall}: AppDetailProps) {
         <TabsContent value="log" className="flex-1 h-0">
           <ScrollArea className="h-full">
             <div className="px-6 pb-6 select-text">
-              <AppLog ref={appLogRef} appName={appName} onLoading={setIsRefreshing}/>
+              <AppLog ref={appLogRef} appId={appId} onLoading={setIsRefreshing}/>
             </div>
           </ScrollArea>
         </TabsContent>

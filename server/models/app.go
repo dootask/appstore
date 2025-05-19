@@ -35,6 +35,7 @@ type App struct {
 	Rating            float64            `yaml:"rating,omitempty" json:"rating"`
 	UserCount         string             `yaml:"user_count,omitempty" json:"user_count"`
 	Downloads         string             `yaml:"downloads,omitempty" json:"downloads"`
+	Upgradeable       bool               `yaml:"upgradeable,omitempty" json:"upgradeable"`
 }
 
 // FieldConfig 定义应用的可配置字段结构
@@ -337,7 +338,19 @@ func NewApp(appId string) *App {
 	}
 	app.MenuItems = menuItems
 
+	// 获取应用配置
 	app.Config = GetAppConfig(filepath.Join(app.ID))
+
+	// 检查是否可以升级
+	if app.Config != nil && app.Config.InstallVersion != "" && app.Config.Status == "installed" {
+		currentVersion := app.Config.InstallVersion
+		if len(app.Versions) > 0 {
+			latestVersion := app.Versions[len(app.Versions)-1]
+			if utils.CompareVersions(latestVersion, currentVersion) > 0 {
+				app.Upgradeable = true
+			}
+		}
+	}
 
 	return app
 }

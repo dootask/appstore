@@ -1,12 +1,11 @@
-import { requestAPI } from "@dootask/tools";
 import { useEffect, useState, useRef, forwardRef, useImperativeHandle } from "react";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 import { useTranslation } from "react-i18next";
-import type { AppItem } from "@/types/app.ts";
 import { useAppStore } from "@/store/app";
+import { InternalApi } from "@/lib";
 
 interface AppLogProps {
-  appName: string
+  appId: string
   onLoading?: (loading: boolean) => void
 }
 
@@ -14,10 +13,10 @@ export interface AppLogRef {
   fetchLogs: (isQueue?: boolean) => Promise<void>
 }
 
-export const AppLog = forwardRef<AppLogRef, AppLogProps>(({appName, onLoading}, ref) => {
+export const AppLog = forwardRef<AppLogRef, AppLogProps>(({appId, onLoading}, ref) => {
   const {t} = useTranslation()
-  const {updateOrAddApp, apps} = useAppStore();
-  const app = apps.find(app => app.name === appName)
+  const {apps} = useAppStore();
+  const app = apps.find(app => app.id === appId)
   const [loading, setLoading] = useState(true)
   const [logDetail, setLogDetail] = useState("")
   const bottomRef = useRef<HTMLDivElement>(null)
@@ -37,19 +36,8 @@ export const AppLog = forwardRef<AppLogRef, AppLogProps>(({appName, onLoading}, 
       isRequestingRef.current = true
       setLoading(true)
       onLoading?.(true)
-      const {data} = await requestAPI({
-        url: 'apps/logs',
-        data: {
-          app_name: app.name
-        }
-      })
-      if (data && data.name === app.name) {
-        updateOrAddApp({
-          name: data.name,
-          config: data.config,
-          versions: data.versions,
-          upgradeable: data.upgradeable
-        } as AppItem);
+      const {data} = await InternalApi.getAppLog(appId)
+      if (data) {
         setLogDetail(data.log)
       }
     } catch (err) {

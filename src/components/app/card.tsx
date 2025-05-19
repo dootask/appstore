@@ -2,7 +2,7 @@ import {Badge} from "@/components/ui/badge.tsx";
 import {Card, CardContent, CardHeader} from "@/components/ui/card.tsx";
 import AppIcon from '@/assets/app.svg'
 import {useTranslation} from "react-i18next";
-import type { AppStatus } from "@/types/app.ts";
+import type { AppStatus } from "@/types/api.ts";
 
 interface AppCardProps {
   icon?: string;
