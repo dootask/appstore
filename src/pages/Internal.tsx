@@ -140,7 +140,7 @@ const Internal = () => {
 
   useEffect(() => {
     // 如果当前选中的类别不在新的类别列表中，重置为 'all'
-    if (selectedCategory !== 'all' && !categories.includes(selectedCategory)) {
+    if (selectedCategory !== 'all' && !categories.slice(0,5).includes(selectedCategory)) {
       setSelectedCategory('all');
     }
   }, [categories, selectedCategory])
@@ -361,7 +361,7 @@ const Internal = () => {
               {/* 类别 */}
               {categories.length > 2 && (
                 <TabsList className="flex w-full md:max-w-md light:bg-gray-100">
-                  {categories.map((cat) => (
+                  {categories.slice(0,5).map((cat) => (
                     <TabsTrigger key={cat} value={cat} className="text-sm">
                       {cat === 'all' ? t('app.all') : cat}
                     </TabsTrigger>
@@ -370,7 +370,7 @@ const Internal = () => {
               )}
 
               {/* 列表 */}
-              {categories.map((tabValue) => (
+              {categories.slice(0,5).map((tabValue) => (
                 <TabsContent key={tabValue} value={tabValue}>
                   {loading && getFilteredApps().length === 0 ? (
                     <div className="text-center py-10">

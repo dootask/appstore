@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronDown, Globe, UserCircle, Zap, Sparkles, ArrowRight, Heart, Filter, Folder, Activity, Wallet, Sun, Moon } from 'lucide-react';
+import { ChevronDown, Globe, UserCircle, Zap, Sparkles, ArrowRight, Heart, Filter, Sun, Moon } from 'lucide-react';
 import i18n from '@/i18n';
 import LogoIcon from '@/assets/logo.svg'
 import Dropdown from '@/components/custom/dropdown';
@@ -10,46 +10,40 @@ import {
   setLanguage
 } from '@/store/config';
 import { useTranslation, Trans } from 'react-i18next';
+import { useAppStore } from "@/store/app.ts";
+import type { App } from '@/types/api';
 
 const AppDisplayCard: React.FC<{
-  titleKey: string;
-  rating: number;
-  users: string;
-  downloads: string;
-  icon: React.ReactElement<{ className?: string, size?: number | string }>;
   bgColorClass: string;
   iconColorClass: string;
   buttonBgClass: string;
   textColorClass: string;
   cardBgClass: string;
-}> = ({titleKey, rating, users, downloads, icon, bgColorClass, iconColorClass, buttonBgClass, textColorClass, cardBgClass}) => {
+  app: App;
+}> = ({bgColorClass, iconColorClass, buttonBgClass, textColorClass, cardBgClass, app}) => {
   const {t} = useTranslation();
-  const sizedIcon = React.cloneElement(icon, {
-    className: `${icon.props.className || ''} w-7 h-7 ${iconColorClass}`.trim(),
-    size: 28
-  });
 
   return (
     <div className={`p-6 rounded-2xl shadow-lg ${cardBgClass} border border-gray-200 dark:border-gray-700 flex flex-col`}>
       <div className="flex items-center justify-between mb-4">
         <div className={`p-3 rounded-lg ${bgColorClass}`}>
-          {sizedIcon}
+          <img src={app.icon} alt={app.name} className={`w-7 h-7 ${iconColorClass}`} />
         </div>
         <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
           <Heart className="w-4 h-4 text-pink-500 dark:text-pink-400 mr-1" fill="currentColor" />
-          <span>{rating.toFixed(1)}</span>
+          <span>{app.rating}</span>
         </div>
       </div>
       <div className="flex-grow">
-        <h3 className="text-xl font-semibold mb-1 text-gray-900 dark:text-white">{t(titleKey)}</h3>
+        <h3 className="text-xl font-semibold mb-1 text-gray-900 dark:text-white">{app.name}</h3>
         <div className="mb-4 space-y-1 mt-3">
           <div className="flex justify-between text-sm">
             <span className="text-gray-500 dark:text-gray-400">{t('home.appDisplayCard.totalUsers')}</span>
-            <span className={`font-semibold ${textColorClass}`}>{users}</span>
+            <span className={`font-semibold ${textColorClass}`}>{app.user_count}</span>
           </div>
           <div className="flex justify-between text-sm">
             <span className="text-gray-500 dark:text-gray-400">{t('home.appDisplayCard.downloads')}</span>
-            <span className={`font-semibold ${textColorClass}`}>{downloads}</span>
+            <span className={`font-semibold ${textColorClass}`}>{app.downloads}</span>
           </div>
         </div>
       </div>
@@ -66,6 +60,8 @@ const AppDisplayCard: React.FC<{
 
 const Home: React.FC = () => {
   const {t} = useTranslation();
+  const {apps, categories, fetchApps} = useAppStore();
+
   const [currentTheme, setCurrentThemeLocal] = useState(() => {
     if (typeof window !== 'undefined') {
       return document.body.classList.contains('dark') ? 'dark' : 'light';
@@ -116,16 +112,9 @@ const Home: React.FC = () => {
     };
   }, [currentTheme]);
 
-  const categoryOptions = [
-    {
-      label: '全部',
-      value: 'all'
-    },
-    {
-      label: '开发工具',
-      value: 'development'
-    }
-  ];
+  useEffect(() => {
+    fetchApps()
+  }, []);
 
   const supportOptions = [
     {
@@ -149,7 +138,9 @@ const Home: React.FC = () => {
           </div>
           <nav className="hidden md:flex items-center space-x-6 flex-1 justify-center min-w-0">
             <Dropdown
-              options={categoryOptions}
+              options={
+                categories.slice(1,11).map(category => ({label: category, value: category}))
+              }
               onChange={() => {
               }}
               className="py-3 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white flex items-center truncate min-w-0 max-w-full cursor-pointer"
@@ -233,42 +224,45 @@ const Home: React.FC = () => {
 
           {/* App Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <AppDisplayCard
-              icon={<Folder />}
-              bgColorClass="bg-green-100 dark:bg-green-600/20"
-              iconColorClass="text-green-600 dark:text-green-400"
-              buttonBgClass="bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700"
-              textColorClass="text-green-600 dark:text-green-400 font-bold"
-              cardBgClass="bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-shadow duration-300"
-              titleKey="home.appTitles.fileManager"
-              rating={4.9}
-              users="5.2k"
-              downloads="9,04,012 +"
-            />
-            <AppDisplayCard
-              icon={<Activity />}
-              bgColorClass="bg-yellow-100 dark:bg-yellow-500/20"
-              iconColorClass="text-yellow-600 dark:text-yellow-400"
-              buttonBgClass="bg-yellow-500 hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700"
-              textColorClass="text-yellow-600 dark:text-yellow-400 font-bold"
-              cardBgClass="bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-shadow duration-300"
-              titleKey="home.appTitles.analyticsData"
-              rating={5.0}
-              users="9.2k"
-              downloads="1,00,000 +"
-            />
-            <AppDisplayCard
-              icon={<Wallet />}
-              bgColorClass="bg-blue-100 dark:bg-blue-600/20"
-              iconColorClass="text-blue-600 dark:text-blue-400"
-              buttonBgClass="bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700"
-              textColorClass="text-blue-600 dark:text-blue-400 font-bold"
-              cardBgClass="bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-shadow duration-300"
-              titleKey="home.appTitles.walletFeature"
-              rating={3.2}
-              users="4.8k"
-              downloads="70,800 +"
-            />
+            {[...apps]
+              .sort(() => Math.random() - 0.5)
+              .slice(0, 3)
+              .map((app, index) => {
+              const colorConfigs = [
+                {
+                  bgColorClass: "bg-green-100 dark:bg-green-600/20",
+                  iconColorClass: "text-green-600 dark:text-green-400",
+                  buttonBgClass: "bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700",
+                  textColorClass: "text-green-600 dark:text-green-400 font-bold"
+                },
+                {
+                  bgColorClass: "bg-yellow-100 dark:bg-yellow-500/20",
+                  iconColorClass: "text-yellow-600 dark:text-yellow-400",
+                  buttonBgClass: "bg-yellow-500 hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700",
+                  textColorClass: "text-yellow-600 dark:text-yellow-400 font-bold"
+                },
+                {
+                  bgColorClass: "bg-blue-100 dark:bg-blue-600/20",
+                  iconColorClass: "text-blue-600 dark:text-blue-400",
+                  buttonBgClass: "bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700",
+                  textColorClass: "text-blue-600 dark:text-blue-400 font-bold"
+                }
+              ]
+              
+              const colorConfig = colorConfigs[index]
+              
+              return (
+                <AppDisplayCard
+                  key={app.id}
+                  bgColorClass={colorConfig.bgColorClass}
+                  iconColorClass={colorConfig.iconColorClass}
+                  buttonBgClass={colorConfig.buttonBgClass}
+                  textColorClass={colorConfig.textColorClass}
+                  cardBgClass="bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-shadow duration-300"
+                  app={app}
+                />
+              )
+            })}
           </div>
         </div>
       </section>

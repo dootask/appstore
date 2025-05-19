@@ -77,7 +77,7 @@ export const useAppStore = create<AppStoreState>((set, get) => ({
     const allTags = apps.flatMap(app => app.tags || []);
     const uniqueTags = [...new Set(allTags)].filter(tag => tag.trim() !== '');
     const shuffledTags = uniqueTags.sort(() => Math.random() - 0.5);
-    const limitedTags = shuffledTags.slice(0, 4);
+    const limitedTags = shuffledTags.slice(0, 20);
     set({categories: ['all', ...limitedTags]});
   },
 }));
