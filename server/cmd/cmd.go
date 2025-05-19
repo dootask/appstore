@@ -586,7 +586,7 @@ func routeInternalUpdateList(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param request body models.AppInternalDownloadRequest true "下载参数"
-// @Success 200 {object} response.Response
+// @Success 200 {object} response.Response{data=map[string]string}
 // @Router /internal/apps/download [post]
 func routeInternalDownloadByURL(c *gin.Context) {
 	var req models.AppInternalDownloadRequest

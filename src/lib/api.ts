@@ -44,7 +44,7 @@ export const InternalApi = {
    */
   downloadApp(url: string) {
     const params: AppInternalDownloadRequest = { url };
-    return post<unknown, AppInternalDownloadRequest>('/internal/apps/download', params);
+    return post<Record<string, string>, AppInternalDownloadRequest>('/internal/apps/download', params);
   },
 
   /**

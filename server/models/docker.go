@@ -114,7 +114,7 @@ func GenerateDockerCompose(appId string, version string, config *AppConfig) erro
 	templateData = []byte(strings.ReplaceAll(string(templateData), "${PUBLIC_PATH}", "${HOST_PWD}/public"))
 	if config.Params != nil {
 		for key, value := range config.Params {
-			templateData = []byte(strings.ReplaceAll(string(templateData), "${"+key+"}", value.(string)))
+			templateData = []byte(strings.ReplaceAll(string(templateData), "${"+key+"}", fmt.Sprintf("%v", value)))
 		}
 	}
 
