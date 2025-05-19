@@ -240,10 +240,9 @@ func RunDockerCompose(appId, action string) error {
 			// 重启nginx
 			if hasNginxConfig, _ := HasNginxConfig(appId); hasNginxConfig {
 				_, _ = logFile.WriteString("nginx reload starting...\n")
-				time.Sleep(2 * time.Second)
-				out, err := ReloadNginx(appId)
+				out, err := ReloadNginx(appId, 3)
 				if out != "" {
-					_, _ = logFile.WriteString("nginx reload result: " + out + "\n")
+					_, _ = logFile.WriteString("nginx reload output: " + out + "\n")
 				}
 				if err != nil {
 					_, _ = logFile.WriteString("nginx reload failed: " + err.Error() + "\n")

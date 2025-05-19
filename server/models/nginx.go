@@ -40,7 +40,7 @@ func DeleteNginxConfig(appId string) {
 }
 
 // ReloadNginx 重启nginx
-func ReloadNginx(appId string) (string, error) {
+func ReloadNginx(appId string, retry int) (string, error) {
 	if hasNginxConfig, _ := HasNginxConfig(appId); !hasNginxConfig {
 		return "", nil
 	}
@@ -53,8 +53,22 @@ func ReloadNginx(appId string) (string, error) {
 
 	// 执行重启
 	nginxCmd := fmt.Sprintf("docker exec -i %s %s", nginxContainerName, "nginx -s reload")
-	out, err := utils.ExecWithTimeOut(nginxCmd, 20*time.Second)
-	if err != nil {
+
+	var out string
+	var err error
+	for i := 0; i <= retry; i++ {
+		out, err = utils.ExecWithTimeOut(nginxCmd, 20*time.Second)
+		if err == nil {
+			return out, nil
+		}
+
+		// 如果不是最后一次重试，则等待后继续
+		if i < retry {
+			time.Sleep(time.Second * 3)
+			continue
+		}
+
+		// 最后一次重试失败
 		if out != "" {
 			return "Command execution failed with output", fmt.Errorf("%s", out)
 		}
