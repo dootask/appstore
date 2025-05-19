@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ChevronDown, Globe, UserCircle, Zap, Sparkles, ArrowRight, Filter, Sun, Moon } from 'lucide-react';
 import i18n from '@/i18n';
 import LogoIcon from '@/assets/logo.svg'
@@ -17,6 +17,7 @@ import PromptPortal, { Alert } from '@/components/custom/prompt';
 const Home: React.FC = () => {
   const {t} = useTranslation();
   const {apps, categories, fetchApps} = useAppStore();
+  const marketplaceRef = useRef<HTMLElement>(null);
 
   const [currentTheme, setCurrentThemeLocal] = useState(() => {
     if (typeof window !== 'undefined') {
@@ -150,7 +151,10 @@ const Home: React.FC = () => {
               options={
                 categories.slice(0,10).map(cat => ({label: cat === 'all' ? t('app.all') : cat, value: cat}))
               }
-              onChange={(value) => handleCategoryChange(value)}
+              onChange={(value) => {
+                handleCategoryChange(value)
+                marketplaceRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }}
               className="py-3 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white flex items-center truncate min-w-0 max-w-full cursor-pointer"
             >
               <span className='whitespace-nowrap overflow-hidden text-ellipsis'>{t('home.header.category')}</span>
@@ -218,7 +222,7 @@ const Home: React.FC = () => {
       </section>
 
       {/* Explore Marketplace Section */}
-      <section className="py-12 px-8 md:px-16 bg-white dark:bg-black">
+      <section ref={marketplaceRef} className="py-12 px-8 md:px-16 bg-white dark:bg-black">
         <div className="container mx-auto">
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-3xl font-semibold text-gray-900 dark:text-white">{t('home.marketplace.title')}</h2>
