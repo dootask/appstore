@@ -18,6 +18,7 @@ import (
 	"appstore/server/utils"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"github.com/spf13/cobra"
 )
 
@@ -78,9 +79,9 @@ func runServer(*cobra.Command, []string) {
 		// 内部使用接口
 		internal := v1.Group("/internal")
 		{
-			internal.GET("/install", routeInternalInstall)     // 安装应用
-			internal.GET("/uninstall", routeInternalUninstall) // 卸载应用
-			internal.GET("/installed", routeInternalInstalled) // 获取已安装应用列表
+			internal.POST("/install", routeInternalInstall)     // 安装应用
+			internal.POST("/uninstall", routeInternalUninstall) // 卸载应用
+			internal.POST("/installed", routeInternalInstalled) // 获取已安装应用列表
 		}
 	}
 
@@ -94,6 +95,7 @@ func runServer(*cobra.Command, []string) {
 
 // Execute 执行命令
 func Execute() error {
+	global.Validator = validator.New()
 	return rootCmd.Execute()
 }
 
@@ -253,6 +255,18 @@ func routeAppDownload(c *gin.Context) {
 // ****************************************************************************
 
 func routeInternalInstall(c *gin.Context) {
+	var req models.AppInternalInstallCreate
+	if err := response.CheckBindAndValidate(&req, c); err != nil {
+		return
+	}
+	if req.Version == "latest" {
+		latestV, err := models.FindLatestVersion(req.AppID)
+		if err != nil {
+			response.ErrorWithDetail(c, global.CodeError, "Could not determine latest version for "+req.AppID, err)
+			return
+		}
+		req.Version = latestV
+	}
 	c.String(http.StatusOK, "Hello, World!")
 }
 

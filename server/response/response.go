@@ -59,3 +59,16 @@ func SuccessWithMsg(ctx *gin.Context, message string) {
 	})
 	ctx.Abort()
 }
+
+// CheckBindAndValidate 检查绑定和验证
+func CheckBindAndValidate(req interface{}, c *gin.Context) error {
+	if err := c.ShouldBindJSON(req); err != nil {
+		ErrorWithDetail(c, global.CodeError, "Parameter error", err)
+		return err
+	}
+	if err := global.Validator.Struct(req); err != nil {
+		ErrorWithDetail(c, global.CodeError, "Parameter error", err)
+		return err
+	}
+	return nil
+}

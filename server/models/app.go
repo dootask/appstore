@@ -84,6 +84,14 @@ type AppConfigResources struct {
 	MemoryLimit int `yaml:"memory_limit" json:"memory_limit"`
 }
 
+// AppInternalInstallCreate 内部安装请求结构
+type AppInternalInstallCreate struct {
+	AppID     string                 `json:"appid" validate:"required"`
+	Version   string                 `json:"version" validate:"omitempty"`
+	Params    map[string]interface{} `json:"params" validate:"omitempty"`
+	Resources AppConfigResources     `json:"resources" validate:"omitempty"`
+}
+
 // getLocalizedValue 获取多语言字符串值
 func getLocalizedValue(data interface{}, lang string) string {
 	if data == nil {
@@ -170,28 +178,6 @@ func parseVersionOperator(version string) (string, string) {
 		return operator, versionNum
 	}
 	return "=", version
-}
-
-// getAppConfig 获取应用的配置文件内容
-func getAppConfig(appId string) *AppConfig {
-	appConfig := &AppConfig{}
-	configFile := filepath.Join(global.WorkDir, "config", appId, "config.yml")
-	if _, err := os.Stat(configFile); err == nil {
-		data, err := os.ReadFile(configFile)
-		if err == nil {
-			_ = yaml.Unmarshal(data, &appConfig)
-		}
-	}
-
-	if appConfig.Status == "" {
-		appConfig.Status = "not_installed"
-	}
-
-	if appConfig.Params == nil {
-		appConfig.Params = make(map[string]interface{})
-	}
-
-	return appConfig
 }
 
 // NewApps 创建应用实例列表
@@ -336,9 +322,31 @@ func NewApp(appId string) *App {
 	}
 	app.MenuItems = menuItems
 
-	app.Config = getAppConfig(filepath.Join(app.ID))
+	app.Config = GetAppConfig(filepath.Join(app.ID))
 
 	return app
+}
+
+// GetAppConfig 获取应用的配置文件内容
+func GetAppConfig(appId string) *AppConfig {
+	appConfig := &AppConfig{}
+	configFile := filepath.Join(global.WorkDir, "config", appId, "config.yml")
+	if _, err := os.Stat(configFile); err == nil {
+		data, err := os.ReadFile(configFile)
+		if err == nil {
+			_ = yaml.Unmarshal(data, &appConfig)
+		}
+	}
+
+	if appConfig.Status == "" {
+		appConfig.Status = "not_installed"
+	}
+
+	if appConfig.Params == nil {
+		appConfig.Params = make(map[string]interface{})
+	}
+
+	return appConfig
 }
 
 // GetReadme 获取应用的自述文件内容

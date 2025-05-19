@@ -1,5 +1,7 @@
 package global
 
+import "github.com/go-playground/validator/v10"
+
 const (
 	// 默认配置
 	DefaultPort     = "8080"
@@ -20,7 +22,9 @@ const (
 
 // 全局变量
 var (
-	WorkDir  string
-	Language string
-	BaseUrl  string
+	WorkDir  string // 工作目录
+	BaseUrl  string // 基础URL
+	Language string // 用户语言
+
+	Validator *validator.Validate // 验证器
 )
