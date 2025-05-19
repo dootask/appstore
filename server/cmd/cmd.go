@@ -19,6 +19,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"github.com/spf13/cobra"
+	"gopkg.in/yaml.v3"
 )
 
 var (
@@ -371,7 +372,134 @@ func routeInternalLog(c *gin.Context) {
 
 // routeInternalUpdateList 更新应用列表
 func routeInternalUpdateList(c *gin.Context) {
-	response.SuccessWithOutData(c)
+	// 临时目录
+	tempDir := filepath.Join(global.WorkDir, "temp", "sources")
+	zipFile := filepath.Join(tempDir, "sources.zip")
+
+	// 清空临时目录
+	if utils.IsDirExists(tempDir) {
+		if err := os.RemoveAll(tempDir); err != nil {
+			response.ErrorWithDetail(c, global.CodeError, "清理临时目录失败", err)
+			return
+		}
+	}
+	if err := os.MkdirAll(tempDir, 0755); err != nil {
+		response.ErrorWithDetail(c, global.CodeError, "创建临时目录失败", err)
+		return
+	}
+
+	// 下载源列表
+	resp, err := http.Get("https://appstore.dootask.com/sources.list")
+	if err != nil {
+		response.ErrorWithDetail(c, global.CodeError, "下载源列表失败", err)
+		return
+	}
+	defer resp.Body.Close()
+
+	// 保存zip文件
+	zipData, err := io.ReadAll(resp.Body)
+	if err != nil {
+		response.ErrorWithDetail(c, global.CodeError, "读取下载数据失败", err)
+		return
+	}
+	if err := os.WriteFile(zipFile, zipData, 0644); err != nil {
+		response.ErrorWithDetail(c, global.CodeError, "保存zip文件失败", err)
+		return
+	}
+
+	// 解压文件
+	if err := utils.Unzip(zipFile, tempDir); err != nil {
+		response.ErrorWithDetail(c, global.CodeError, "解压文件失败", err)
+		return
+	}
+	os.Remove(zipFile)
+
+	// 遍历目录
+	entries, err := os.ReadDir(tempDir)
+	if err != nil {
+		response.ErrorWithDetail(c, global.CodeError, "读取目录失败", err)
+		return
+	}
+
+	results := struct {
+		Success []map[string]string `json:"success"`
+		Failed  []map[string]string `json:"failed"`
+	}{
+		Success: make([]map[string]string, 0),
+		Failed:  make([]map[string]string, 0),
+	}
+
+	for _, entry := range entries {
+		// 跳过当前目录、父目录和隐藏文件
+		if entry.Name() == "." || entry.Name() == ".." || strings.HasPrefix(entry.Name(), ".") {
+			continue
+		}
+
+		appId := entry.Name()
+		sourceDir := filepath.Join(tempDir, appId)
+		if !entry.IsDir() {
+			continue
+		}
+
+		// 检查config.yml文件
+		configFile := filepath.Join(sourceDir, "config.yml")
+		if !utils.IsFileExists(configFile) {
+			results.Failed = append(results.Failed, map[string]string{
+				"id":     appId,
+				"reason": "未找到config.yml配置文件",
+			})
+			continue
+		}
+
+		// 解析配置文件
+		configData, err := os.ReadFile(configFile)
+		if err != nil {
+			results.Failed = append(results.Failed, map[string]string{
+				"id":     appId,
+				"reason": "读取配置文件失败：" + err.Error(),
+			})
+			continue
+		}
+
+		var config map[string]interface{}
+		if err := yaml.Unmarshal(configData, &config); err != nil {
+			results.Failed = append(results.Failed, map[string]string{
+				"id":     appId,
+				"reason": "YAML解析失败：" + err.Error(),
+			})
+			continue
+		}
+
+		// 检查name字段
+		if _, ok := config["name"]; !ok {
+			results.Failed = append(results.Failed, map[string]string{
+				"id":     appId,
+				"reason": "配置文件不正确",
+			})
+			continue
+		}
+
+		// 使用目录名作为应用名称
+		targetDir := filepath.Join(global.WorkDir, "apps", appId)
+
+		// 复制目录
+		if err := utils.CopyDir(sourceDir, targetDir, true); err != nil {
+			results.Failed = append(results.Failed, map[string]string{
+				"id":     appId,
+				"reason": "复制文件失败：" + err.Error(),
+			})
+			continue
+		}
+
+		results.Success = append(results.Success, map[string]string{
+			"id": appId,
+		})
+	}
+
+	// 清理临时目录
+	os.RemoveAll(tempDir)
+
+	response.SuccessWithData(c, results)
 }
 
 // routeInternalInstallByURL 通过URL安装应用
