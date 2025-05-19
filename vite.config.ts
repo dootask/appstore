@@ -18,6 +18,9 @@ export default defineConfig(({ mode }) => {
           changeOrigin: true,
           rewrite: (path) => path
         }
+      },
+      watch: {
+        ignored: ['**/resources/**']
       }
     },
     plugins: [react(), tailwindcss()],

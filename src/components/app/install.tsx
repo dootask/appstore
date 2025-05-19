@@ -23,7 +23,7 @@ interface AppInstallProps {
 export function AppInstall({appId, onClose}: AppInstallProps) {
   const {t} = useTranslation()
   const [installing, setInstalling] = useState(false)
-  const {apps} = useAppStore();
+  const {apps, fetchApp} = useAppStore();
   const app = apps.find(app => app.id === appId)
 
   if (!app) {
@@ -71,7 +71,10 @@ export function AppInstall({appId, onClose}: AppInstallProps) {
       cpuLimit: app.config.resources.cpu_limit || "0",
       memoryLimit: app.config.resources.memory_limit || "0",
       ...Object.fromEntries(
-        app.fields.map((field) => [field.name, field.default || ""])
+        app.fields.map((field) => [
+          field.name, 
+          app.config.params?.[field.name] ?? field.default ?? ""
+        ])
       ),
     } as FormValues,
   })
@@ -116,6 +119,7 @@ export function AppInstall({appId, onClose}: AppInstallProps) {
       appid: appId,
     }).then(() => {
       eventEmit("refreshLog", appId)
+      fetchApp(appId)
       onClose?.()
     }).catch((error) => {
       Alert({

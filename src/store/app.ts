@@ -8,8 +8,9 @@ interface AppStoreState {
   apps: App[];
   loading: boolean;
   setApps: (apps: App[]) => void;
+  
   fetchApps: (silence?: boolean) => Promise<void>;
-  updateOrAddApp: (app: App) => void;
+  fetchApp: (appId: string) => Promise<void>;
 
   categorys: string[];
   updateCategorys: () => void;  // 获取应用列表、添加应用后，更新应用类别
@@ -41,16 +42,16 @@ export const useAppStore = create<AppStoreState>((set, get) => ({
       if (!silence) set({loading: false});
     }
   },
-  updateOrAddApp: (app) => {
-    const {apps} = get();
-    const idx = apps.findIndex(item => item.id === app.id);
-    if (idx > -1) {
-      const newApps = [...apps];
-      newApps[idx] = {...newApps[idx], ...app};
-      set({apps: newApps});
-    } else {
-      set({apps: [...apps, app]});
-      get().updateCategorys();
+  fetchApp: async (appId: string) => {
+    const {data} = await AppApi.getAppDetail(appId);
+    if (data) {
+      const {apps} = get();
+      const idx = apps.findIndex(item => item.id === appId);
+      if (idx > -1) {
+        const newApps = [...apps];
+        newApps[idx] = {...newApps[idx], ...data};
+        set({apps: newApps});
+      }
     }
   },
 

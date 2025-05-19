@@ -23,7 +23,7 @@ interface AppDetailProps {
 
 export function AppDetail({appId, onInstall, onUninstall}: AppDetailProps) {
   const {t} = useTranslation()
-  const {updateOrAddApp, apps} = useAppStore();
+  const {apps} = useAppStore();
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState("detail")
   const [appReadme, setAppReadme] = useState("")
@@ -53,7 +53,7 @@ export function AppDetail({appId, onInstall, onUninstall}: AppDetailProps) {
     return () => {
       off()
     }
-  }, [appId, updateOrAddApp]);
+  }, [appId]);
 
   const handleRefreshLog = () => {
     setActiveTab('log')

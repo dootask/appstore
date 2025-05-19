@@ -18,7 +18,7 @@ import { InternalApi } from "@/lib";
 
 const Internal = () => {
   const {t} = useTranslation();
-  const {apps, loading, categorys, fetchApps} = useAppStore();
+  const {apps, loading, categorys, fetchApps, fetchApp} = useAppStore();
   const [selectedApp, setSelectedApp] = useState<App | null>(null)
   const [openDetail, setOpenDetail] = useState(false)
   const [openInstall, setOpenInstall] = useState(false)
@@ -217,6 +217,7 @@ const Internal = () => {
           // 卸载成功
           setOpenDetail(false);
           setOpenInstall(false);
+          fetchApp(app.id);
         }).catch((error) => {
           // 卸载失败
           Alert({
