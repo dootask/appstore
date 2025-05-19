@@ -11,9 +11,12 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"regexp"
+	"slices"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -504,5 +507,156 @@ func routeInternalUpdateList(c *gin.Context) {
 
 // routeInternalInstallByURL 通过URL安装应用
 func routeInternalInstallByURL(c *gin.Context) {
-	response.SuccessWithOutData(c)
+	var req struct {
+		URL string `json:"url" binding:"required"`
+	}
+	if err := response.CheckBindAndValidate(&req, c); err != nil {
+		return
+	}
+
+	// 验证URL格式
+	if !utils.IsValidURL(req.URL) {
+		response.ErrorWithDetail(c, global.CodeError, "URL格式不正确", nil)
+		return
+	}
+
+	// 验证URL协议
+	scheme := utils.GetURLScheme(req.URL)
+	if !slices.Contains([]string{"http", "https", "git"}, scheme) {
+		response.ErrorWithDetail(c, global.CodeError, "不支持的URL协议，仅支持http、https和git协议", nil)
+		return
+	}
+
+	// 从URL提取appId
+	u, _ := url.Parse(req.URL)
+	pathParts := strings.Split(strings.Trim(u.Path, "/"), "/")
+	appId := pathParts[len(pathParts)-1]
+	if lastDotIndex := strings.LastIndex(appId, "."); lastDotIndex != -1 {
+		appId = appId[:lastDotIndex]
+	}
+	appId = strings.ReplaceAll(appId, ".", "_")
+	appId = utils.Camel2Snake(appId)
+	if appId == "" {
+		response.ErrorWithDetail(c, global.CodeError, "URL格式不正确", nil)
+		return
+	}
+
+	// 检查appId是否被保护
+	if slices.Contains(models.PROTECTED_NAMES, appId) {
+		response.ErrorWithDetail(c, global.CodeError, fmt.Sprintf("服务名称 '%s' 被保护，不能使用", appId), nil)
+		return
+	}
+
+	// 检查目标是否存在
+	appConfig := models.GetAppConfig(appId)
+	if appConfig != nil {
+		errorMessages := map[string]string{
+			"installed":    "应用已存在，请先卸载后再安装",
+			"installing":   "应用正在安装中，请稍后再试",
+			"uninstalling": "应用正在卸载中，请稍后再试",
+		}
+		if msg, ok := errorMessages[appConfig.Status]; ok {
+			response.ErrorWithDetail(c, global.CodeError, msg, nil)
+			return
+		}
+	}
+
+	// 临时目录
+	tempDir := filepath.Join(global.WorkDir, "temp", utils.MD5(req.URL))
+
+	// 清空临时目录
+	if utils.IsDirExists(tempDir) {
+		if err := os.RemoveAll(tempDir); err != nil {
+			response.ErrorWithDetail(c, global.CodeError, "清理临时目录失败", err)
+			return
+		}
+	}
+	if err := os.MkdirAll(tempDir, 0755); err != nil {
+		response.ErrorWithDetail(c, global.CodeError, "创建临时目录失败", err)
+		return
+	}
+
+	// 判断URL类型
+	isGit := strings.HasSuffix(req.URL, ".git") || strings.Contains(req.URL, "github.com") || strings.Contains(req.URL, "gitlab.com")
+
+	// 下载或克隆
+	if isGit {
+		// 克隆Git仓库
+		cmd := exec.Command("git", "clone", "--depth=1", req.URL, tempDir)
+		if err := cmd.Run(); err != nil {
+			response.ErrorWithDetail(c, global.CodeError, "Git克隆失败", err)
+			return
+		}
+	} else {
+		// 下载ZIP文件
+		resp, err := http.Get(req.URL)
+		if err != nil {
+			response.ErrorWithDetail(c, global.CodeError, "下载失败", err)
+			return
+		}
+		defer resp.Body.Close()
+
+		zipFile := filepath.Join(tempDir, "app.zip")
+		zipData, err := io.ReadAll(resp.Body)
+		if err != nil {
+			response.ErrorWithDetail(c, global.CodeError, "读取下载数据失败", err)
+			return
+		}
+		if err := os.WriteFile(zipFile, zipData, 0644); err != nil {
+			response.ErrorWithDetail(c, global.CodeError, "保存zip文件失败", err)
+			return
+		}
+
+		// 解压ZIP文件
+		if err := utils.Unzip(zipFile, tempDir); err != nil {
+			response.ErrorWithDetail(c, global.CodeError, "解压文件失败", err)
+			return
+		}
+		os.Remove(zipFile)
+	}
+
+	// 检查config.yml文件
+	configFile := filepath.Join(tempDir, "config.yml")
+	if !utils.IsFileExists(configFile) {
+		response.ErrorWithDetail(c, global.CodeError, "未找到config.yml配置文件", nil)
+		return
+	}
+
+	// 解析配置文件
+	configData, err := os.ReadFile(configFile)
+	if err != nil {
+		response.ErrorWithDetail(c, global.CodeError, "读取配置文件失败", err)
+		return
+	}
+
+	var config map[string]interface{}
+	if err := yaml.Unmarshal(configData, &config); err != nil {
+		response.ErrorWithDetail(c, global.CodeError, "YAML解析失败："+err.Error(), nil)
+		return
+	}
+
+	// 检查name字段
+	name, ok := config["name"].(string)
+	if !ok || name == "" {
+		response.ErrorWithDetail(c, global.CodeError, "配置文件不正确", nil)
+		return
+	}
+
+	// 使用目录名作为应用名称
+	targetDir := filepath.Join(global.WorkDir, "apps", appId)
+
+	// 检查目标是否存在
+	if utils.IsDirExists(targetDir) {
+		os.RemoveAll(targetDir)
+	}
+
+	// 移动文件到目标目录
+	if err := os.Rename(tempDir, targetDir); err != nil {
+		response.ErrorWithDetail(c, global.CodeError, "移动文件失败", err)
+		return
+	}
+
+	response.SuccessWithData(c, gin.H{
+		"id": appId,
+	})
 }
