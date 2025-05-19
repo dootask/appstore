@@ -181,16 +181,19 @@ func findVersions(appId string) []string {
 }
 
 // NewApps 创建应用实例列表
-func NewApps() []*App {
-	appsDir := filepath.Join(global.WorkDir, "apps")
+func NewApps(appIds []string) []*App {
+	if len(appIds) == 0 {
+		appsDir := filepath.Join(global.WorkDir, "apps")
 
-	if !utils.IsDirExists(appsDir) {
-		return nil
-	}
+		if !utils.IsDirExists(appsDir) {
+			return nil
+		}
 
-	appIds, err := utils.GetSubDirs(appsDir)
-	if err != nil {
-		return nil
+		var err error
+		appIds, err = utils.GetSubDirs(appsDir)
+		if err != nil {
+			return nil
+		}
 	}
 
 	apps := []*App{}

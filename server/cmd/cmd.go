@@ -161,10 +161,16 @@ func Execute() error {
 // @Tags 应用
 // @Accept json
 // @Produce json
+// @Param appIds query string false "应用ID列表，多个应用ID用逗号分隔"
 // @Success 200 {object} response.Response{data=[]models.App}
 // @Router /list [get]
 func routeList(c *gin.Context) {
-	response.SuccessWithData(c, models.NewApps())
+	appIds := c.Query("appIds")
+	var appIdList []string
+	if appIds != "" {
+		appIdList = strings.Split(appIds, ",")
+	}
+	response.SuccessWithData(c, models.NewApps(appIdList))
 }
 
 // @Summary 获取应用详情
@@ -442,7 +448,7 @@ func routeInternalUninstall(c *gin.Context) {
 // @Success 200 {object} response.Response{data=models.AppInternalInstalledResponse}
 // @Router /internal/installed [get]
 func routeInternalInstalled(c *gin.Context) {
-	apps := models.NewApps()
+	apps := models.NewApps(nil)
 	var resp models.AppInternalInstalledResponse
 	for _, app := range apps {
 		if app.Config.Status == "installed" {

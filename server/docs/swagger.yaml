@@ -315,6 +315,11 @@ paths:
       consumes:
       - application/json
       description: 获取所有可用的应用列表
+      parameters:
+      - description: 应用ID列表，多个应用ID用逗号分隔
+        in: query
+        name: appIds
+        type: string
       produces:
       - application/json
       responses:

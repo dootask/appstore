@@ -257,6 +257,14 @@ const docTemplate = `{
                     "应用"
                 ],
                 "summary": "获取应用列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "应用ID列表，多个应用ID用逗号分隔",
+                        "name": "appIds",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
