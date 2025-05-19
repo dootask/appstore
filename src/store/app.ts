@@ -9,24 +9,40 @@ interface AppStoreState {
   loading: boolean;
   setApps: (apps: App[]) => void;
   
-  fetchApps: (silence?: boolean) => Promise<void>;
+  fetchApps: (silence?: boolean, appIds?: string[]) => Promise<void>;
   fetchApp: (appId: string) => Promise<void>;
 
   categorys: string[];
-  updateCategorys: () => void;  // 获取应用列表、添加应用后，更新应用类别
+  updateCategorys: () => void;  // 获取应用列表后，更新应用类别
 }
 
 export const useAppStore = create<AppStoreState>((set, get) => ({
   apps: [],
   loading: false,
   setApps: (apps) => set({apps}),
-  fetchApps: async (silence = false) => {
+  fetchApps: async (silence = false, appIds?: string[]) => {
     if (!silence) set({loading: true});
     try {
-      const {data} = await AppApi.getAppList();
+      const {data} = await AppApi.getAppList(appIds);
       if (data) {
-        set({apps: data});
-        get().updateCategorys();
+        if (appIds?.length) {
+          // 更新现有列表
+          const {apps} = get();
+          const newApps = [...apps];
+          data.forEach(app => {
+            const idx = newApps.findIndex(item => item.id === app.id);
+            if (idx > -1) {
+              newApps[idx] = {...newApps[idx], ...app};
+            } else {
+              newApps.push(app);
+            }
+          });
+          set({apps: newApps});
+        } else {
+          // 设置新列表
+          set({apps: data});
+          get().updateCategorys();
+        }
       }
     } catch (e) {
       if (!silence) {

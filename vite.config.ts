@@ -20,7 +20,7 @@ export default defineConfig(({ mode }) => {
         }
       },
       watch: {
-        ignored: ['**/resources/**']
+        ignored: ['**/resources/**', '**/server/**']
       }
     },
     plugins: [react(), tailwindcss()],

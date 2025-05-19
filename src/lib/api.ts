@@ -13,7 +13,10 @@ export const AppApi = {
   /**
    * 获取应用列表
    */
-  getAppList() {
+  getAppList(appIds?: string[]) {
+    if (appIds?.length) {
+      return get<App[]>(`/list?appIds=${appIds?.join(',')}`);
+    }
     return get<App[]>('/list');
   },
 

@@ -113,9 +113,21 @@ const Internal = () => {
     const hasUpgradeable = apps.some(app => app.upgradeable);
     setHasUpgradeableApps(hasUpgradeable);
     // 设置定时器
-    fetchTimerRef.current = setInterval(() => {
-      if (apps.find(item => ['installing', 'uninstalling'].includes(item.config.status))) {
-        fetchApps(true);
+    let isFetching = false;
+    fetchTimerRef.current = setInterval(async () => {
+      if (isFetching) return;
+      
+      const waitIds = apps
+        .filter(item => ['installing', 'uninstalling'].includes(item.config.status))
+        .map(item => item.id);
+      
+      if (waitIds.length > 0) {
+        isFetching = true;
+        try {
+          await fetchApps(true, waitIds);
+        } finally {
+          isFetching = false;
+        }
       }
     }, 5000)
     // 清理定时器
