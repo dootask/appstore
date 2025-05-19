@@ -241,8 +241,8 @@ func NewApp(appId string) *App {
 
 	app.DownloadURL = fmt.Sprintf("%s/api/%s/download/%s/latest", global.BaseUrl, global.APIVersion, app.ID)
 
-	// 生成随机评分 (4.0-5.0)
-	app.Rating = 4.0 + (rand.Float64() * 1.0)
+	// 生成随机评分 (4.5-5.0)
+	app.Rating = 4.5 + (rand.Float64() * 0.5)
 	app.Rating = math.Round(app.Rating*10) / 10 // 保留一位小数
 
 	// 生成随机用户数量 (1k-10k)

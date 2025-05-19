@@ -12,6 +12,7 @@ import {
 import { useTranslation, Trans } from 'react-i18next';
 import { useAppStore } from "@/store/app.ts";
 import HomeCard from './card';
+import PromptPortal, { Alert } from '@/components/custom/prompt';
 
 const Home: React.FC = () => {
   const {t} = useTranslation();
@@ -26,6 +27,10 @@ const Home: React.FC = () => {
 
   const [currentLanguage, setCurrentLanguageLocal] = useState(i18n.language);
   const [currentLanguageLabel, setCurrentLanguageLabelLocal] = useState(supportedLanguagesMap[i18n.language] || i18n.language);
+
+  const [filterType, setFilterType] = useState<'popular' | 'featured' | 'category' | 'search'>('popular');
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [searchKeyword, setSearchKeyword] = useState<string>('');
 
   const toggleThemeHandler = () => {
     const newTheme = currentTheme === 'light' ? 'dark' : 'light';
@@ -73,14 +78,63 @@ const Home: React.FC = () => {
 
   const supportOptions = [
     {
-      label: '开发文档',
-      value: 'support'
+      label: t('home.support.development'),
+      value: 'development'
     },
     {
-      label: '发布应用',
-      value: 'support'
+      label: t('home.support.publish'),
+      value: 'publish'
     },
   ];
+
+  const handleMaintenance = () => {
+    Alert({
+      type: 'warning',
+      title: t('home.support.warning'),
+      description: t('home.support.maintenance'),
+      showCancel: false,
+    });
+  }
+
+  const getFilteredApps = () => {
+    let filtered = [...apps];
+
+    if (filterType === 'category' && selectedCategory !== 'all') {
+      filtered = filtered.filter(app => {
+        const tags = app.tags || [];
+        return tags.some(tag => tag.toLowerCase() === selectedCategory.toLowerCase());
+      });
+    }
+
+    let isEffectiveSearch = false;
+    if (filterType === 'search' && searchKeyword.trim() !== '') {
+      isEffectiveSearch = true;
+      const keyword = searchKeyword.toLowerCase().trim();
+      filtered = filtered.filter(app => {
+        return (
+          app.name.toLowerCase().includes(keyword) ||
+          app.description.toLowerCase().includes(keyword) ||
+          (app.tags && app.tags.some(tag => tag.toLowerCase().includes(keyword)))
+        );
+      });
+    }
+
+    filtered = [...filtered].sort(() => Math.random() - 0.5);
+    if (isEffectiveSearch || filterType === 'category') {
+      return filtered.slice(0, 12);
+    }
+    return filtered.slice(0, 3);
+  };
+
+  const handleSearch = (keyword: string) => {
+    setSearchKeyword(keyword);
+    setFilterType('search');
+  };
+
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategory(category);
+    setFilterType('category');
+  };
 
   return (
     <div className="bg-white dark:bg-black text-gray-900 dark:text-white min-h-screen">
@@ -94,10 +148,9 @@ const Home: React.FC = () => {
           <nav className="hidden md:flex items-center space-x-6 flex-1 justify-center min-w-0">
             <Dropdown
               options={
-                categories.slice(1,11).map(category => ({label: category, value: category}))
+                categories.slice(0,10).map(cat => ({label: cat === 'all' ? t('app.all') : cat, value: cat}))
               }
-              onChange={() => {
-              }}
+              onChange={(value) => handleCategoryChange(value)}
               className="py-3 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white flex items-center truncate min-w-0 max-w-full cursor-pointer"
             >
               <span className='whitespace-nowrap overflow-hidden text-ellipsis'>{t('home.header.category')}</span>
@@ -105,8 +158,7 @@ const Home: React.FC = () => {
             </Dropdown>
             <Dropdown
               options={supportOptions}
-              onChange={() => {
-              }}
+              onChange={() => {handleMaintenance()}}
               className="py-3 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white flex items-center truncate min-w-0 max-w-full cursor-pointer"
             >
               <span className='whitespace-nowrap overflow-hidden text-ellipsis'>{t('home.header.support')}</span>
@@ -130,7 +182,7 @@ const Home: React.FC = () => {
             >
               {currentTheme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
             </button>
-            <div className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white cursor-pointer">
+            <div className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white cursor-pointer" onClick={() => {handleMaintenance()}}>
               <UserCircle className="w-8 h-8" />
             </div>
           </div>
@@ -153,6 +205,8 @@ const Home: React.FC = () => {
             <input
               type="text"
               placeholder={t('home.hero.searchPlaceholder')}
+              value={searchKeyword}
+              onChange={(e) => handleSearch(e.target.value)}
               className="w-full py-4 px-6 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-white"
             />
             <div className="absolute right-3 top-1/2 transform -translate-y-1/2 bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 text-xs rounded px-2.5 h-7 font-mono flex items-center gap-1.5">
@@ -169,20 +223,45 @@ const Home: React.FC = () => {
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-3xl font-semibold text-gray-900 dark:text-white">{t('home.marketplace.title')}</h2>
             <div className="flex items-center space-x-3">
-              <button className="bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 py-2 px-4 rounded-lg text-sm border border-gray-300 dark:border-gray-700 transition-colors duration-150">{t('home.marketplace.featuredButton')}</button>
-              <button className="bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-900 dark:text-white py-2 px-4 rounded-lg text-sm border border-gray-300 dark:border-gray-600 font-semibold transition-colors duration-150">{t('home.marketplace.popularButton')}</button>
-              <button className="bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 p-2 rounded-lg border border-gray-300 dark:border-gray-700 transition-colors duration-150">
-                <Filter className="w-5 h-5" />
+              <button 
+                onClick={() => setFilterType('featured')}
+                className={`py-2 px-4 rounded-lg text-sm border transition-colors duration-150 ${
+                  filterType === 'featured' 
+                    ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 font-semibold' 
+                    : 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-700'
+                }`}
+              >
+                {t('home.marketplace.featuredButton')}
               </button>
+              <button 
+                onClick={() => setFilterType('popular')}
+                className={`py-2 px-4 rounded-lg text-sm border transition-colors duration-150 ${
+                  filterType === 'popular' 
+                    ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 font-semibold' 
+                    : 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-700'
+                }`}
+              >
+                {t('home.marketplace.popularButton')}
+              </button>
+              <Dropdown
+                options={
+                  categories.slice(0,10).map(cat => ({label: cat === 'all' ? t('app.all') : cat, value: cat}))
+                }
+                onChange={(value) => handleCategoryChange(value)}
+                className={`p-2 rounded-lg border transition-colors duration-150 ${
+                  filterType === 'category' && selectedCategory !== 'all'
+                    ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600'
+                    : 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-700'
+                }`}
+                >
+                <Filter className="w-5 h-5" />
+              </Dropdown>
             </div>
           </div>
 
           {/* App Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[...apps]
-              .sort(() => Math.random() - 0.5)
-              .slice(0, 3)
-              .map((app, index) => {
+            {getFilteredApps().map((app, index) => {
               const colorConfigs = [
                 {
                   bgColorClass: "bg-green-100 dark:bg-green-600/20",
@@ -204,7 +283,7 @@ const Home: React.FC = () => {
                 }
               ]
               
-              const colorConfig = colorConfigs[index]
+              const colorConfig = colorConfigs[index % colorConfigs.length]
               
               return (
                 <HomeCard
@@ -222,6 +301,7 @@ const Home: React.FC = () => {
         </div>
       </section>
 
+      {/* 底部 */}
       <footer className="py-10 mt-16 border-t border-gray-200/80 dark:border-gray-800/80">
         <div className="container mx-auto text-center text-gray-500 dark:text-gray-400 text-sm">
           <Trans i18nKey="home.footer.copyright" year={new Date().getFullYear()}>
@@ -230,6 +310,9 @@ const Home: React.FC = () => {
           {t('home.footer.illustrativeDesign')}
         </div>
       </footer>
+
+      {/* 提示弹窗 */}
+      <PromptPortal />
     </div>
   );
 }
