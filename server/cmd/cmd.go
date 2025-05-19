@@ -71,16 +71,18 @@ func runServer(*cobra.Command, []string) {
 		v1.GET("/list", routeList)                            // 获取应用列表
 		v1.GET("/one/:appId", routeAppOne)                    // 获取单个应用
 		v1.GET("/readme/:appId", routeAppReadme)              // 获取应用自述文件
-		v1.GET("/log/:appId", routeAppLog)                    // 获取应用日志
 		v1.GET("/asset/:appId/*assetPath", routeAppAsset)     // 查看应用资源
 		v1.GET("/download/:appId/*version", routeAppDownload) // 下载应用压缩包
 
 		// 内部使用接口
 		internal := v1.Group("/internal")
 		{
-			internal.POST("/install", routeInternalInstall)           // 安装应用
-			internal.GET("/uninstall/:appId", routeInternalUninstall) // 卸载应用
-			internal.GET("/installed", routeInternalInstalled)        // 获取已安装应用列表
+			internal.POST("/install", routeInternalInstall)             // 安装应用
+			internal.GET("/uninstall/:appId", routeInternalUninstall)   // 卸载应用
+			internal.GET("/installed", routeInternalInstalled)          // 获取已安装应用列表
+			internal.GET("/log/:appId", routeInternalLog)               // 获取应用日志
+			internal.GET("/update-list", routeInternalUpdateList)       // 更新应用列表
+			internal.POST("/install-by-url", routeInternalInstallByURL) // 通过URL安装应用
 		}
 	}
 
@@ -118,14 +120,6 @@ func routeAppReadme(c *gin.Context) {
 	appId := c.Param("appId")
 	response.SuccessWithData(c, gin.H{
 		"content": models.GetReadme(appId),
-	})
-}
-
-// routeAppLog 获取应用日志
-func routeAppLog(c *gin.Context) {
-	appId := c.Param("appId")
-	response.SuccessWithData(c, gin.H{
-		"log": models.GetLog(appId, 200),
 	})
 }
 
@@ -365,4 +359,22 @@ func routeInternalInstalled(c *gin.Context) {
 		}
 	}
 	response.SuccessWithData(c, resp)
+}
+
+// routeInternalLog 获取应用日志
+func routeInternalLog(c *gin.Context) {
+	appId := c.Param("appId")
+	response.SuccessWithData(c, gin.H{
+		"log": models.GetLog(appId, 200),
+	})
+}
+
+// routeInternalUpdateList 更新应用列表
+func routeInternalUpdateList(c *gin.Context) {
+	response.SuccessWithOutData(c)
+}
+
+// routeInternalInstallByURL 通过URL安装应用
+func routeInternalInstallByURL(c *gin.Context) {
+	response.SuccessWithOutData(c)
 }
