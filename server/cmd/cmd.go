@@ -420,7 +420,7 @@ func routeInternalInstalled(c *gin.Context) {
 	var resp models.AppInternalInstalledResponse
 	for _, app := range apps {
 		if app.Config.Status == "installed" {
-			resp.Names = append(resp.Names, app.Name)
+			resp.Names = append(resp.Names, app.Name.(string))
 			resp.Menus = append(resp.Menus, app.MenuItems...)
 		}
 	}

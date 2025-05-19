@@ -6,8 +6,7 @@ definitions:
         type: string
       config:
         $ref: '#/definitions/models.AppConfig'
-      description:
-        type: string
+      description: {}
       document:
         type: string
       download_url:
@@ -28,8 +27,7 @@ definitions:
         items:
           $ref: '#/definitions/models.MenuItem'
         type: array
-      name:
-        type: string
+      name: {}
       rating:
         type: number
       require_uninstalls:
@@ -69,9 +67,9 @@ definitions:
   models.AppConfigResources:
     properties:
       cpu_limit:
-        type: integer
+        type: string
       memory_limit:
-        type: integer
+        type: string
     type: object
   models.AppInternalDownloadRequest:
     properties:

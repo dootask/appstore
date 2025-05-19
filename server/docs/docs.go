@@ -369,9 +369,7 @@ const docTemplate = `{
                 "config": {
                     "$ref": "#/definitions/models.AppConfig"
                 },
-                "description": {
-                    "type": "string"
-                },
+                "description": {},
                 "document": {
                     "type": "string"
                 },
@@ -402,9 +400,7 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.MenuItem"
                     }
                 },
-                "name": {
-                    "type": "string"
-                },
+                "name": {},
                 "rating": {
                     "type": "number"
                 },
@@ -463,10 +459,10 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "cpu_limit": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "memory_limit": {
-                    "type": "integer"
+                    "type": "string"
                 }
             }
         },

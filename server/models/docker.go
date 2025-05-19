@@ -59,8 +59,8 @@ type Resources struct {
 
 // Limits 定义资源限制值
 type Limits struct {
-	CPUs   string `yaml:"cpus"`
-	Memory string `yaml:"memory"`
+	CPUs   string `yaml:"cpus,omitempty"`
+	Memory string `yaml:"memory,omitempty"`
 }
 
 // convertSourcePath 转换源路径
@@ -185,12 +185,12 @@ func GenerateDockerCompose(appId string, version string, config *AppConfig) erro
 		}
 
 		// 资源限制
-		if config.Resources.CPULimit > 0 || config.Resources.MemoryLimit > 0 {
+		if config.Resources.CPULimit != "" || config.Resources.MemoryLimit != "" {
 			service.Deploy = &DeployConfig{
 				Resources: Resources{
 					Limits: Limits{
-						CPUs:   fmt.Sprintf("%d", config.Resources.CPULimit),
-						Memory: fmt.Sprintf("%dM", config.Resources.MemoryLimit),
+						CPUs:   config.Resources.CPULimit,
+						Memory: config.Resources.MemoryLimit,
 					},
 				},
 			}

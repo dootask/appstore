@@ -18,8 +18,8 @@ import (
 // App 应用信息结构
 type App struct {
 	ID                string             `yaml:"id" json:"id"`
-	Name              string             `yaml:"name" json:"name"`
-	Description       string             `yaml:"description" json:"description"`
+	Name              interface{}        `yaml:"name" json:"name"`
+	Description       interface{}        `yaml:"description" json:"description"`
 	Icon              string             `yaml:"icon" json:"icon"`
 	Versions          []string           `yaml:"versions" json:"versions"`
 	Tags              []string           `yaml:"tags" json:"tags"`
@@ -84,8 +84,8 @@ type AppConfig struct {
 
 // AppConfigResources 应用配置资源结构
 type AppConfigResources struct {
-	CPULimit    int `yaml:"cpu_limit" json:"cpu_limit"`
-	MemoryLimit int `yaml:"memory_limit" json:"memory_limit"`
+	CPULimit    string `yaml:"cpu_limit" json:"cpu_limit"`
+	MemoryLimit string `yaml:"memory_limit" json:"memory_limit"`
 }
 
 // AppInternalInstallRequest 内部安装请求结构
@@ -385,6 +385,9 @@ func GetReadme(appId string) string {
 		fmt.Sprintf("README_%s.md", global.Language),
 		fmt.Sprintf("README-%s.md", global.Language),
 		fmt.Sprintf("README.%s.md", global.Language),
+	}
+	if global.Language == "zh" {
+		patterns = append(patterns, "README_CN.md", "README-CN.md", "README.CN.md")
 	}
 	if global.Language == "zh-cht" {
 		patterns = append(patterns, "README_TW.md", "README-TW.md", "README.TW.md")
