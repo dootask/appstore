@@ -23,6 +23,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
+	"github.com/joho/godotenv"
 	"github.com/spf13/cobra"
 	"github.com/swaggo/files"
 	"github.com/swaggo/gin-swagger"
@@ -60,23 +61,37 @@ func init() {
 }
 
 func runPre(*cobra.Command, []string) {
+	// 设置gin模式
 	if mode == global.ModeRelease {
 		gin.SetMode(gin.ReleaseMode)
 	} else {
 		gin.SetMode(gin.DebugMode)
 	}
 
+	// 加载环境变量
+	envFile := filepath.Join(os.Getenv("HOST_PWD"), ".env")
+	if utils.IsFileExists(envFile) {
+		if err := godotenv.Load(envFile); err != nil {
+			fmt.Printf("加载环境变量失败: %v\n", err)
+			os.Exit(1)
+		}
+		fmt.Printf("环境变量文件: %s\n", envFile)
+	}
+
+	// 转换工作目录路径
 	absPath, err := filepath.Abs(global.WorkDir)
 	if err != nil {
 		fmt.Printf("转换工作目录路径失败: %v\n", err)
 		os.Exit(1)
 	}
 
+	// 检查工作目录是否存在
 	if !utils.IsDirExists(absPath) {
 		fmt.Printf("工作目录不存在: %s\n", absPath)
 		os.Exit(1)
 	}
 
+	// 创建必要子目录
 	dirs := []string{"apps", "config", "log", "temp"}
 	for _, dir := range dirs {
 		if !utils.IsDirExists(filepath.Join(absPath, dir)) {
@@ -87,6 +102,7 @@ func runPre(*cobra.Command, []string) {
 		}
 	}
 
+	// 设置工作目录
 	global.WorkDir = absPath
 	fmt.Printf("工作目录: %s\n", global.WorkDir)
 }
