@@ -12,6 +12,8 @@ definitions:
         type: string
       download_url:
         type: string
+      downloads:
+        type: string
       fields:
         items:
           $ref: '#/definitions/models.FieldConfig'
@@ -28,6 +30,8 @@ definitions:
         type: array
       name:
         type: string
+      rating:
+        type: number
       require_uninstalls:
         items:
           $ref: '#/definitions/models.RequireUninstall'
@@ -36,6 +40,8 @@ definitions:
         items:
           type: string
         type: array
+      user_count:
+        type: string
       versions:
         items:
           type: string

@@ -378,6 +378,9 @@ const docTemplate = `{
                 "download_url": {
                     "type": "string"
                 },
+                "downloads": {
+                    "type": "string"
+                },
                 "fields": {
                     "type": "array",
                     "items": {
@@ -402,6 +405,9 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
+                "rating": {
+                    "type": "number"
+                },
                 "require_uninstalls": {
                     "type": "array",
                     "items": {
@@ -413,6 +419,9 @@ const docTemplate = `{
                     "items": {
                         "type": "string"
                     }
+                },
+                "user_count": {
+                    "type": "string"
                 },
                 "versions": {
                     "type": "array",

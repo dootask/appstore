@@ -3,6 +3,7 @@ package utils
 import (
 	"crypto/md5"
 	"encoding/hex"
+	"fmt"
 	"net/url"
 	"strings"
 	"unicode"
@@ -39,5 +40,27 @@ func Camel2Snake(s string) string {
 		}
 		result.WriteRune(unicode.ToLower(r))
 	}
+	return result.String()
+}
+
+// FormatNumber 格式化数字为带千位分隔符的字符串
+func FormatNumber(n int) string {
+	// 将数字转换为字符串
+	s := fmt.Sprintf("%d", n)
+
+	// 如果数字小于1000，直接返回
+	if n < 1000 {
+		return s
+	}
+
+	// 添加千位分隔符
+	var result strings.Builder
+	for i, digit := range s {
+		if i > 0 && (len(s)-i)%3 == 0 {
+			result.WriteRune(',')
+		}
+		result.WriteRune(digit)
+	}
+
 	return result.String()
 }

@@ -4,6 +4,8 @@ import (
 	"appstore/server/global"
 	"appstore/server/utils"
 	"fmt"
+	"math"
+	"math/rand"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -30,6 +32,9 @@ type App struct {
 	RequireUninstalls []RequireUninstall `yaml:"require_uninstalls" json:"require_uninstalls"`
 	MenuItems         []MenuItem         `yaml:"menu_items" json:"menu_items"`
 	Config            *AppConfig         `yaml:"config,omitempty" json:"config,omitempty"`
+	Rating            float64            `yaml:"rating,omitempty" json:"rating"`
+	UserCount         string             `yaml:"user_count,omitempty" json:"user_count"`
+	Downloads         string             `yaml:"downloads,omitempty" json:"downloads"`
 }
 
 // FieldConfig 定义应用的可配置字段结构
@@ -231,6 +236,22 @@ func NewApp(appId string) *App {
 	}
 
 	app.DownloadURL = fmt.Sprintf("%s/api/%s/download/%s/latest", global.BaseUrl, global.APIVersion, app.ID)
+
+	// 生成随机评分 (4.0-5.0)
+	app.Rating = 4.0 + (rand.Float64() * 1.0)
+	app.Rating = math.Round(app.Rating*10) / 10 // 保留一位小数
+
+	// 生成随机用户数量 (1k-10k)
+	userCount := 1 + rand.Intn(10)
+	if userCount == 10 {
+		app.UserCount = "10k+"
+	} else {
+		app.UserCount = fmt.Sprintf("%d.%dk", userCount, rand.Intn(10))
+	}
+
+	// 生成随机下载量 (10万-100万)
+	downloads := 100000 + rand.Intn(900000)
+	app.Downloads = utils.FormatNumber(downloads) + "+"
 
 	// 处理 Fields
 	fields := []FieldConfig{}

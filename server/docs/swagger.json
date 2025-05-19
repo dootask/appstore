@@ -372,6 +372,9 @@
                 "download_url": {
                     "type": "string"
                 },
+                "downloads": {
+                    "type": "string"
+                },
                 "fields": {
                     "type": "array",
                     "items": {
@@ -396,6 +399,9 @@
                 "name": {
                     "type": "string"
                 },
+                "rating": {
+                    "type": "number"
+                },
                 "require_uninstalls": {
                     "type": "array",
                     "items": {
@@ -407,6 +413,9 @@
                     "items": {
                         "type": "string"
                     }
+                },
+                "user_count": {
+                    "type": "string"
                 },
                 "versions": {
                     "type": "array",
