@@ -85,8 +85,8 @@ func runServer(*cobra.Command, []string) {
 			internal.GET("/uninstall/:appId", routeInternalUninstall)   // 卸载应用
 			internal.GET("/installed", routeInternalInstalled)          // 获取已安装应用列表
 			internal.GET("/log/:appId", routeInternalLog)               // 获取应用日志
-			internal.GET("/update-list", routeInternalUpdateList)       // 更新应用列表
-			internal.POST("/install-by-url", routeInternalInstallByURL) // 通过URL安装应用
+			internal.GET("/apps/update", routeInternalUpdateList)       // 更新应用列表
+			internal.POST("/apps/download", routeInternalDownloadByURL) // 通过URL下载应用
 		}
 	}
 
@@ -505,8 +505,8 @@ func routeInternalUpdateList(c *gin.Context) {
 	response.SuccessWithData(c, results)
 }
 
-// routeInternalInstallByURL 通过URL安装应用
-func routeInternalInstallByURL(c *gin.Context) {
+// routeInternalDownloadByURL 通过URL下载应用
+func routeInternalDownloadByURL(c *gin.Context) {
 	var req struct {
 		URL string `json:"url" binding:"required"`
 	}
