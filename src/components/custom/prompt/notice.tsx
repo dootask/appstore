@@ -3,8 +3,9 @@
 import { useEffect, useState } from "react";
 import NoticeItem from "./notice-item";
 import { eventOn } from "@/lib/events";
-import { cn, uuidv4 } from "@/lib/utils";
+import { uuidv4 } from "@/lib/utils";
 import { nextZIndex } from "@dootask/tools";
+import { Portal } from "./portal";
 
 export interface NoticeProps {
   type: "success" | "warning" | "error" | "info" | "text"
@@ -51,20 +52,19 @@ export default function NoticePortal() {
     }
   }, [zIndex])
 
+  if (notices.length === 0) return null
+
   return (
-    <>
+    <Portal>
       <div
         aria-live="assertive"
-        className={cn(
-          'pointer-events-none fixed inset-0 hidden flex-col-reverse justify-end px-4 py-6 sm:p-6',
-          notices.length > 0 && 'flex'
-        )}
+        className="pointer-events-none fixed inset-0 bottom-auto flex flex-col-reverse justify-end px-4 py-6 sm:p-6"
         style={{zIndex: zIndex}}
       >
         {notices.map((item) => (
           <NoticeItem key={item.id} {...item} />
         ))}
       </div>
-    </>
+    </Portal>
   )
 }
