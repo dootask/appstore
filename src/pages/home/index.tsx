@@ -35,8 +35,7 @@ const Home: React.FC = () => {
   const [showAppDetail, setShowAppDetail] = useState<boolean>(false);
 
   const toggleThemeHandler = () => {
-    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-    setTheme(newTheme);
+    setTheme(currentTheme === 'light' ? 'dark' : 'light');
   };
 
   const handleLanguageChangeHandler = (langCode: string) => {
@@ -50,10 +49,6 @@ const Home: React.FC = () => {
           const newThemeOnBody = document.body.classList.contains('dark') ? 'dark' : 'light';
           if (newThemeOnBody !== currentTheme) {
             setCurrentThemeLocal(newThemeOnBody);
-            const storedTheme = localStorage.getItem('theme');
-            if (newThemeOnBody !== storedTheme) {
-              localStorage.setItem('theme', newThemeOnBody);
-            }
           }
         }
       }

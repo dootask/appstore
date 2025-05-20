@@ -37,9 +37,6 @@ export const initializeLanguage = (initialConfig?: { languageName?: string }) =>
     } else if (SUPPORTED_LANGUAGES.includes(baseBrowserLang)) {
       language = baseBrowserLang;
     }
-    localStorage.setItem('language', language);
-  } else {
-    localStorage.setItem('language', 'en'); // 回退到默认语言
   }
   i18n.changeLanguage(language);
   return language;
@@ -63,10 +60,9 @@ export const initializeTheme = (initialConfig?: { themeName?: 'light' | 'dark' }
     theme = initialConfig.themeName;
     localStorage.setItem('theme', theme);
   } else if (typeof window !== 'undefined' && window.matchMedia?.('(prefers-color-scheme: dark)').matches) {
-    theme = 'dark'; // 根据系统偏好设置
-    localStorage.setItem('theme', theme);
+    theme = 'dark'; // 根据系统偏好设置，但不保存到 localStorage
   } else {
-    localStorage.setItem('theme', 'light'); // 回退到默认主题
+    theme = 'light'; // 回退到默认主题，但不保存到 localStorage
   }
 
   if (theme === 'dark') {
