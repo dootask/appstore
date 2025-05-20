@@ -42,7 +42,10 @@ const HomeCard: React.FC<{
         <div className="h-px bg-gray-200 dark:bg-gray-700 my-5"></div>
         <div className="flex justify-between items-center">
           <span className="text-sm text-gray-700 dark:text-gray-300">{t('home.appDisplayCard.downloadAppButton')}</span>
-          <button className={`${buttonBgClass} text-white font-semibold py-2 px-4 rounded-lg flex items-center text-sm transition-colors duration-150`} onClick={onDownload}>
+          <button className={`${buttonBgClass} text-white font-semibold py-2 px-4 rounded-lg flex items-center text-sm transition-colors duration-150`} onClick={e => {
+            e.stopPropagation();
+            onDownload();
+          }}>
             {t('home.appDisplayCard.getButton')} <ArrowRight className="w-4 h-4 ml-2" />
           </button>
         </div>

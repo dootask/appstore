@@ -130,9 +130,6 @@
       "publish": "发布应用",
       "warning": "温馨提示",
       "maintenance": "功能维护，敬请期待..."
-    },
-    "appDetail": {
-      "title": "应用详情"
     }
   }
 }

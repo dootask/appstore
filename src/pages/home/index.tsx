@@ -1,20 +1,16 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { ChevronDown, Globe, UserCircle, Zap, Sparkles, ArrowRight, Filter, Sun, Moon } from 'lucide-react';
 import i18n from '@/i18n';
 import LogoIcon from '@/assets/logo.svg'
 import Dropdown from '@/components/custom/dropdown';
-import {
-  supportedLanguagesMap,
-  languageOptionsForDropdown,
-  setTheme,
-  setLanguage
-} from '@/store/config';
+import { supportedLanguagesMap, languageOptionsForDropdown, setTheme, setLanguage } from '@/store/config';
 import { useTranslation, Trans } from 'react-i18next';
 import { useAppStore } from "@/store/app.ts";
 import HomeCard from './card';
 import PromptPortal, { Alert } from '@/components/custom/prompt';
 import Drawer from '@/components/custom/drawer';
 import type { App } from '@/types/api';
+import AppDetail from './detail';
 const Home: React.FC = () => {
   const {t} = useTranslation();
   const {apps, categories, fetchApps} = useAppStore();
@@ -34,6 +30,7 @@ const Home: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchKeyword, setSearchKeyword] = useState<string>('');
   const [selectedApp, setSelectedApp] = useState<App | null>(null);
+  const [showAppDetail, setShowAppDetail] = useState<boolean>(false);
 
   const toggleThemeHandler = () => {
     const newTheme = currentTheme === 'light' ? 'dark' : 'light';
@@ -43,21 +40,6 @@ const Home: React.FC = () => {
   const handleLanguageChangeHandler = (langCode: string) => {
     setLanguage(langCode);
   };
-
-  const showAppDownloadUrl = (app: App) => {
-    Alert({
-      type: "prompt",
-      title: t('home.appDisplayCard.getButtonApp'),
-      description: t('home.appDisplayCard.copyButtonAppDescription'),
-      defaultValue: app.download_url,
-      buttonText: t('home.appDisplayCard.copyButton'),
-      showCancel: true,
-      showConfirm: true,
-      onConfirm: () => {
-        navigator.clipboard.writeText(app.download_url);
-      }
-    });
-  }
 
   useEffect(() => {
     const observer = new MutationObserver((mutationsList) => {
@@ -90,6 +72,70 @@ const Home: React.FC = () => {
     };
   }, [currentTheme]);
 
+  const showAppDownloadUrl = (app: App) => {
+    Alert({
+      type: "prompt",
+      title: t('home.appDisplayCard.getButtonApp'),
+      description: t('home.appDisplayCard.copyButtonAppDescription'),
+      defaultValue: app.download_url,
+      buttonText: t('home.appDisplayCard.copyButton'),
+      showCancel: true,
+      showConfirm: true,
+      onConfirm: () => {
+        navigator.clipboard.writeText(app.download_url);
+      }
+    });
+  }
+
+  const handleMaintenance = () => {
+    Alert({
+      type: 'warning',
+      title: t('home.support.warning'),
+      description: t('home.support.maintenance'),
+      showCancel: false,
+    });
+  }
+
+  const filteredApps = useMemo(() => {
+    let filtered = [...apps];
+  
+    if (filterType === 'category' && selectedCategory !== 'all') {
+      filtered = filtered.filter(app => {
+        const tags = app.tags || [];
+        return tags.some(tag => tag.toLowerCase() === selectedCategory.toLowerCase());
+      });
+    }
+  
+    let isEffectiveSearch = false;
+    if (filterType === 'search' && searchKeyword.trim() !== '') {
+      isEffectiveSearch = true;
+      const keyword = searchKeyword.toLowerCase().trim();
+      filtered = filtered.filter(app => {
+        return (
+          app.name.toLowerCase().includes(keyword) ||
+          app.description.toLowerCase().includes(keyword) ||
+          (app.tags && app.tags.some(tag => tag.toLowerCase().includes(keyword)))
+        );
+      });
+    }
+  
+    filtered = [...filtered].sort(() => Math.random() - 0.5);
+    if (isEffectiveSearch || filterType === 'category') {
+      return filtered.slice(0, 12);
+    }
+    return filtered.slice(0, 3);
+  }, [apps, filterType, selectedCategory, searchKeyword]);
+
+  const handleSearch = (keyword: string) => {
+    setSearchKeyword(keyword);
+    setFilterType('search');
+  };
+
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategory(category);
+    setFilterType('category');
+  };
+
   useEffect(() => {
     fetchApps()
   }, []);
@@ -104,55 +150,6 @@ const Home: React.FC = () => {
       value: 'publish'
     },
   ];
-
-  const handleMaintenance = () => {
-    Alert({
-      type: 'warning',
-      title: t('home.support.warning'),
-      description: t('home.support.maintenance'),
-      showCancel: false,
-    });
-  }
-
-  const getFilteredApps = () => {
-    let filtered = [...apps];
-
-    if (filterType === 'category' && selectedCategory !== 'all') {
-      filtered = filtered.filter(app => {
-        const tags = app.tags || [];
-        return tags.some(tag => tag.toLowerCase() === selectedCategory.toLowerCase());
-      });
-    }
-
-    let isEffectiveSearch = false;
-    if (filterType === 'search' && searchKeyword.trim() !== '') {
-      isEffectiveSearch = true;
-      const keyword = searchKeyword.toLowerCase().trim();
-      filtered = filtered.filter(app => {
-        return (
-          app.name.toLowerCase().includes(keyword) ||
-          app.description.toLowerCase().includes(keyword) ||
-          (app.tags && app.tags.some(tag => tag.toLowerCase().includes(keyword)))
-        );
-      });
-    }
-
-    filtered = [...filtered].sort(() => Math.random() - 0.5);
-    if (isEffectiveSearch || filterType === 'category') {
-      return filtered.slice(0, 12);
-    }
-    return filtered.slice(0, 3);
-  };
-
-  const handleSearch = (keyword: string) => {
-    setSearchKeyword(keyword);
-    setFilterType('search');
-  };
-
-  const handleCategoryChange = (category: string) => {
-    setSelectedCategory(category);
-    setFilterType('category');
-  };
 
   return (
     <div className="bg-white dark:bg-black text-gray-900 dark:text-white min-h-screen">
@@ -282,7 +279,7 @@ const Home: React.FC = () => {
 
           {/* App Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {getFilteredApps().map((app, index) => {
+            {filteredApps.map((app, index) => {
               const colorConfigs = [
                 {
                   bgColorClass: "bg-green-100 dark:bg-green-600/20",
@@ -317,6 +314,7 @@ const Home: React.FC = () => {
                   app={app}
                   onSelect={() => {
                     setSelectedApp(app);
+                    setShowAppDetail(true);
                   }}
                   onDownload={() => {
                     showAppDownloadUrl(app);
@@ -339,17 +337,14 @@ const Home: React.FC = () => {
       </footer>
 
       <Drawer
-        open={!!selectedApp}
+        open={showAppDetail}
         onOpenChange={() => {
-          setSelectedApp(null);
+          setShowAppDetail(false);
         }}
-        title={t('home.appDetail.title')}
         direction="bottom"
-        className="rounded-t-xl bg-white dark:bg-zinc-800"
+        className="rounded-t-xl bg-white dark:bg-zinc-900"
       >
-        <div className="p-4">
-          <h1>{selectedApp?.name}</h1>
-        </div>
+        <AppDetail app={selectedApp} />
       </Drawer>
       {/* 提示弹窗 */}
       <PromptPortal />
