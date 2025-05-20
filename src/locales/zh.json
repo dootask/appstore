@@ -27,13 +27,73 @@
   "common": {
     "cancel": "取消",
     "confirm": "确认",
+    "copyFailed": "复制失败",
+    "copySuccess": "复制成功",
     "document": "文档说明",
     "open_community": "开源社区",
     "title": "应用商店",
     "unknown_error": "未知错误",
-    "website": "官方网站",
-    "copySuccess": "复制成功",
-    "copyFailed": "复制失败"
+    "website": "官方网站"
+  },
+  "home": {
+    "appDetail": {
+      "by": "作者：",
+      "contentTitle": "详细内容",
+      "documentation": "查看文档",
+      "downloadButton": "下载应用",
+      "downloads": "下载量",
+      "favoriteButtonLabel": "收藏",
+      "links": "相关链接",
+      "noAppSelected": "请选择一个应用",
+      "rating": "评分",
+      "sourceCode": "查看源码",
+      "tags": "标签",
+      "users": "用户数",
+      "visitWebsiteButtonLabel": "访问官网"
+    },
+    "appDisplayCard": {
+      "copyButton": "复制",
+      "copyButtonAppDescription": "请复制应用包文件地址，然后在 DooTask 应用商店中使用「从 URL 安装」功能完成安装。",
+      "downloadAppButton": "下载插件",
+      "downloads": "下载量",
+      "getButton": "获取",
+      "getButtonApp": "获取应用",
+      "totalUsers": "总用户数"
+    },
+    "appTitles": {
+      "analyticsData": "分析数据",
+      "fileManager": "文件管理器",
+      "walletFeature": "钱包功能"
+    },
+    "footer": {
+      "copyright": "© {{year}} DooTask.com. 保留所有权利。",
+      "illustrativeDesign": "说明性设计基于用户提供的图像。"
+    },
+    "header": {
+      "category": "应用分类",
+      "support": "支持",
+      "themeToggleDark": "切换到深色主题",
+      "themeToggleLight": "切换到浅色主题",
+      "title": "DooTask 应用商店"
+    },
+    "hero": {
+      "searchPlaceholder": "搜索 API、应用和插件",
+      "seriesBAnnouncement": "我们B轮融资获得250万美元",
+      "titlePart1": "获得您",
+      "titlePart2": "想要的应用程序",
+      "titlePart3": "以促进增长"
+    },
+    "marketplace": {
+      "featuredButton": "精选",
+      "popularButton": "热门",
+      "title": "探索市场"
+    },
+    "support": {
+      "development": "开发文档",
+      "maintenance": "功能维护，敬请期待...",
+      "publish": "发布应用",
+      "warning": "温馨提示"
+    }
   },
   "install": {
     "app_config": "应用配置",
@@ -88,66 +148,5 @@
     "success_description": "应用「{{app}}」已卸载成功",
     "title": "卸载应用",
     "uninstall_starting": "应用「{{app}}」开始卸载..."
-  },
-  "home": {
-    "header": {
-      "category": "应用分类",
-      "support": "支持",
-      "themeToggleLight": "切换到浅色主题",
-      "themeToggleDark": "切换到深色主题",
-      "title": "DooTask 应用商店"
-    },
-    "hero": {
-      "seriesBAnnouncement": "我们B轮融资获得250万美元",
-      "titlePart1": "获得您",
-      "titlePart2": "想要的应用程序",
-      "titlePart3": "以促进增长",
-      "searchPlaceholder": "搜索 API、应用和插件"
-    },
-    "marketplace": {
-      "title": "探索市场",
-      "featuredButton": "精选",
-      "popularButton": "热门"
-    },
-    "appDisplayCard": {
-      "totalUsers": "总用户数",
-      "downloads": "下载量",
-      "downloadAppButton": "下载插件",
-      "getButton": "获取",
-      "getButtonApp": "获取应用",
-      "copyButton": "复制",
-      "copyButtonAppDescription": "请复制应用包文件地址，然后在 DooTask 应用商店中使用「从 URL 安装」功能完成安装。"
-    },
-    "appTitles": {
-      "fileManager": "文件管理器",
-      "analyticsData": "分析数据",
-      "walletFeature": "钱包功能"
-    },
-    "footer": {
-      "copyright": "© {{year}} DooTask.com. 保留所有权利。",
-      "illustrativeDesign": "说明性设计基于用户提供的图像。"
-    },
-    "support": {
-      "development": "开发文档",
-      "publish": "发布应用",
-      "warning": "温馨提示",
-      "maintenance": "功能维护，敬请期待..."
-    },
-    "appDetail": {
-      "noAppSelected": "请选择一个应用",
-      "latestVersion": "最新版本",
-      "rating": "评分",
-      "downloads": "下载量",
-      "users": "用户数",
-      "by": "作者：",
-      "favoriteButtonLabel": "收藏",
-      "visitWebsiteButtonLabel": "访问官网",
-      "downloadButton": "下载应用",
-      "tags": "标签",
-      "links": "相关链接",
-      "documentation": "查看文档",
-      "sourceCode": "查看源码",
-      "contentTitle": "详细内容"
-    }
   }
 }

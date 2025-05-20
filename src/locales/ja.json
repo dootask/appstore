@@ -27,11 +27,73 @@
   "common": {
     "cancel": "キャンセル",
     "confirm": "確認",
+    "copyFailed": "コピーが失敗しました",
+    "copySuccess": "正常にコピーします",
     "document": "ドキュメント",
     "open_community": "オープンソースコミュニティ",
     "title": "アプリストア",
     "unknown_error": "不明なエラー",
     "website": "公式サイト"
+  },
+  "home": {
+    "appDetail": {
+      "by": "作者：",
+      "contentTitle": "詳細内容",
+      "documentation": "ドキュメントを見る",
+      "downloadButton": "アプリをダウンロード",
+      "downloads": "ダウンロード数",
+      "favoriteButtonLabel": "お気に入り",
+      "links": "関連リンク",
+      "noAppSelected": "アプリを選択してください",
+      "rating": "評価",
+      "sourceCode": "ソースコードを見る",
+      "tags": "タグ",
+      "users": "ユーザー数",
+      "visitWebsiteButtonLabel": "公式サイトへ"
+    },
+    "appDisplayCard": {
+      "copyButton": "コピー",
+      "copyButtonAppDescription": "アプリパッケージファイルのURLをコピーし、DooTaskアプリストアの「URLからインストール」機能を使用してインストールを完了してください。",
+      "downloadAppButton": "プラグインをダウンロード",
+      "downloads": "ダウンロード数",
+      "getButton": "入手",
+      "getButtonApp": "アプリを入手",
+      "totalUsers": "総ユーザー数"
+    },
+    "appTitles": {
+      "analyticsData": "分析データ",
+      "fileManager": "ファイルマネージャー",
+      "walletFeature": "ウォレット機能"
+    },
+    "footer": {
+      "copyright": "© {{year}} DooTask.com. All rights reserved.",
+      "illustrativeDesign": "ユーザー提供の画像に基づく説明デザイン。"
+    },
+    "header": {
+      "category": "アプリカテゴリー",
+      "support": "サポート",
+      "themeToggleDark": "ダークテーマに切り替え",
+      "themeToggleLight": "ライトテーマに切り替え",
+      "title": "DooTaskアプリストア"
+    },
+    "hero": {
+      "searchPlaceholder": "API、アプリ、プラグインを検索",
+      "seriesBAnnouncement": "シリーズBで250万ドルの資金調達を完了",
+      "titlePart1": "成長を促進する",
+      "titlePart2": "必要なアプリを",
+      "titlePart3": "手に入れよう"
+    },
+    "marketplace": {
+      "featuredButton": "おすすめ",
+      "popularButton": "人気",
+      "title": "マーケットプレイスを探索"
+    },
+    "support": {
+      "development": "開発ドキュメント",
+      "maintenance": "機能メンテナンス、近日公開...",
+      "publish": "アプリを公開",
+      "warning": "ご注意"
+    }
   },
   "install": {
     "app_config": "アプリ設定",

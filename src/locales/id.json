@@ -27,11 +27,73 @@
   "common": {
     "cancel": "Batal",
     "confirm": "Konfirmasi",
+    "copyFailed": "Salinan gagal",
+    "copySuccess": "Salin berhasil",
     "document": "Dokumentasi",
     "open_community": "Komunitas Open Source",
     "title": "Toko Aplikasi",
     "unknown_error": "Kesalahan yang tidak diketahui",
     "website": "Situs Resmi"
+  },
+  "home": {
+    "appDetail": {
+      "by": "Oleh",
+      "contentTitle": "Detail Konten",
+      "documentation": "Lihat Dokumentasi",
+      "downloadButton": "Unduh Aplikasi",
+      "downloads": "Unduhan",
+      "favoriteButtonLabel": "Favorit",
+      "links": "Tautan Terkait",
+      "noAppSelected": "Silakan pilih aplikasi",
+      "rating": "Peringkat",
+      "sourceCode": "Lihat Kode Sumber",
+      "tags": "Tag",
+      "users": "Pengguna",
+      "visitWebsiteButtonLabel": "Kunjungi Situs Web"
+    },
+    "appDisplayCard": {
+      "copyButton": "Salin",
+      "copyButtonAppDescription": "Silakan salin URL file paket aplikasi dan gunakan fitur 'Instal dari URL' di DooTask App Store untuk menyelesaikan instalasi.",
+      "downloadAppButton": "Unduh Plugin",
+      "downloads": "Unduhan",
+      "getButton": "Dapatkan",
+      "getButtonApp": "Dapatkan Aplikasi",
+      "totalUsers": "Total Pengguna"
+    },
+    "appTitles": {
+      "analyticsData": "Data Analitik",
+      "fileManager": "Pengelola File",
+      "walletFeature": "Fitur Dompet"
+    },
+    "footer": {
+      "copyright": "© {{year}} DooTask.com. Hak Cipta Dilindungi.",
+      "illustrativeDesign": "Desain ilustratif berdasarkan gambar yang disediakan pengguna."
+    },
+    "header": {
+      "category": "Kategori Aplikasi",
+      "support": "Dukungan",
+      "themeToggleDark": "Beralih ke Tema Gelap",
+      "themeToggleLight": "Beralih ke Tema Terang",
+      "title": "DooTask App Store"
+    },
+    "hero": {
+      "searchPlaceholder": "Cari API, aplikasi, dan plugin",
+      "seriesBAnnouncement": "Kami mengumpulkan $2,5 juta dalam pendanaan Seri B",
+      "titlePart1": "Dapatkan",
+      "titlePart2": "aplikasi yang Anda",
+      "titlePart3": "inginkan untuk pertumbuhan"
+    },
+    "marketplace": {
+      "featuredButton": "Unggulan",
+      "popularButton": "Populer",
+      "title": "Jelajahi Marketplace"
+    },
+    "support": {
+      "development": "Dokumentasi Pengembangan",
+      "maintenance": "Pemeliharaan fitur, segera hadir...",
+      "publish": "Publikasikan Aplikasi",
+      "warning": "Tips"
+    }
   },
   "install": {
     "app_config": "Konfigurasi Aplikasi",

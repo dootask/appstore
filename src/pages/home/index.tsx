@@ -11,6 +11,7 @@ import { Alert, Toast } from '@/components/custom/prompt';
 import Drawer from '@/components/custom/drawer';
 import type { App } from '@/types/api';
 import AppDetail from './detail';
+
 const Home: React.FC = () => {
   const {t} = useTranslation();
   const {apps, categories, fetchApps} = useAppStore();
@@ -91,7 +92,7 @@ const Home: React.FC = () => {
           });
         } catch (error) {
           Toast({
-            type: 'error', 
+            type: 'error',
             content: t('common.copyFailed'),
             duration: 2000
           });
@@ -111,14 +112,14 @@ const Home: React.FC = () => {
 
   const filteredApps = useMemo(() => {
     let filtered = [...apps];
-  
+
     if (filterType === 'category' && selectedCategory !== 'all') {
       filtered = filtered.filter(app => {
         const tags = app.tags || [];
         return tags.some(tag => tag.toLowerCase() === selectedCategory.toLowerCase());
       });
     }
-  
+
     let isEffectiveSearch = false;
     if (filterType === 'search' && searchKeyword.trim() !== '') {
       isEffectiveSearch = true;
@@ -131,7 +132,7 @@ const Home: React.FC = () => {
         );
       });
     }
-  
+
     filtered = [...filtered].sort(() => Math.random() - 0.5);
     if (isEffectiveSearch || filterType === 'category') {
       return filtered.slice(0, 12);
@@ -176,11 +177,11 @@ const Home: React.FC = () => {
           <nav className="hidden md:flex items-center space-x-6 flex-1 justify-center min-w-0">
             <Dropdown
               options={
-                categories.slice(0,10).map(cat => ({label: cat === 'all' ? t('app.all') : cat, value: cat}))
+                categories.slice(0, 10).map(cat => ({label: cat === 'all' ? t('app.all') : cat, value: cat}))
               }
               onChange={(value) => {
                 handleCategoryChange(value)
-                marketplaceRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                marketplaceRef.current?.scrollIntoView({behavior: 'smooth', block: 'start'});
               }}
               className="py-3 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white flex items-center truncate min-w-0 max-w-full cursor-pointer"
             >
@@ -189,7 +190,9 @@ const Home: React.FC = () => {
             </Dropdown>
             <Dropdown
               options={supportOptions}
-              onChange={() => {handleMaintenance()}}
+              onChange={() => {
+                handleMaintenance()
+              }}
               className="py-3 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white flex items-center truncate min-w-0 max-w-full cursor-pointer"
             >
               <span className='whitespace-nowrap overflow-hidden text-ellipsis'>{t('home.header.support')}</span>
@@ -213,7 +216,9 @@ const Home: React.FC = () => {
             >
               {currentTheme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
             </button>
-            <div className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white cursor-pointer" onClick={() => {handleMaintenance()}}>
+            <div className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white cursor-pointer" onClick={() => {
+              handleMaintenance()
+            }}>
               <UserCircle className="w-8 h-8" />
             </div>
           </div>
@@ -224,7 +229,7 @@ const Home: React.FC = () => {
       <section className="py-16 md:py-24 px-8 text-center">
         <div
           className="inline-flex items-center bg-gray-200 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/70 rounded-full py-2 px-4 mb-6 text-sm text-gray-700 dark:text-gray-300 cursor-pointer"
-          onClick={() => {    
+          onClick={() => {
             Toast({
               type: 'info',
               direction: 'middle',
@@ -263,21 +268,21 @@ const Home: React.FC = () => {
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-3xl font-semibold text-gray-900 dark:text-white">{t('home.marketplace.title')}</h2>
             <div className="flex items-center space-x-3">
-              <button 
+              <button
                 onClick={() => setFilterType('featured')}
                 className={`py-2 px-4 rounded-lg text-sm border transition-colors duration-150 ${
-                  filterType === 'featured' 
-                    ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 font-semibold' 
+                  filterType === 'featured'
+                    ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 font-semibold'
                     : 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-700'
                 }`}
               >
                 {t('home.marketplace.featuredButton')}
               </button>
-              <button 
+              <button
                 onClick={() => setFilterType('popular')}
                 className={`py-2 px-4 rounded-lg text-sm border transition-colors duration-150 ${
-                  filterType === 'popular' 
-                    ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 font-semibold' 
+                  filterType === 'popular'
+                    ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 font-semibold'
                     : 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-700'
                 }`}
               >
@@ -285,7 +290,7 @@ const Home: React.FC = () => {
               </button>
               <Dropdown
                 options={
-                  categories.slice(0,10).map(cat => ({label: cat === 'all' ? t('app.all') : cat, value: cat}))
+                  categories.slice(0, 10).map(cat => ({label: cat === 'all' ? t('app.all') : cat, value: cat}))
                 }
                 onChange={(value) => handleCategoryChange(value)}
                 className={`p-2 rounded-lg border transition-colors duration-150 ${
@@ -293,7 +298,7 @@ const Home: React.FC = () => {
                     ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600'
                     : 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-700'
                 }`}
-                >
+              >
                 <Filter className="w-5 h-5" />
               </Dropdown>
             </div>
@@ -322,9 +327,9 @@ const Home: React.FC = () => {
                   textColorClass: "text-blue-600 dark:text-blue-400 font-bold"
                 }
               ]
-              
+
               const colorConfig = colorConfigs[index % colorConfigs.length]
-              
+
               return (
                 <HomeCard
                   key={app.id}
@@ -370,7 +375,7 @@ const Home: React.FC = () => {
           if (selectedApp) {
             showAppDownloadUrl(selectedApp);
           }
-        }}/>
+        }} />
       </Drawer>
     </div>
   );

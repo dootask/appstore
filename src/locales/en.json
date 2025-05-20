@@ -27,11 +27,73 @@
   "common": {
     "cancel": "Cancel",
     "confirm": "Confirm",
+    "copyFailed": "Copy failed",
+    "copySuccess": "Copy successfully",
     "document": "Documentation",
     "open_community": "Open Source Community",
     "title": "App Store",
     "unknown_error": "Unknown Error",
     "website": "Official Website"
+  },
+  "home": {
+    "appDetail": {
+      "by": "By",
+      "contentTitle": "Content Details",
+      "documentation": "View Documentation",
+      "downloadButton": "Download App",
+      "downloads": "Downloads",
+      "favoriteButtonLabel": "Favorite",
+      "links": "Related Links",
+      "noAppSelected": "Please select an app",
+      "rating": "Rating",
+      "sourceCode": "View Source Code",
+      "tags": "Tags",
+      "users": "Users",
+      "visitWebsiteButtonLabel": "Visit Website"
+    },
+    "appDisplayCard": {
+      "copyButton": "Copy",
+      "copyButtonAppDescription": "Please copy the app package file URL and use the 'Install from URL' feature in DooTask App Store to complete the installation.",
+      "downloadAppButton": "Download Plugin",
+      "downloads": "Downloads",
+      "getButton": "Get",
+      "getButtonApp": "Get App",
+      "totalUsers": "Total Users"
+    },
+    "appTitles": {
+      "analyticsData": "Analytics Data",
+      "fileManager": "File Manager",
+      "walletFeature": "Wallet Feature"
+    },
+    "footer": {
+      "copyright": "© {{year}} DooTask.com. All rights reserved.",
+      "illustrativeDesign": "Illustrative design based on user-provided images."
+    },
+    "header": {
+      "category": "Categories",
+      "support": "Support",
+      "themeToggleDark": "Switch to Dark Theme",
+      "themeToggleLight": "Switch to Light Theme",
+      "title": "DooTask App Store"
+    },
+    "hero": {
+      "searchPlaceholder": "Search APIs, apps and plugins",
+      "seriesBAnnouncement": "We raised $2.5M in Series B funding",
+      "titlePart1": "Get the",
+      "titlePart2": "apps you want",
+      "titlePart3": "to drive growth"
+    },
+    "marketplace": {
+      "featuredButton": "Featured",
+      "popularButton": "Popular",
+      "title": "Explore Marketplace"
+    },
+    "support": {
+      "development": "Development Docs",
+      "maintenance": "Feature maintenance, coming soon...",
+      "publish": "Publish App",
+      "warning": "Tips"
+    }
   },
   "install": {
     "app_config": "App Configuration",
@@ -86,41 +148,5 @@
     "success_description": "The app «{{app}}» has been uninstalled successfully",
     "title": "Uninstall App",
     "uninstall_starting": "Starting to uninstall app «{{app}}»..."
-  },
-  "home": {
-    "header": {
-      "category": "Category",
-      "support": "Support",
-      "themeToggleLight": "Switch to light theme",
-      "themeToggleDark": "Switch to dark theme",
-      "title": "DooTask AppStore"
-    },
-    "hero": {
-      "seriesBAnnouncement": "We Raised $2.5M in Series B",
-      "titlePart1": "Get the",
-      "titlePart2": "Application you",
-      "titlePart3": "Want for Growth",
-      "searchPlaceholder": "Search API, Apps & Plugin"
-    },
-    "marketplace": {
-      "title": "Explore Marketplace",
-      "featuredButton": "Featured",
-      "popularButton": "Popular"
-    },
-    "appDisplayCard": {
-      "totalUsers": "Total Users",
-      "downloads": "Downloads",
-      "downloadAppButton": "Download Plugin",
-      "getButton": "Get"
-    },
-    "appTitles": {
-      "fileManager": "File Manager",
-      "analyticsData": "Analytics Data",
-      "walletFeature": "Wallet Feature"
-    },
-    "footer": {
-      "copyright": "© {{year}} DooTask.com. All rights reserved.",
-      "illustrativeDesign": "Illustrative design based on user-provided image."
-    }
   }
 }

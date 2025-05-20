@@ -55,7 +55,7 @@ export default function ToastPortal() {
       item.type = item.type ?? "info";
       item.zIndex = Math.max(zIndex, item.zIndex ?? (nextZIndex() + 2000)); // Toast zIndex 基础值设置为2000
       item.afterClose = () => setToasts(prev => prev.filter(({id}) => id !== item.id));
-      
+
       setToasts(prev => {
         // 根据 direction 将新消息插入到不同位置
         if (item.direction === 'bottom') {
@@ -105,7 +105,7 @@ export default function ToastPortal() {
             key={direction}
             aria-live="assertive"
             className={`pointer-events-none ${getPositionClasses(direction as ToastDirection)}`}
-            style={{ zIndex: zIndex }} //  确保不同 direction 的 toast 容器 zIndex 一致，由 ToastItem 自身控制具体层级
+            style={{zIndex: zIndex}} //  确保不同 direction 的 toast 容器 zIndex 一致，由 ToastItem 自身控制具体层级
           >
             {items.map((item) => (
               <ToastItem key={item.id} {...item} />

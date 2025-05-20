@@ -27,11 +27,73 @@
   "common": {
     "cancel": "Отмена",
     "confirm": "Подтвердить",
+    "copyFailed": "Копия не удалась",
+    "copySuccess": "Копировать успешно",
     "document": "Документация",
     "open_community": "Сообщество с открытым исходным кодом",
     "title": "Магазин приложений",
     "unknown_error": "Неизвестная ошибка",
     "website": "Официальный сайт"
+  },
+  "home": {
+    "appDetail": {
+      "by": "Автор:",
+      "contentTitle": "Подробная информация",
+      "documentation": "Просмотр документации",
+      "downloadButton": "Скачать приложение",
+      "downloads": "Загрузки",
+      "favoriteButtonLabel": "В избранное",
+      "links": "Связанные ссылки",
+      "noAppSelected": "Пожалуйста, выберите приложение",
+      "rating": "Рейтинг",
+      "sourceCode": "Просмотр исходного кода",
+      "tags": "Теги",
+      "users": "Пользователи",
+      "visitWebsiteButtonLabel": "Посетить сайт"
+    },
+    "appDisplayCard": {
+      "copyButton": "Копировать",
+      "copyButtonAppDescription": "Пожалуйста, скопируйте URL-адрес файла пакета приложения и используйте функцию 'Установить из URL' в DooTask App Store для завершения установки.",
+      "downloadAppButton": "Скачать плагин",
+      "downloads": "Загрузки",
+      "getButton": "Получить",
+      "getButtonApp": "Получить приложение",
+      "totalUsers": "Всего пользователей"
+    },
+    "appTitles": {
+      "analyticsData": "Аналитические данные",
+      "fileManager": "Файловый менеджер",
+      "walletFeature": "Функция кошелька"
+    },
+    "footer": {
+      "copyright": "© {{year}} DooTask.com. Все права защищены.",
+      "illustrativeDesign": "Иллюстративный дизайн на основе изображений, предоставленных пользователями."
+    },
+    "header": {
+      "category": "Категории приложений",
+      "support": "Поддержка",
+      "themeToggleDark": "Переключить на темную тему",
+      "themeToggleLight": "Переключить на светлую тему",
+      "title": "DooTask App Store"
+    },
+    "hero": {
+      "searchPlaceholder": "Поиск API, приложений и плагинов",
+      "seriesBAnnouncement": "Мы привлекли 2,5 миллиона долларов в раунде B",
+      "titlePart1": "Получите",
+      "titlePart2": "нужные вам приложения",
+      "titlePart3": "для роста"
+    },
+    "marketplace": {
+      "featuredButton": "Рекомендуемые",
+      "popularButton": "Популярные",
+      "title": "Исследовать маркетплейс"
+    },
+    "support": {
+      "development": "Документация разработчика",
+      "maintenance": "Обслуживание функций, скоро будет доступно...",
+      "publish": "Опубликовать приложение",
+      "warning": "Совет"
+    }
   },
   "install": {
     "app_config": "Настройки приложения",

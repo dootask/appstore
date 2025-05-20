@@ -27,11 +27,73 @@
   "common": {
     "cancel": "Abbrechen",
     "confirm": "Bestätigen",
+    "copyFailed": "Kopie fehlgeschlagen",
+    "copySuccess": "Erfolgreich kopieren",
     "document": "Dokumentation",
     "open_community": "Open-Source-Community",
     "title": "App Store",
     "unknown_error": "Unbekannter Fehler",
     "website": "Offizielle Website"
+  },
+  "home": {
+    "appDetail": {
+      "by": "Von",
+      "contentTitle": "Inhaltsdetails",
+      "documentation": "Dokumentation anzeigen",
+      "downloadButton": "App herunterladen",
+      "downloads": "Downloads",
+      "favoriteButtonLabel": "Favorit",
+      "links": "Verwandte Links",
+      "noAppSelected": "Bitte wählen Sie eine App aus",
+      "rating": "Bewertung",
+      "sourceCode": "Quellcode anzeigen",
+      "tags": "Tags",
+      "users": "Benutzer",
+      "visitWebsiteButtonLabel": "Website besuchen"
+    },
+    "appDisplayCard": {
+      "copyButton": "Kopieren",
+      "copyButtonAppDescription": "Bitte kopieren Sie die App-Paket-URL und verwenden Sie die Funktion 'Von URL installieren' im DooTask App Store, um die Installation abzuschließen.",
+      "downloadAppButton": "Plugin herunterladen",
+      "downloads": "Downloads",
+      "getButton": "Holen",
+      "getButtonApp": "App holen",
+      "totalUsers": "Gesamtbenutzer"
+    },
+    "appTitles": {
+      "analyticsData": "Analysedaten",
+      "fileManager": "Dateimanager",
+      "walletFeature": "Wallet-Funktion"
+    },
+    "footer": {
+      "copyright": "© {{year}} DooTask.com. Alle Rechte vorbehalten.",
+      "illustrativeDesign": "Veranschaulichendes Design basierend auf benutzerbereitgestellten Bildern."
+    },
+    "header": {
+      "category": "App-Kategorien",
+      "support": "Support",
+      "themeToggleDark": "Zu dunklem Design wechseln",
+      "themeToggleLight": "Zu hellem Design wechseln",
+      "title": "DooTask App Store"
+    },
+    "hero": {
+      "searchPlaceholder": "Suche nach APIs, Apps und Plugins",
+      "seriesBAnnouncement": "Wir haben 2,5 Millionen Dollar in der Serie B aufgebracht",
+      "titlePart1": "Holen Sie sich die",
+      "titlePart2": "Apps, die Sie",
+      "titlePart3": "für Ihr Wachstum brauchen"
+    },
+    "marketplace": {
+      "featuredButton": "Ausgewählt",
+      "popularButton": "Beliebt",
+      "title": "Marktplatz erkunden"
+    },
+    "support": {
+      "development": "Entwicklungsdokumentation",
+      "maintenance": "Funktionswartung, demnächst verfügbar...",
+      "publish": "App veröffentlichen",
+      "warning": "Hinweis"
+    }
   },
   "install": {
     "app_config": "App-Konfiguration",

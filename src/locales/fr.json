@@ -27,11 +27,73 @@
   "common": {
     "cancel": "Annuler",
     "confirm": "Confirmer",
+    "copyFailed": "Échec de la copie",
+    "copySuccess": "Copier avec succès",
     "document": "Documentation",
     "open_community": "Communauté Open Source",
     "title": "Boutique d'Applications",
     "unknown_error": "Erreur inconnue",
     "website": "Site Officiel"
+  },
+  "home": {
+    "appDetail": {
+      "by": "Par",
+      "contentTitle": "Détails du contenu",
+      "documentation": "Voir la documentation",
+      "downloadButton": "Télécharger l'application",
+      "downloads": "Téléchargements",
+      "favoriteButtonLabel": "Favori",
+      "links": "Liens connexes",
+      "noAppSelected": "Veuillez sélectionner une application",
+      "rating": "Évaluation",
+      "sourceCode": "Voir le code source",
+      "tags": "Tags",
+      "users": "Utilisateurs",
+      "visitWebsiteButtonLabel": "Visiter le site web"
+    },
+    "appDisplayCard": {
+      "copyButton": "Copier",
+      "copyButtonAppDescription": "Veuillez copier l'URL du fichier de package de l'application et utiliser la fonction 'Installer depuis l'URL' dans le DooTask App Store pour terminer l'installation.",
+      "downloadAppButton": "Télécharger le plugin",
+      "downloads": "Téléchargements",
+      "getButton": "Obtenir",
+      "getButtonApp": "Obtenir l'application",
+      "totalUsers": "Total des utilisateurs"
+    },
+    "appTitles": {
+      "analyticsData": "Données d'analyse",
+      "fileManager": "Gestionnaire de fichiers",
+      "walletFeature": "Fonctionnalité portefeuille"
+    },
+    "footer": {
+      "copyright": "© {{year}} DooTask.com. Tous droits réservés.",
+      "illustrativeDesign": "Design illustratif basé sur les images fournies par les utilisateurs."
+    },
+    "header": {
+      "category": "Catégories d'applications",
+      "support": "Support",
+      "themeToggleDark": "Passer au thème sombre",
+      "themeToggleLight": "Passer au thème clair",
+      "title": "DooTask App Store"
+    },
+    "hero": {
+      "searchPlaceholder": "Rechercher des API, applications et plugins",
+      "seriesBAnnouncement": "Nous avons levé 2,5 millions de dollars en série B",
+      "titlePart1": "Obtenez les",
+      "titlePart2": "applications que vous",
+      "titlePart3": "voulez pour la croissance"
+    },
+    "marketplace": {
+      "featuredButton": "En vedette",
+      "popularButton": "Populaire",
+      "title": "Explorer le marché"
+    },
+    "support": {
+      "development": "Documentation de développement",
+      "maintenance": "Maintenance des fonctionnalités, bientôt disponible...",
+      "publish": "Publier l'application",
+      "warning": "Conseil"
+    }
   },
   "install": {
     "app_config": "Configuration de l'application",

@@ -27,11 +27,73 @@
   "common": {
     "cancel": "取消",
     "confirm": "確認",
+    "copyFailed": "複製失敗",
+    "copySuccess": "複製成功",
     "document": "文檔說明",
     "open_community": "開源社區",
     "title": "應用商店",
     "unknown_error": "未知錯誤",
     "website": "官方網站"
+  },
+  "home": {
+    "appDetail": {
+      "by": "作者：",
+      "contentTitle": "詳細內容",
+      "documentation": "查看文檔",
+      "downloadButton": "下載應用",
+      "downloads": "下載量",
+      "favoriteButtonLabel": "收藏",
+      "links": "相關鏈接",
+      "noAppSelected": "請選擇一個應用",
+      "rating": "評分",
+      "sourceCode": "查看源碼",
+      "tags": "標籤",
+      "users": "用戶數",
+      "visitWebsiteButtonLabel": "訪問官網"
+    },
+    "appDisplayCard": {
+      "copyButton": "複製",
+      "copyButtonAppDescription": "請複製應用包文件地址，然後在 DooTask 應用商店中使用「從 URL 安裝」功能完成安裝。",
+      "downloadAppButton": "下載插件",
+      "downloads": "下載量",
+      "getButton": "獲取",
+      "getButtonApp": "獲取應用",
+      "totalUsers": "總用戶數"
+    },
+    "appTitles": {
+      "analyticsData": "分析數據",
+      "fileManager": "文件管理器",
+      "walletFeature": "錢包功能"
+    },
+    "footer": {
+      "copyright": "© {{year}} DooTask.com. 保留所有權利。",
+      "illustrativeDesign": "說明性設計基於用戶提供的圖像。"
+    },
+    "header": {
+      "category": "應用分類",
+      "support": "支持",
+      "themeToggleDark": "切換到深色主題",
+      "themeToggleLight": "切換到淺色主題",
+      "title": "DooTask 應用商店"
+    },
+    "hero": {
+      "searchPlaceholder": "搜索 API、應用和插件",
+      "seriesBAnnouncement": "我們B輪融資獲得250萬美元",
+      "titlePart1": "獲得您",
+      "titlePart2": "想要的應用程序",
+      "titlePart3": "以促進增長"
+    },
+    "marketplace": {
+      "featuredButton": "精選",
+      "popularButton": "熱門",
+      "title": "探索市場"
+    },
+    "support": {
+      "development": "開發文檔",
+      "maintenance": "功能維護，敬請期待...",
+      "publish": "發布應用",
+      "warning": "溫馨提示"
+    }
   },
   "install": {
     "app_config": "應用配置",
