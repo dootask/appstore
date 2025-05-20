@@ -3,17 +3,17 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { Transition } from '@headlessui/react'
 import { CheckCircleIcon, ExclamationTriangleIcon, InformationCircleIcon, XCircleIcon } from '@heroicons/react/24/outline'
-import type { __ToasterItem, ToasterType, ToasterDirection } from './toaster'
+import type { __ToastItem, ToastType, ToastDirection } from './toast'
 
-const typeIconMap: Record<ToasterType, React.ElementType | null> = {
+const typeIconMap: Record<ToastType, React.ElementType | null> = {
   success: CheckCircleIcon,
-  warning: ExclamationTriangleIcon, 
+  warning: ExclamationTriangleIcon,
   error: XCircleIcon,
   info: InformationCircleIcon,
   text: null,
 };
 
-const typeColorMap: Record<ToasterType, string> = {
+const typeColorMap: Record<ToastType, string> = {
   success: 'text-mantis-400',
   warning: 'text-amber-400',
   error: 'text-coral-400',
@@ -21,7 +21,7 @@ const typeColorMap: Record<ToasterType, string> = {
   text: 'text-gray-900 dark:text-gray-100',
 };
 
-export default function ToasterItem({
+export default function ToastItem({
   content,
   type = 'info',
   duration = 3000,
@@ -30,7 +30,7 @@ export default function ToasterItem({
   onClose,
   afterClose,
   __closeIng
-}: __ToasterItem) {
+}: __ToastItem) {
   const [show, setShow] = useState(false)
   const itemRef = useRef<HTMLDivElement>(null)
 
@@ -75,7 +75,7 @@ export default function ToasterItem({
   const IconComponent = typeIconMap[type];
   const iconColor = typeColorMap[type];
 
-  const getTransitionClasses = (dir: ToasterDirection) => {
+  const getTransitionClasses = (dir: ToastDirection) => {
     switch(dir) {
       case 'top':
         return {
@@ -132,4 +132,4 @@ export default function ToasterItem({
       </div>
     </Transition>
   )
-} 
+}

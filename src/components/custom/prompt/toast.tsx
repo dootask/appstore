@@ -5,10 +5,10 @@ import { eventOn } from "@/lib/events";
 import { uuidv4 } from "@/lib/utils";
 import { nextZIndex } from "@dootask/tools";
 import { Portal } from "./portal";
-import ToasterItem from "./toaster-item";
+import ToastItem from "./toast-item.tsx";
 
 /**
- * Toaster 组件 - 用于显示轻量级的反馈信息。
+ * Toast 组件 - 用于显示轻量级的反馈信息。
  *
  * 支持多种类型的消息（成功、警告、错误、信息、纯文本），可自定义显示时长、内容和位置。
  * 通过事件系统触发显示，支持自动关闭。
@@ -19,12 +19,12 @@ import ToasterItem from "./toaster-item";
  * import { eventEmit } from '@/lib/events'
  *
  * // 普通消息
- * eventEmit('toaster', {
+ * eventEmit('toast', {
  *   content: '一条新的消息'
  * })
  *
  * // 警告消息，从底部弹出
- * eventEmit('toaster', {
+ * eventEmit('toast', {
  *   type: 'warning',
  *   content: '请注意...',
  *   direction: 'bottom',
@@ -33,18 +33,18 @@ import ToasterItem from "./toaster-item";
  * ```
  */
 
-export type ToasterDirection = "top" | "bottom" | "middle";
-export type ToasterType = "success" | "warning" | "error" | "info" | "text";
+export type ToastDirection = "top" | "bottom" | "middle";
+export type ToastType = "success" | "warning" | "error" | "info" | "text";
 
-export interface ToasterProps {
+export interface ToastProps {
   /** 消息内容 */
   content: string;
   /** 消息类型 */
-  type?: ToasterType;
+  type?: ToastType;
   /** 显示时长（毫秒），默认 3000 */
   duration?: number;
   /** 显示位置，默认 'top' */
-  direction?: ToasterDirection;
+  direction?: ToastDirection;
   /** 自定义层级 */
   zIndex?: number;
   /** 关闭回调函数 */
@@ -54,24 +54,24 @@ export interface ToasterProps {
   __closeIng?: boolean;
 }
 
-/** @internal 内部使用的接口，用于管理 Toaster 实例 */
-export interface __ToasterItem extends ToasterProps {
+/** @internal 内部使用的接口，用于管理 Toast 实例 */
+export interface __ToastItem extends ToastProps {
   /** 唯一标识 */
   id: string;
   /** 关闭后的回调 */
   afterClose: () => void;
 }
 
-export default function ToasterPortal() {
-  const [toasters, setToasters] = useState<__ToasterItem[]>([]);
+export default function ToastPortal() {
+  const [toasts, setToasts] = useState<__ToastItem[]>([]);
   const [zIndex, setZIndex] = useState(0);
 
   useEffect(() => {
-    const off = eventOn("toaster", (args: unknown) => {
-      const item = args as __ToasterItem;
+    const off = eventOn("toast", (args: unknown) => {
+      const item = args as __ToastItem;
       if (item.__closeIng) {
-        setToasters(prev => prev.map(toaster =>
-          toaster.id === item.id ? {...toaster, __closeIng: true} : toaster
+        setToasts(prev => prev.map(toast =>
+          toast.id === item.id ? {...toast, __closeIng: true} : toast
         ));
         return;
       }
@@ -79,10 +79,10 @@ export default function ToasterPortal() {
       item.duration = item.duration ?? 3000;
       item.direction = item.direction ?? "top";
       item.type = item.type ?? "info";
-      item.zIndex = Math.max(zIndex, item.zIndex ?? (nextZIndex() + 2000)); // Toaster zIndex 基础值设置为2000
-      item.afterClose = () => setToasters(prev => prev.filter(({id}) => id !== item.id));
-      
-      setToasters(prev => {
+      item.zIndex = Math.max(zIndex, item.zIndex ?? (nextZIndex() + 2000)); // Toast zIndex 基础值设置为2000
+      item.afterClose = () => setToasts(prev => prev.filter(({id}) => id !== item.id));
+
+      setToasts(prev => {
         // 根据 direction 将新消息插入到不同位置
         if (item.direction === 'bottom') {
           return [...prev, item]; // 底部消息追加到末尾
@@ -96,9 +96,9 @@ export default function ToasterPortal() {
     };
   }, [zIndex]);
 
-  if (toasters.length === 0) return null;
+  if (toasts.length === 0) return null;
 
-  const getPositionClasses = (direction: ToasterDirection = "top") => {
+  const getPositionClasses = (direction: ToastDirection = "top") => {
     switch (direction) {
       case "top":
         return "fixed inset-x-0 top-0 flex flex-col items-center px-4 py-6 sm:p-6";
@@ -111,34 +111,34 @@ export default function ToasterPortal() {
     }
   };
 
-  // 将 toasters 按 direction 分组
-  const groupedToasters: Record<ToasterDirection, __ToasterItem[]> = {
+  // 将 toasts 按 direction 分组
+  const groupedToasts: Record<ToastDirection, __ToastItem[]> = {
     top: [],
     bottom: [],
     middle: [],
   };
 
-  toasters.forEach(toaster => {
-    groupedToasters[toaster.direction ?? 'top'].push(toaster);
+  toasts.forEach(toast => {
+    groupedToasts[toast.direction ?? 'top'].push(toast);
   });
 
   return (
     <Portal>
-      {Object.entries(groupedToasters).map(([direction, items]) => {
+      {Object.entries(groupedToasts).map(([direction, items]) => {
         if (items.length === 0) return null;
         return (
           <div
             key={direction}
             aria-live="assertive"
-            className={`pointer-events-none ${getPositionClasses(direction as ToasterDirection)}`}
-            style={{ zIndex: zIndex }} //  确保不同 direction 的 toaster 容器 zIndex 一致，由 ToasterItem 自身控制具体层级
+            className={`pointer-events-none ${getPositionClasses(direction as ToastDirection)}`}
+            style={{ zIndex: zIndex }} //  确保不同 direction 的 toast 容器 zIndex 一致，由 ToastItem 自身控制具体层级
           >
             {items.map((item) => (
-              <ToasterItem key={item.id} {...item} />
+              <ToastItem key={item.id} {...item} />
             ))}
           </div>
         );
       })}
     </Portal>
   );
-} 
+}
