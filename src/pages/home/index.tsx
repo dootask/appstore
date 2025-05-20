@@ -153,6 +153,9 @@ const Home: React.FC = () => {
   };
 
   useEffect(() => {
+    // 设置页面标题
+    document.title = t('home.header.title');
+    // 获取应用列表
     fetchApps()
   }, []);
 
