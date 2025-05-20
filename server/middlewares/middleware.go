@@ -2,6 +2,9 @@ package middlewares
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
+	"slices"
 	"strings"
 
 	"appstore/server/global"
@@ -36,6 +39,27 @@ func Middleware() gin.HandlerFunc {
 			}
 		}
 
+		c.Next()
+	}
+}
+
+// WebStaticMiddleware 处理前端静态文件
+func WebStaticMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		prePaths := []string{"/api/", "/swagger/"}
+		if global.WebDir != "" && !slices.Contains(prePaths, c.Request.URL.Path) {
+			// 尝试访问请求的文件
+			filePath := filepath.Join(global.WebDir, c.Request.URL.Path)
+			if _, err := os.Stat(filePath); err == nil {
+				c.File(filePath)
+				c.Abort()
+				return
+			}
+			// 如果文件不存在，返回 index.html
+			c.File(filepath.Join(global.WebDir, "index.html"))
+			c.Abort()
+			return
+		}
 		c.Next()
 	}
 }

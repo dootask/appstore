@@ -23,6 +23,7 @@ const (
 // 全局变量
 var (
 	WorkDir  string // 工作目录
+	WebDir   string // 前端静态文件目录
 	BaseUrl  string // 基础URL
 	Language string // 用户语言
 

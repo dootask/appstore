@@ -57,8 +57,9 @@ var (
 )
 
 func init() {
-	rootCmd.PersistentFlags().StringVarP(&global.WorkDir, "work-dir", "w", ".", "工作目录路径")
-	rootCmd.PersistentFlags().StringVarP(&mode, "mode", "m", global.DefaultMode, "运行模式 (debug/release)")
+	rootCmd.PersistentFlags().StringVar(&global.WorkDir, "work-dir", ".", "工作目录路径")
+	rootCmd.PersistentFlags().StringVar(&global.WebDir, "web-dir", "", "前端静态文件目录")
+	rootCmd.PersistentFlags().StringVar(&mode, "mode", global.DefaultMode, "运行模式 (debug/release)")
 }
 
 func runPre(*cobra.Command, []string) {
@@ -115,6 +116,9 @@ func runServer(*cobra.Command, []string) {
 	// 注册语言中间件
 	r.Use(middlewares.Middleware())
 
+	// 注册静态文件中间件
+	r.Use(middlewares.WebStaticMiddleware())
+
 	// 创建v1路由组
 	v1 := r.Group("/api/" + global.APIVersion)
 	{
@@ -123,6 +127,7 @@ func runServer(*cobra.Command, []string) {
 		v1.GET("/readme/:appId", routeAppReadme)              // 获取应用自述文件
 		v1.GET("/asset/:appId/*assetPath", routeAppAsset)     // 查看应用资源
 		v1.GET("/download/:appId/*version", routeAppDownload) // 下载应用压缩包
+		v1.GET("/sources/package", routeSourcesPackage)       // 下载应用商店资源包
 
 		// 内部使用接口
 		internal := v1.Group("/internal", middlewares.DooTaskTokenMiddleware("admin"))
@@ -135,9 +140,6 @@ func runServer(*cobra.Command, []string) {
 			internal.POST("/apps/download", routeInternalDownloadByURL) // 通过URL下载应用
 		}
 	}
-
-	// 应用商店源列表
-	r.GET("/sources.list", routeSourcesList)
 
 	// 添加Swagger文档路由
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
@@ -503,7 +505,7 @@ func routeInternalUpdateList(c *gin.Context) {
 	}
 
 	// 下载源列表
-	resp, err := http.Get("https://appstore.dootask.com/sources.list")
+	resp, err := http.Get("https://appstore.dootask.com/api/sources/package")
 	if err != nil {
 		response.ErrorWithDetail(c, global.CodeError, "下载源列表失败", err)
 		return
@@ -781,19 +783,19 @@ func routeInternalDownloadByURL(c *gin.Context) {
 // @Description 获取应用商店源列表压缩包
 // @Tags 资源
 // @Accept json
-// @Produce application/zip
-// @Success 200 {file} binary "sources.list.zip"
-// @Router /sources.list [get]
-func routeSourcesList(c *gin.Context) {
+// @Produce application/gzip
+// @Success 200 {file} binary "sources.tar.gz"
+// @Router /sources/package [get]
+func routeSourcesPackage(c *gin.Context) {
 	// 获取当前日期作为文件名
 	currentDate := time.Now().Format("20060102")
-	sourcesDir := filepath.Join(global.WorkDir, "temp", "sources_list")
+	sourcesDir := filepath.Join(global.WorkDir, "temp", "sources_package")
 	tarFile := filepath.Join(sourcesDir, currentDate+".tar.gz")
 
 	// 如果文件已存在，直接下载
 	if utils.IsFileExists(tarFile) {
 		c.Header("Content-Description", "File Transfer")
-		c.Header("Content-Disposition", "attachment; filename=sources.list.tar.gz")
+		c.Header("Content-Disposition", "attachment; filename=sources.tar.gz")
 		c.Header("Content-Type", "application/gzip")
 		c.File(tarFile)
 		return
@@ -891,7 +893,7 @@ func routeSourcesList(c *gin.Context) {
 
 	// 设置响应头
 	c.Header("Content-Description", "File Transfer")
-	c.Header("Content-Disposition", "attachment; filename=sources.list.tar.gz")
+	c.Header("Content-Disposition", "attachment; filename=sources.tar.gz")
 	c.Header("Content-Type", "application/gzip")
 
 	// 发送文件
