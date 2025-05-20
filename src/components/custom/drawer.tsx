@@ -5,6 +5,30 @@ import { Dialog, DialogBackdrop, DialogPanel, DialogTitle, TransitionChild } fro
 import { cn } from '@/lib/utils'
 import { nextZIndex } from '@dootask/tools'
 
+/**
+ * 抽屉组件 - 从屏幕边缘滑入的面板
+ * 
+ * 支持从四个方向（左、右、上、下）滑入，带有平滑的动画效果和背景遮罩。
+ * 
+ * @example
+ * ```tsx
+ * // 基本用法
+ * <Drawer open={isOpen} onOpenChange={setIsOpen}>
+ *   <div>抽屉内容</div>
+ * </Drawer>
+ * 
+ * // 从左侧打开
+ * <Drawer direction="left" title="左侧抽屉">
+ *   <div>左侧抽屉内容</div>
+ * </Drawer>
+ * 
+ * // 从底部打开，不显示关闭按钮
+ * <Drawer direction="bottom" showCloseButton={false}>
+ *   <div>底部抽屉内容</div>
+ * </Drawer>
+ * ```
+ */
+
 // 标题组件
 const DrawerTitle = memo(function DrawerTitle({title}: { title?: ReactNode }) {
   if (!title) return null
@@ -47,20 +71,53 @@ const CloseButton = memo(function CloseButton({dismissible, onOpenChange}: {
 })
 
 export interface DrawerProps {
-  open: boolean                    // 控制抽屉是否打开
-  onOpenChange: (open: boolean) => void  // 抽屉状态改变时的回调函数
-  title?: ReactNode                // 抽屉标题
-  children?: ReactNode             // 抽屉内容
-  className?: string               // 自定义类名
-  direction?: 'left' | 'right' | 'bottom'     // 抽屉打开方向
-  dismissible?: boolean            // 是否可关闭
-  showBackdrop?: boolean           // 是否显示背景遮罩
-  zIndex?: number                  // 自定义层级
+  /** 控制抽屉是否打开 */
+  open: boolean
+  /** 抽屉状态改变时的回调函数 */
+  onOpenChange: (open: boolean) => void
+  /** 抽屉标题 */
+  title?: ReactNode
+  /** 抽屉内容 */
+  children?: ReactNode
+  /** 自定义类名 */
+  className?: string
+  /** 抽屉打开方向 */
+  direction?: 'left' | 'right' | 'bottom' | 'top'
+  /** 是否可关闭（点击背景遮罩时） */
+  dismissible?: boolean
+  /** 是否显示背景遮罩 */
+  showBackdrop?: boolean
+  /** 是否显示关闭按钮 */
+  showCloseButton?: boolean
+  /** 自定义层级 */
+  zIndex?: number
 }
 
-export default function Drawer({open, onOpenChange, title, children, className, direction = 'right', dismissible = true, showBackdrop = true, zIndex}: DrawerProps) {
+export default function Drawer({open, onOpenChange, title, children, className, direction = 'right', dismissible = true, showBackdrop = true, showCloseButton = true, zIndex}: DrawerProps) {
   const currentZIndex = zIndex || nextZIndex()
   const divRef = useRef<HTMLDivElement>(null)
+
+  // 统一定义各方向的样式
+  const containerStyles = {
+    right: 'inset-y-0 right-0 pl-10 max-w-full',
+    left: 'inset-y-0 left-0 pr-10 max-w-full',
+    bottom: 'inset-x-0 bottom-0 pt-10 max-h-full',
+    top: 'inset-x-0 top-0 pb-10 max-h-full'
+  }
+
+  const panelStyles = {
+    right: 'w-screen max-w-md data-closed:translate-x-2/5 data-closed:opacity-0',
+    left: 'w-screen max-w-md data-closed:-translate-x-2/5 data-closed:opacity-0',
+    bottom: 'h-screen max-h-[80vh] w-full data-closed:translate-y-2/5 data-closed:opacity-0',
+    top: 'h-screen max-h-[80vh] w-full data-closed:-translate-y-2/5 data-closed:opacity-0'
+  }
+
+  const closeButtonStyles = {
+    right: 'top-0 left-0 -ml-10',
+    left: 'top-0 right-0 -mr-10',
+    bottom: 'top-0 right-0 -mt-10',
+    top: 'bottom-0 right-0 -mb-10'
+  }
 
   return (
     <Dialog
@@ -70,7 +127,7 @@ export default function Drawer({open, onOpenChange, title, children, className, 
       style={{zIndex: currentZIndex}}
       initialFocus={divRef}
     >
-      {/* 背景 */}
+      {/* 背景遮罩 */}
       {showBackdrop && (
         <DialogBackdrop
           transition
@@ -83,42 +140,32 @@ export default function Drawer({open, onOpenChange, title, children, className, 
         <div className="absolute inset-0 overflow-hidden">
           <div className={cn(
             "pointer-events-none fixed flex",
-            direction === 'right' 
-              ? 'inset-y-0 right-0 pl-10 max-w-full' 
-              : direction === 'left' 
-                ? 'inset-y-0 left-0 pr-10 max-w-full' 
-                : 'inset-x-0 bottom-0 pt-10 max-h-full'
+            containerStyles[direction as keyof typeof containerStyles]
           )}>
             <DialogPanel
               transition
               className={cn(
                 "pointer-events-auto relative bg-white dark:bg-black transform transition duration-300 ease-out data-closed:ease-in-out will-change-transform",
-                direction === 'right' 
-                  ? 'w-screen max-w-md data-closed:translate-x-2/5 data-closed:opacity-0' 
-                  : direction === 'left' 
-                    ? 'w-screen max-w-md data-closed:-translate-x-2/5 data-closed:opacity-0'
-                    : 'h-screen max-h-[80vh] w-full data-closed:translate-y-2/5 data-closed:opacity-0',
+                panelStyles[direction as keyof typeof panelStyles],
                 className
               )}>
 
-              {/* 外侧关闭 */}
-              <TransitionChild>
-                <div className={cn(
-                  "absolute w-10 h-10",
-                  direction === 'right' 
-                    ? 'top-0 left-0 -ml-10' 
-                    : direction === 'left' 
-                      ? 'top-0 right-0 -mr-10'
-                      : 'top-0 right-0 -mt-10'
-                )}>
-                  <CloseButton
-                    dismissible={dismissible}
-                    onOpenChange={onOpenChange}
-                  />
-                </div>
-              </TransitionChild>
+              {/* 外侧关闭按钮 */}
+              {showCloseButton && (
+                <TransitionChild>
+                  <div className={cn(
+                    "absolute w-10 h-10",
+                    closeButtonStyles[direction as keyof typeof closeButtonStyles]
+                  )}>
+                    <CloseButton
+                      dismissible={dismissible}
+                      onOpenChange={onOpenChange}
+                    />
+                  </div>
+                </TransitionChild>
+              )}
 
-              {/* 内容 */}
+              {/* 抽屉内容 */}
               <div className="flex h-full flex-col">
                 <DrawerTitle title={title}/>
                 <DrawerContent>{children}</DrawerContent>
