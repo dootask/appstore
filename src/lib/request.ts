@@ -6,7 +6,7 @@ import { props } from '@dootask/tools';
 
 // 创建axios实例
 const instance = axios.create({
-  baseURL: '/api/v1',
+  baseURL: `${import.meta.env.VITE_BASE_PATH || '/'}api/v1`,
   timeout: 30000,
   headers: {
     'Content-Type': 'application/json',

@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"slices"
 	"strings"
 
 	"appstore/server/global"
 	"appstore/server/models"
 	"appstore/server/response"
+	"appstore/server/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -22,7 +22,10 @@ func Middleware() gin.HandlerFunc {
 		if c.Request.TLS != nil || c.GetHeader("X-Forwarded-Proto") == "https" {
 			scheme = "https"
 		}
-		host := c.Request.Host
+		host := c.GetHeader("X-Forwarded-Host")
+		if host == "" {
+			host = c.Request.Host
+		}
 		global.BaseUrl = fmt.Sprintf("%s://%s", scheme, host)
 
 		// 语言偏好
@@ -47,7 +50,7 @@ func Middleware() gin.HandlerFunc {
 func WebStaticMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		prePaths := []string{"/api/", "/swagger/"}
-		if global.WebDir != "" && !slices.Contains(prePaths, c.Request.URL.Path) {
+		if global.WebDir != "" && !utils.HasPrefixInArray(c.Request.URL.Path, prePaths) {
 			// 尝试访问请求的文件
 			filePath := filepath.Join(global.WebDir, c.Request.URL.Path)
 			if _, err := os.Stat(filePath); err == nil {

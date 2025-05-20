@@ -64,3 +64,13 @@ func FormatNumber(n int) string {
 
 	return result.String()
 }
+
+// HasPrefixInArray 判断字符串是否在数组前缀中
+func HasPrefixInArray(str string, arr []string) bool {
+	for _, prefix := range arr {
+		if strings.HasPrefix(str, prefix) {
+			return true
+		}
+	}
+	return false
+}
