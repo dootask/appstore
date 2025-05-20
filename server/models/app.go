@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"slices"
 	"sort"
 	"strings"
 
@@ -198,34 +199,61 @@ func NewApps(appIds []string) []*App {
 
 	apps := []*App{}
 	for _, appId := range appIds {
-		apps = append(apps, NewApp(appId))
+		app, err := NewApp(appId)
+		if err != nil {
+			continue
+		}
+		apps = append(apps, app)
 	}
 
 	return apps
 }
 
 // NewApp 创建新的应用实例
-func NewApp(appId string) *App {
+func NewApp(appId string) (*App, error) {
+	if appId == "" {
+		return nil, fmt.Errorf("应用ID不能为空")
+	}
+	if slices.Contains([]string{"..", "/", "\\", ".git", ".DS_Store"}, appId) {
+		return nil, fmt.Errorf("无效的应用ID")
+	}
+
 	appDir := filepath.Join(global.WorkDir, "apps", appId)
 
 	app := &App{}
 	configFile := filepath.Join(appDir, "config.yml")
-	if _, err := os.Stat(configFile); err == nil {
+
+	// 检查配置文件是否存在
+	if _, err := os.Stat(configFile); err != nil {
+		if !os.IsNotExist(err) {
+			return nil, fmt.Errorf("检查配置文件失败: %v", err)
+		}
+	} else {
+		// 读取配置文件
 		data, err := os.ReadFile(configFile)
-		if err == nil {
-			_ = yaml.Unmarshal(data, &app)
+		if err != nil {
+			return nil, fmt.Errorf("读取配置文件失败: %v", err)
+		}
+
+		// 解析YAML
+		if err := yaml.Unmarshal(data, &app); err != nil {
+			return nil, fmt.Errorf("解析配置文件失败: %v", err)
 		}
 	}
 
+	// 设置应用ID
 	app.ID = appId
 
+	// 设置应用名称
 	app.Name = getLocalizedValue(app.Name, global.Language)
 	if app.Name == "" {
 		app.Name = app.ID
 	}
 
+	// 设置应用描述
 	app.Description = getLocalizedValue(app.Description, global.Language)
 
+	// 设置应用图标
 	iconFilename := findIcon(app.ID)
 	if iconFilename != "" {
 		app.Icon = fmt.Sprintf("%s/api/%s/asset/%s/%s", global.BaseUrl, global.APIVersion, app.ID, iconFilename)
@@ -233,12 +261,15 @@ func NewApp(appId string) *App {
 		app.Icon = ""
 	}
 
+	// 设置应用版本
 	app.Versions = findVersions(app.ID)
 
+	// 设置应用标签
 	if app.Tags == nil {
 		app.Tags = []string{}
 	}
 
+	// 设置应用下载URL
 	app.DownloadURL = fmt.Sprintf("%s/api/%s/download/%s/latest", global.BaseUrl, global.APIVersion, app.ID)
 
 	// 生成随机评分 (4.5-5.0)
@@ -256,6 +287,20 @@ func NewApp(appId string) *App {
 	// 生成随机下载量 (10万-100万)
 	downloads := 100000 + rand.Intn(900000)
 	app.Downloads = utils.FormatNumber(downloads) + "+"
+
+	// 获取应用配置
+	app.Config = GetAppConfig(filepath.Join(app.ID))
+
+	// 检查是否可以升级
+	if app.Config != nil && app.Config.InstallVersion != "" && app.Config.Status == "installed" {
+		currentVersion := app.Config.InstallVersion
+		if len(app.Versions) > 0 {
+			latestVersion := app.Versions[len(app.Versions)-1]
+			if utils.CompareVersions(latestVersion, currentVersion) > 0 {
+				app.Upgradeable = true
+			}
+		}
+	}
 
 	// 处理 Fields
 	fields := []FieldConfig{}
@@ -341,21 +386,7 @@ func NewApp(appId string) *App {
 	}
 	app.MenuItems = menuItems
 
-	// 获取应用配置
-	app.Config = GetAppConfig(filepath.Join(app.ID))
-
-	// 检查是否可以升级
-	if app.Config != nil && app.Config.InstallVersion != "" && app.Config.Status == "installed" {
-		currentVersion := app.Config.InstallVersion
-		if len(app.Versions) > 0 {
-			latestVersion := app.Versions[len(app.Versions)-1]
-			if utils.CompareVersions(latestVersion, currentVersion) > 0 {
-				app.Upgradeable = true
-			}
-		}
-	}
-
-	return app
+	return app, nil
 }
 
 // GetAppConfig 获取应用的配置文件内容

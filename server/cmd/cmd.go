@@ -189,7 +189,12 @@ func routeList(c *gin.Context) {
 // @Router /one/{appId} [get]
 func routeAppOne(c *gin.Context) {
 	appId := c.Param("appId")
-	response.SuccessWithData(c, models.NewApp(appId))
+	app, err := models.NewApp(appId)
+	if err != nil {
+		response.ErrorWithDetail(c, global.CodeError, "获取应用详情失败", err)
+		return
+	}
+	response.SuccessWithData(c, app)
 }
 
 // @Summary 获取应用自述文件
@@ -366,7 +371,11 @@ func routeInternalInstall(c *gin.Context) {
 
 	// 检查是否需要先卸载
 	if appConfig.Status == "installed" && appConfig.InstallVersion != "" {
-		app := models.NewApp(req.AppID)
+		app, err := models.NewApp(req.AppID)
+		if err != nil {
+			response.ErrorWithDetail(c, global.CodeError, "获取应用详情失败", err)
+			return
+		}
 		for _, require := range app.RequireUninstalls {
 			if utils.CheckVersionRequirement(appConfig.InstallVersion, require.Operator, require.Version) {
 				response.ErrorWithDetail(c, global.CodeError, fmt.Sprintf("更新版本 %s，需要先卸载已安装的版本%s", req.Version, require.Reason.(string)), fmt.Errorf(require.Reason.(string)))
