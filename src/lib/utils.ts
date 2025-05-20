@@ -1,8 +1,24 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
-export function cn(...inputs: ClassValue[]) {
+/**
+ * 合并 Tailwind CSS 类名
+ * @param inputs - 输入的类名
+ * @returns {string} - 合并后的类名
+ */
+export function cn(...inputs: ClassValue[]): string {
   return twMerge(clsx(inputs))
+}
+
+/**
+ * 获取 URL 参数
+ * @param param - 参数名
+ * @returns {string | null} - 返回参数值或 null
+ */
+export function getUrlParam(param: string): string | null {
+  if (typeof window === 'undefined') return null;
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get(param);
 }
 
 /**

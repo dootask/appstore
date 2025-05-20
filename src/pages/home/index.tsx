@@ -17,6 +17,13 @@ const Home: React.FC = () => {
   const {t} = useTranslation();
   const {apps, categories, fetchApps} = useAppStore();
   const marketplaceRef = useRef<HTMLElement>(null);
+  const [currentLanguage, setCurrentLanguageLocal] = useState(i18n.language);
+  const [currentLanguageLabel, setCurrentLanguageLabelLocal] = useState(supportedLanguagesMap[i18n.language] || i18n.language);
+  const [filterType, setFilterType] = useState<'popular' | 'featured' | 'category' | 'search'>('popular');
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [searchKeyword, setSearchKeyword] = useState<string>('');
+  const [selectedApp, setSelectedApp] = useState<App | null>(null);
+  const [showAppDetail, setShowAppDetail] = useState<boolean>(false);
 
   const [currentTheme, setCurrentThemeLocal] = useState(() => {
     if (typeof window !== 'undefined') {
@@ -24,15 +31,6 @@ const Home: React.FC = () => {
     }
     return 'light';
   });
-
-  const [currentLanguage, setCurrentLanguageLocal] = useState(i18n.language);
-  const [currentLanguageLabel, setCurrentLanguageLabelLocal] = useState(supportedLanguagesMap[i18n.language] || i18n.language);
-
-  const [filterType, setFilterType] = useState<'popular' | 'featured' | 'category' | 'search'>('popular');
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [searchKeyword, setSearchKeyword] = useState<string>('');
-  const [selectedApp, setSelectedApp] = useState<App | null>(null);
-  const [showAppDetail, setShowAppDetail] = useState<boolean>(false);
 
   const toggleThemeHandler = () => {
     setTheme(currentTheme === 'light' ? 'dark' : 'light');
@@ -170,10 +168,10 @@ const Home: React.FC = () => {
       {/* Header */}
       <header className="px-8 md:px-16 h-17 flex items-center">
         <div className="container mx-auto flex items-center">
-          <div className="flex items-center space-x-2 flex-1 justify-start">
+          <a href="https://www.dootask.com" target="_blank" rel="noopener noreferrer" className="flex items-center space-x-2 flex-1 justify-start">
             <img src={LogoIcon} alt="Logo" className="w-7 h-7" />
             <span className="text-lg font-semibold text-gray-500 dark:text-gray-400">{t('home.header.title')}</span>
-          </div>
+          </a>
           <nav className="hidden md:flex items-center space-x-6 flex-1 justify-center min-w-0">
             <Dropdown
               options={
