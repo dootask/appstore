@@ -177,7 +177,9 @@ func findVersions(appId string) []string {
 		}
 	}
 
-	sort.Strings(versions)
+	sort.Slice(versions, func(i, j int) bool {
+		return utils.CompareVersions(versions[i], versions[j]) > 0
+	})
 	return versions
 }
 
@@ -496,7 +498,7 @@ func FindLatestVersion(appId string) (string, error) {
 	if len(versions) == 0 {
 		return "", fmt.Errorf("未找到应用 %s 的版本", appId)
 	}
-	return versions[len(versions)-1], nil
+	return versions[0], nil
 }
 
 // FindAsset 查找应用资源文件
