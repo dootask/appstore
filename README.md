@@ -5,7 +5,7 @@
 ```
 AppDirectory/
 ├── resources/  # 资源文件(应用列表、应用详情、应用安装包等)
-├── server/     # 服务端
+├── server/     # 服务端（结构进入 server/README.md 查看）
 ├── src/        # 前端
 ├── Dockerfile  # 构建文件
 └── ...

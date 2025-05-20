@@ -10,22 +10,18 @@ API 文档可通过 Swagger UI 访问：http://localhost:8080/swagger/index.html
 ## 启动服务
 
 ```bash
-# 开发模式启动
-go run main.go
-
-# 指定工作目录启动
-go run main.go -w /path/to/workdir
-
-# 生产模式启动
-go run main.go -w /path/to/workdir -m release
+# 开发模式启动（后端开发）
+go run main.go --work-dir /path/to/workdir
 ```
 
 ### 命令行参数
 
-| 参数 | 简写 | 说明 | 默认值 |
-|------|------|------|--------|
-| --work-dir | -w | 指定工作目录路径 | 当前目录 (.) |
-| --mode | -m | 运行模式 (debug/release) | debug |
+| 参数         | 简写 | 说明                   | 默认值      |
+|------------|----|----------------------|----------|
+| --work-dir | -w | 指定工作目录路径             | 当前目录 (.) |
+| --env-file | -e | 环境变量文件路径             | 空        |
+| --web-dir  | -d | 前端静态文件目录             | 空        |
+| --mode     | -m | 运行模式 (debug/release) | debug    |
 
 ## 更新文档
 
