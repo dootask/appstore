@@ -17,6 +17,9 @@ RUN mkdir -p release && \
 # 前端构建阶段
 FROM node:22 AS builder
 
+# 定义构建参数
+ARG MODE=tag
+
 # 设置工作目录
 WORKDIR /web
 
@@ -29,12 +32,12 @@ RUN npm install
 # 复制源代码
 COPY . .
 
-# 定义构建参数，默认值为 /appstore/
-ARG VITE_BASE_PATH=/appstore/
-
 # 构建项目
-ENV VITE_BASE_PATH=${VITE_BASE_PATH}
-RUN npm run build
+RUN if [ "$MODE" = "tag" ]; then \
+      VITE_BASE_PATH=/appstore/ npm run build; \
+    else \
+      VITE_BASE_PATH=/ npm run build; \
+    fi
 
 # =============================================================
 # =============================================================
@@ -43,11 +46,20 @@ RUN npm run build
 # 生产阶段
 FROM docker:cli
 
+# 定义构建参数
+ARG MODE=tag
+
 # 安装必要的工具
 RUN apk add --no-cache bash curl
 
 # 创建工作目录
 RUN mkdir -p /usr/share/appstore
+
+# 有条件的复制资源目录
+COPY ./resources /var/www/docker/appstore/
+RUN if [ "$MODE" = "tag" ]; then \
+      rm -rf /var/www/docker/appstore; \
+    fi
 
 # 复制前端构建产物
 COPY --from=builder /web/dist /usr/share/appstore/dist
@@ -58,5 +70,9 @@ COPY --from=go-builder /app/appstore /usr/local/bin/
 # 设置权限
 RUN chmod +x /usr/local/bin/appstore
 
+# 复制启动脚本
+COPY ./entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
 # 设置入口点
-ENTRYPOINT ["appstore", "--work-dir", "/var/www/docker/appstore", "--env-file", "/var/www/.env", "--web-dir", "/usr/share/appstore/dist", "--mode", "release"]
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
