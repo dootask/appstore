@@ -48,9 +48,11 @@ import AlertItem from "./alert-item";
  * ```
  */
 
+export type AlertType = "success" | "warning" | "error" | "prompt" | "close"
+
 export interface AlertProps {
   /** 提示类型 */
-  type: "success" | "warning" | "error" | "prompt" | "close"
+  type: AlertType
   /** 提示标题 */
   title: string
   /** 提示描述 */

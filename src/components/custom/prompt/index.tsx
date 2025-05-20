@@ -1,5 +1,6 @@
 import AlertPortal, {type AlertProps} from "./alert";
 import NoticePortal, {type NoticeProps} from "./notice";
+import ToasterPortal, {type ToasterProps} from "./toaster";
 import {eventEmit} from "@/lib/events.ts";
 
 export function Alert(props: AlertProps) {
@@ -22,11 +23,22 @@ export function Notice(props: NoticeProps) {
   }
 }
 
+export function Toaster(props: ToasterProps) {
+  eventEmit("toaster", props)
+  return () => {
+    eventEmit("toaster", {
+      ...props,
+      __closeIng: true
+    })
+  }
+}
+
 export default function PromptPortal() {
   return (
     <>
       <AlertPortal/>
       <NoticePortal/>
+      <ToasterPortal/>
     </>
   )
 }

@@ -44,9 +44,11 @@ import { Portal } from "./portal";
  * ```
  */
 
+export type NoticeType = "success" | "warning" | "error" | "info" | "text"
+
 export interface NoticeProps {
   /** 通知类型 */
-  type: "success" | "warning" | "error" | "info" | "text"
+  type: NoticeType
   /** 通知标题 */
   title: string
   /** 通知描述 */
