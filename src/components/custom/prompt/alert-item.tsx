@@ -2,10 +2,11 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react'
-import { CheckIcon, ExclamationTriangleIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { XMarkIcon } from '@heroicons/react/24/outline'
 import { Loader2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import type { __AlertItem } from "@/components/custom/prompt/alert.tsx";
+import { ErrorIcon, InfoIcon, SuccessIcon, WarningIcon } from './icon'
 
 export default function AlertItem({type, title, description, placeholder, defaultValue, buttonText, showCancel, showConfirm, closeOnClickMask, zIndex, onConfirm, onCancel, afterClose, __closeIng}: __AlertItem) {
   const {t} = useTranslation();
@@ -124,16 +125,20 @@ export default function AlertItem({type, title, description, placeholder, defaul
                 <div className={`mx-auto flex size-12 shrink-0 items-center justify-center rounded-full sm:mx-0 sm:size-7 text-white ${
                   type === 'success' ? 'bg-mantis-400' :
                     type === 'warning' ? 'bg-amber-400' :
-                      'bg-coral-400'
+                      type === 'info' ? 'bg-ocean-400' :
+                        'bg-coral-400'
                 }`}>
                   {type === 'success' && (
-                    <CheckIcon aria-hidden="true" className="size-4.5"/>
+                    <SuccessIcon aria-hidden="true" className="size-5"/>
                   )}
                   {type === 'warning' && (
-                    <ExclamationTriangleIcon aria-hidden="true" className="size-4.5"/>
+                    <WarningIcon aria-hidden="true" className="size-5"/>
+                  )}
+                  {type === 'info' && (
+                    <InfoIcon aria-hidden="true" className="size-5"/>
                   )}
                   {type === 'error' && (
-                    <XMarkIcon aria-hidden="true" className="size-4.5"/>
+                    <ErrorIcon aria-hidden="true" className="size-5"/>
                   )}
                 </div>
                 <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
@@ -156,7 +161,8 @@ export default function AlertItem({type, title, description, placeholder, defaul
                     className={`flex items-center w-full min-w-24 justify-center rounded-md px-3 py-2 text-sm font-semibold text-white shadow-xs sm:ml-4 sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed ${
                       type === 'success' ? 'bg-mantis-400 hover:bg-mantis-350' :
                         type === 'warning' ? 'bg-amber-400 hover:bg-amber-350' :
-                          'bg-coral-400 hover:bg-coral-350'
+                          type === 'info' ? 'bg-ocean-400 hover:bg-ocean-350' :
+                            'bg-coral-400 hover:bg-coral-350'
                     }`}
                   >
                     {confirmLoading ? (

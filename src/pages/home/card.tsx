@@ -23,7 +23,7 @@ const HomeCard: React.FC<{
         </div>
         <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
           <Heart className="w-4 h-4 text-pink-500 dark:text-pink-400 mr-1" fill="currentColor" />
-          <span>{app.rating}</span>
+          <span>{app.rating?.toFixed(1)}</span>
         </div>
       </div>
       <div className="flex-grow">

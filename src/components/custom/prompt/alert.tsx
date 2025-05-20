@@ -6,7 +6,7 @@ import { nextZIndex } from "@dootask/tools";
 import { uuidv4 } from "@/lib/utils";
 import AlertItem from "./alert-item";
 
-export type AlertType = "success" | "warning" | "error" | "prompt" | "close"
+export type AlertType = "success" | "warning" | "error" | "info" | "prompt"
 
 export interface AlertProps {
   /** 提示类型 */

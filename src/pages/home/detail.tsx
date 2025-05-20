@@ -4,7 +4,7 @@ import Github from '@/assets/github.svg';
 import { useTranslation } from 'react-i18next';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AppApi } from '@/lib';
 import ReactMarkdown from "react-markdown"
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
@@ -67,7 +67,7 @@ export default function AppDetail({app, onDownload}: { app: App | null, onDownlo
 
   const detailItems = [
     app.versions?.[0] && {icon: GitBranch, labelKey: 'install.latest_version', value: app.versions[0]},
-    app.rating && {icon: Heart, labelKey: 'home.appDetail.rating', value: `${app.rating}/5.0`, className: 'text-yellow-500 dark:text-yellow-400'},
+    app.rating && {icon: Heart, labelKey: 'home.appDetail.rating', value: `${app.rating.toFixed(1)}/5.0`, className: 'text-yellow-500 dark:text-yellow-400'},
     app.downloads && {icon: Download, labelKey: 'home.appDetail.downloads', value: app.downloads},
     app.user_count && {icon: Users, labelKey: 'home.appDetail.users', value: app.user_count},
   ].filter(Boolean) as { icon: React.ElementType; labelKey: string; value: string; className?: string }[];

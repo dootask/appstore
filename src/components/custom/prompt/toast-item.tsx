@@ -1,13 +1,13 @@
 'use client'
 
-import { useEffect, useRef, useState, useCallback } from 'react'
+import React, { useEffect, useRef, useState, useCallback } from 'react'
 import { Transition } from '@headlessui/react'
-import { CheckCircleIcon, ExclamationTriangleIcon, InformationCircleIcon, XCircleIcon } from '@heroicons/react/24/outline'
+import { CheckCircleIcon, ExclamationCircleIcon, InformationCircleIcon, XCircleIcon } from '@heroicons/react/24/outline'
 import type { __ToastItem, ToastType, ToastDirection } from './toast'
 
 const typeIconMap: Record<ToastType, React.ElementType | null> = {
   success: CheckCircleIcon,
-  warning: ExclamationTriangleIcon,
+  warning: ExclamationCircleIcon,
   error: XCircleIcon,
   info: InformationCircleIcon,
   text: null,

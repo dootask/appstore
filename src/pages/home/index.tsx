@@ -11,6 +11,7 @@ import { Alert, Toast } from '@/components/custom/prompt';
 import Drawer from '@/components/custom/drawer';
 import type { App } from '@/types/api';
 import AppDetail from './detail';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const Home: React.FC = () => {
   const {t} = useTranslation();
@@ -96,6 +97,7 @@ const Home: React.FC = () => {
             content: t('common.copyFailed'),
             duration: 2000
           });
+          console.error(error);
         }
       }
     });
@@ -103,7 +105,7 @@ const Home: React.FC = () => {
 
   const handleMaintenance = () => {
     Alert({
-      type: 'warning',
+      type: 'info',
       title: t('home.support.warning'),
       description: t('home.support.maintenance'),
       showCancel: false,
@@ -166,7 +168,7 @@ const Home: React.FC = () => {
   ];
 
   return (
-    <div className="bg-white dark:bg-black text-gray-900 dark:text-white min-h-screen">
+    <ScrollArea className="bg-white dark:bg-black text-gray-900 dark:text-white h-screen">
       {/* Header */}
       <header className="px-8 md:px-16 h-17 flex items-center">
         <div className="container mx-auto flex items-center">
@@ -377,7 +379,7 @@ const Home: React.FC = () => {
           }
         }} />
       </Drawer>
-    </div>
+    </ScrollArea>
   );
 }
 
