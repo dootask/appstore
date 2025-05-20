@@ -4,7 +4,7 @@ import type {
   AppInternalInstallRequest, 
   AppInternalDownloadRequest,
   AppInternalInstalledResponse
-} from '../types/api';
+} from '@/types/api';
 
 /**
  * 应用相关API

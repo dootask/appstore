@@ -1,8 +1,9 @@
 import axios from 'axios';
 import type { AxiosRequestConfig } from 'axios';
-import type { Response } from '../types/api';
+import type { Response } from '@/types/api';
 import { getUrlParam } from './utils';
 import { props } from '@dootask/tools';
+import i18n from '@/i18n';
 
 // 创建axios实例
 const instance = axios.create({
@@ -19,6 +20,9 @@ instance.interceptors.request.use(
     const token = getUrlParam('token') || props?.userToken;
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+    }
+    if (i18n.language) {
+      config.headers.Language = i18n.language;
     }
     return config;
   },

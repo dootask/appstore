@@ -30,7 +30,10 @@ func Middleware() gin.HandlerFunc {
 
 		// 语言偏好
 		global.Language = global.DefaultLanguage
-		langHeader := c.GetHeader("Accept-Language")
+		langHeader := c.GetHeader("Language")
+		if langHeader == "" {
+			langHeader = c.GetHeader("Accept-Language")
+		}
 		if langHeader != "" {
 			langs := strings.Split(langHeader, ",")
 			if len(langs) > 0 {
