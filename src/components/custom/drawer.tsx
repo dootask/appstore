@@ -172,7 +172,7 @@ export default function Drawer({open, onOpenChange, title, children, className, 
               </div>
             </DialogPanel>
           </div>
-          <span className="sr-only" role="app-store-close" role-index={currentZIndex}></span>
+          <span className="hidden" role="app-store-close" role-index={currentZIndex}></span>
         </div>
       </div>
     </Dialog>

@@ -343,12 +343,12 @@ const Home: React.FC = () => {
         onOpenChange={() => {
           setSelectedApp(null);
         }}
-        title={selectedApp?.name}
+        title={t('home.appDetail.title')}
         direction="bottom"
-        className="rounded-t-xl bg-white dark:bg-gray-800"
+        className="rounded-t-xl bg-white dark:bg-zinc-800"
       >
-        <div>
-          <h1>Hello</h1>
+        <div className="p-4">
+          <h1>{selectedApp?.name}</h1>
         </div>
       </Drawer>
       {/* 提示弹窗 */}

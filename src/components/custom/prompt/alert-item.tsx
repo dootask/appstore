@@ -177,7 +177,7 @@ export default function AlertItem({type, title, description, placeholder, defaul
               </div>
             </DialogPanel>
           )}
-          <span className="sr-only" role="app-store-close" role-index={zIndex}></span>
+          <span className="hidden" role="app-store-close" role-index={zIndex}></span>
         </div>
       </div>
     </Dialog>
