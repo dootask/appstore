@@ -31,7 +31,9 @@
     "open_community": "开源社区",
     "title": "应用商店",
     "unknown_error": "未知错误",
-    "website": "官方网站"
+    "website": "官方网站",
+    "copySuccess": "复制成功",
+    "copyFailed": "复制失败"
   },
   "install": {
     "app_config": "应用配置",

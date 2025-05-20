@@ -7,7 +7,7 @@ import { supportedLanguagesMap, languageOptionsForDropdown, setTheme, setLanguag
 import { useTranslation, Trans } from 'react-i18next';
 import { useAppStore } from "@/store/app.ts";
 import HomeCard from './card';
-import { Alert } from '@/components/custom/prompt';
+import { Alert, Toast } from '@/components/custom/prompt';
 import Drawer from '@/components/custom/drawer';
 import type { App } from '@/types/api';
 import AppDetail from './detail';
@@ -81,8 +81,21 @@ const Home: React.FC = () => {
       buttonText: t('home.appDisplayCard.copyButton'),
       showCancel: true,
       showConfirm: true,
-      onConfirm: () => {
-        navigator.clipboard.writeText(app.download_url);
+      onConfirm: async () => {
+        try {
+          await navigator.clipboard.writeText(app.download_url);
+          Toast({
+            type: 'success',
+            content: t('common.copySuccess'),
+            duration: 2000
+          });
+        } catch (error) {
+          Toast({
+            type: 'error', 
+            content: t('common.copyFailed'),
+            duration: 2000
+          });
+        }
       }
     });
   }
@@ -209,7 +222,16 @@ const Home: React.FC = () => {
 
       {/* Hero Section */}
       <section className="py-16 md:py-24 px-8 text-center">
-        <div className="inline-flex items-center bg-gray-200 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/70 rounded-full py-2 px-4 mb-6 text-sm text-gray-700 dark:text-gray-300">
+        <div
+          className="inline-flex items-center bg-gray-200 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/70 rounded-full py-2 px-4 mb-6 text-sm text-gray-700 dark:text-gray-300 cursor-pointer"
+          onClick={() => {    
+            Toast({
+              type: 'info',
+              direction: 'middle',
+              content: t('home.hero.seriesBAnnouncement'),
+            })
+          }}
+        >
           <Zap className="w-5 h-5 text-yellow-500 dark:text-yellow-400 mr-2" />
           {t('home.hero.seriesBAnnouncement')}
           <ArrowRight className="w-4 h-4 ml-2 text-gray-500 dark:text-gray-400" />
