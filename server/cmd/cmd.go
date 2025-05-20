@@ -125,7 +125,7 @@ func runServer(*cobra.Command, []string) {
 		v1.GET("/download/:appId/*version", routeAppDownload) // 下载应用压缩包
 
 		// 内部使用接口
-		internal := v1.Group("/internal")
+		internal := v1.Group("/internal", middlewares.DooTaskTokenMiddleware("admin"))
 		{
 			internal.POST("/install", routeInternalInstall)             // 安装应用
 			internal.GET("/uninstall/:appId", routeInternalUninstall)   // 卸载应用

@@ -18,7 +18,7 @@ func ErrorWithDetail(ctx *gin.Context, code int, message string, err error) {
 	resp := &Response{
 		Code:    code,
 		Message: message,
-		Data:    nil,
+		Data:    gin.H{},
 	}
 	if err != nil {
 		resp.Data = gin.H{

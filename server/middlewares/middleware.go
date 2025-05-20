@@ -5,6 +5,8 @@ import (
 	"strings"
 
 	"appstore/server/global"
+	"appstore/server/models"
+	"appstore/server/response"
 
 	"github.com/gin-gonic/gin"
 )
@@ -32,6 +34,34 @@ func Middleware() gin.HandlerFunc {
 					global.Language = strings.ToLower(firstLang)
 				}
 			}
+		}
+
+		c.Next()
+	}
+}
+
+// DooTaskTokenMiddleware 是一个 DooTask 的 token 验证中间件
+func DooTaskTokenMiddleware(identity ...string) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		token := c.GetHeader("Authorization")
+		token = strings.TrimPrefix(token, "Bearer ")
+		if token == "" {
+			response.ErrorWithDetail(c, global.CodeError, "身份验证失败", nil)
+			c.Abort()
+			return
+		}
+
+		// 验证 token
+		var err error
+		if len(identity) > 0 {
+			_, err = models.DooTaskCheckUserIdentity(token, identity[0])
+		} else {
+			_, err = models.DooTaskCheckUser(token)
+		}
+		if err != nil {
+			response.ErrorWithDetail(c, global.CodeError, "权限不足", err)
+			c.Abort()
+			return
 		}
 
 		c.Next()
