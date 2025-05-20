@@ -31,6 +31,9 @@ const Internal = () => {
   const detailTimerRef = useRef<NodeJS.Timeout>(null)
 
   useEffect(() => {
+    // 设置基本样式（在子应用中body的样式会丢失，所以需要手动设置）
+    document.body.style.color = 'var(--foreground)';
+    document.body.style.backgroundColor = 'var(--background)';
     // 获取应用列表数据
     fetchApps();
     // 拦截返回事件

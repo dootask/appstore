@@ -148,7 +148,7 @@ export function AppInstall({appId, onClose}: AppInstallProps) {
                 name="name"
                 render={({field}) => (
                   <FormItem className="grid grid-cols-1 gap-3 sm:grid-cols-4 sm:items-start">
-                    <FormLabel className="sm:text-right min-h-9">{t('install.name')}</FormLabel>
+                    <FormLabel className="sm:text-right min-h-9 text-foreground/50">{t('install.name')}</FormLabel>
                     <div className="sm:col-span-3">
                       <FormControl>
                         <Input {...field} disabled className="bg-muted"/>
@@ -163,7 +163,7 @@ export function AppInstall({appId, onClose}: AppInstallProps) {
                 name="version"
                 render={({field}) => (
                   <FormItem className="grid grid-cols-1 gap-3 sm:grid-cols-4 sm:items-start">
-                    <FormLabel className="sm:text-right min-h-9">{t('install.version')}</FormLabel>
+                    <FormLabel className="sm:text-right min-h-9 text-foreground/50">{t('install.version')}</FormLabel>
                     <div className="sm:col-span-3">
                       <FormControl>
                         <Select
@@ -204,7 +204,7 @@ export function AppInstall({appId, onClose}: AppInstallProps) {
                     name={field.name as keyof FormValues}
                     render={({field: formField}) => (
                       <FormItem className="grid grid-cols-1 gap-3 sm:grid-cols-4 sm:items-start">
-                        <FormLabel className="sm:text-right min-h-9">{field.label + ""}</FormLabel>
+                        <FormLabel className="sm:text-right min-h-9 text-foreground/50">{field.label + ""}</FormLabel>
                         <div className="sm:col-span-3">
                           <FormControl>
                             {field.type === "select" ? (
@@ -243,7 +243,7 @@ export function AppInstall({appId, onClose}: AppInstallProps) {
                 name="cpuLimit"
                 render={({field}) => (
                   <FormItem className="grid grid-cols-1 gap-3 sm:grid-cols-4 sm:items-start">
-                    <FormLabel className="sm:text-right min-h-9">{t('install.cpu_limit')}</FormLabel>
+                    <FormLabel className="sm:text-right min-h-9 text-foreground/50">{t('install.cpu_limit')}</FormLabel>
                     <div className="sm:col-span-3">
                       <FormControl>
                         <Input {...field} placeholder={t('install.cpu_limit_placeholder')}/>
@@ -258,7 +258,7 @@ export function AppInstall({appId, onClose}: AppInstallProps) {
                 name="memoryLimit"
                 render={({field}) => (
                   <FormItem className="grid grid-cols-1 gap-3 sm:grid-cols-4 sm:items-start">
-                    <FormLabel className="sm:text-right min-h-9">{t('install.memory_limit')}</FormLabel>
+                    <FormLabel className="sm:text-right min-h-9 text-foreground/50">{t('install.memory_limit')}</FormLabel>
                     <div className="sm:col-span-3">
                       <FormControl>
                         <Input
