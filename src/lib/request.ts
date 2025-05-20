@@ -1,6 +1,8 @@
 import axios from 'axios';
 import type { AxiosRequestConfig } from 'axios';
 import type { Response } from '../types/api';
+import { getUrlParam } from './utils';
+import { props } from '@dootask/tools';
 
 // 创建axios实例
 const instance = axios.create({
@@ -14,6 +16,10 @@ const instance = axios.create({
 // 请求拦截器
 instance.interceptors.request.use(
   (config) => {
+    const token = getUrlParam('token') || props?.userToken;
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
     return config;
   },
   (error) => {
