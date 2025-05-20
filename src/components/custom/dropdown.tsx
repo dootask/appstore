@@ -3,6 +3,7 @@ import { Check, Ellipsis } from 'lucide-react'
 import { type ReactNode, useEffect, useState } from 'react'
 import { useFloating, autoUpdate, offset, flip, shift, useInteractions, useHover, useFocus, size } from '@floating-ui/react'
 import { cn } from "@/lib/utils.ts";
+import { nextZIndex } from '@dootask/tools';
 
 export interface DropdownItem {
   value: string
@@ -15,10 +16,12 @@ export interface DropdownProps {
   defaultValue?: string
   className?: string
   children?: ReactNode;
+  zIndex?: number
   onChange?: (value: string) => void
 }
 
-export default function Dropdown({options, defaultValue, className, onChange, children, ...props}: DropdownProps) {
+export default function Dropdown({options, defaultValue, className, onChange, children, zIndex, ...props}: DropdownProps) {
+  const currentZIndex = zIndex || nextZIndex()
   // 状态管理
   const [items, setItems] = useState<DropdownItem[][]>([])
   
@@ -106,11 +109,12 @@ export default function Dropdown({options, defaultValue, className, onChange, ch
           top: y ?? 0,
           left: x ?? 0,
           width: 'var(--radix-dropdown-menu-content-width)',
+          zIndex: currentZIndex
         }}
         {...getFloatingProps()}
         transition
         className={cn(
-          "z-50 min-w-40 max-w-56 divide-y divide-gray-100 rounded-md bg-white dark:bg-zinc-800 shadow-lg ring-1 ring-black/5 transition focus:outline-hidden data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in overflow-auto",
+          "min-w-40 max-w-56 divide-y divide-gray-100 rounded-md bg-white dark:bg-zinc-800 shadow-lg ring-1 ring-black/5 transition focus:outline-hidden data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in overflow-auto",
           getOrigin()
         )}
       >
