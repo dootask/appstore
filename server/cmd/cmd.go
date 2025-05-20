@@ -144,6 +144,9 @@ func runServer(*cobra.Command, []string) {
 	// 添加Swagger文档路由
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
+	// 启动检测容器状态守护
+	go models.StartCheckContainerStatusDaemon()
+
 	// 启动服务器
 	err := r.Run(":" + global.DefaultPort)
 	if err != nil {
@@ -490,7 +493,7 @@ func routeInternalLog(c *gin.Context) {
 }
 
 // @Summary 更新应用列表
-// @Description 从远程仓库更新应用列表
+// @Description 从远程仓库更新应用列表，给 DooTask 内部应用商店使用
 // @Tags 内部接口
 // @Accept json
 // @Produce json
@@ -514,7 +517,7 @@ func routeInternalUpdateList(c *gin.Context) {
 	}
 
 	// 下载源列表
-	resp, err := http.Get("https://appstore.dootask.com/api/sources/package")
+	resp, err := http.Get("https://appstore.dootask.com/api/v1/sources/package")
 	if err != nil {
 		response.ErrorWithDetail(c, global.CodeError, "下载源列表失败", err)
 		return

@@ -262,3 +262,83 @@ func RunDockerCompose(appId, action string) error {
 
 	return nil
 }
+
+// StartCheckContainerStatusDaemon 启动检测容器状态守护
+// - 如果 config.status=installed 且 docker-compose.yml 文件存在时，检查容器不存在则自动启动
+// - 每隔10秒检查一次
+// - 1分钟内只启动一次
+func StartCheckContainerStatusDaemon() {
+	configDir := filepath.Join(global.WorkDir, "config")
+	lastUpTimes := make(map[string]time.Time) // 记录每个应用最后一次执行 up 命令的时间
+	waitTime := 10 * time.Second              // 等待时间
+
+	for {
+		// 遍历 configsDir 目录下的所有子目录
+		entries, err := os.ReadDir(configDir)
+		if err != nil {
+			fmt.Printf("[Daemon] Failed to read directory config: %v\n", err)
+			time.Sleep(waitTime)
+			continue
+		}
+
+		for _, entry := range entries {
+			if !entry.IsDir() {
+				continue
+			}
+
+			appId := entry.Name()
+
+			// 检查是否在1分钟内执行过
+			if lastTime, exists := lastUpTimes[appId]; exists {
+				if time.Since(lastTime) < time.Minute {
+					continue
+				}
+			}
+
+			// 检查是否存在 docker-compose.yml 文件
+			composeFile := filepath.Join(configDir, appId, "docker-compose.yml")
+			if !utils.IsFileExists(composeFile) {
+				continue
+			}
+
+			// 检查是否运行状态
+			appConfig := GetAppConfig(appId)
+			if appConfig.Status != "installed" {
+				continue
+			}
+
+			// 检查容器状态
+			stdout, err := utils.Execf("docker compose -f %s ps --format {{.Name}} 2>/dev/null", composeFile)
+			if err != nil || strings.TrimSpace(stdout) != "" {
+				continue
+			}
+
+			// 打开日志文件
+			logPath := filepath.Join(global.WorkDir, "log", appId+".log")
+			logFile, err := os.OpenFile(logPath, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0666)
+			if err != nil {
+				fmt.Printf("[Daemon] Failed to open log file %s: %v\n", appId, err)
+				continue
+			}
+
+			// 如果容器不存在，则执行 up 命令
+			_, _ = logFile.WriteString("\n[" + time.Now().Format("2006-01-02 15:04:05") + "]\n")
+			_, _ = logFile.WriteString("[Daemon] up starting...\n")
+			stdout, err = utils.Execf("docker compose -f %s up -d --remove-orphans", composeFile)
+			if stdout != "" {
+				_, _ = logFile.WriteString(stdout + "\n")
+			}
+			if err != nil {
+				_, _ = logFile.WriteString("[Daemon] up failed\n")
+			} else {
+				_, _ = logFile.WriteString("[Daemon] up successful\n")
+			}
+			_ = logFile.Close()
+
+			// 记录每个应用最后一次执行 up 命令的时间
+			lastUpTimes[appId] = time.Now()
+		}
+
+		time.Sleep(waitTime)
+	}
+}
