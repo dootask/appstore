@@ -12,21 +12,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup SSH
-        uses: webfactory/ssh-agent@v0.8.0
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
-      - name: Add GitHub to known hosts
-        run: |
-          mkdir -p ~/.ssh
-          ssh-keyscan github.com >> ~/.ssh/known_hosts
-
-      - name: Clone private repository
-        run: |
-          git clone git@github.com:kuaifan/dooso.git
-          cd dooso
-
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
@@ -47,5 +32,5 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            kuaifan/dootask-appstore:latest
-            kuaifan/dootask-appstore:${{ github.ref_name }} 
+            dootask/appstore:latest
+            dootask/appstore:${{ github.ref_name }} 
