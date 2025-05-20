@@ -3,12 +3,12 @@ FROM golang:1.24.1 AS go-builder
 
 WORKDIR /app
 
-# 复制 dooso 仓库代码
-COPY dooso/ .
+# 复制 server
+COPY server/ .
 
 # 构建 Go 应用
 RUN mkdir -p release && \
-    env CGO_ENABLED=0 go build -trimpath -ldflags "-s -w" -o ./release/doocli ./cli
+    env CGO_ENABLED=0 go build -trimpath -ldflags "-s -w" -o ./appstore .
 
 # =============================================================
 # =============================================================
@@ -18,7 +18,7 @@ RUN mkdir -p release && \
 FROM node:22 AS builder
 
 # 设置工作目录
-WORKDIR /app
+WORKDIR /web
 
 # 复制 package.json 和 package-lock.json（如果存在）
 COPY package*.json ./
@@ -30,7 +30,7 @@ RUN npm install
 COPY . .
 
 # 构建项目
-ENV VITE_BASE_PATH=/appstore/web/
+ENV VITE_BASE_PATH=/appstore/
 RUN npm run build
 
 # =============================================================
@@ -44,16 +44,16 @@ FROM docker:cli
 RUN apk add --no-cache bash curl
 
 # 创建工作目录
-RUN mkdir -p /var/appstore/web
+RUN mkdir -p /usr/share/appstore
 
-# 复制构建产物到 nginx 目录
-COPY --from=builder /app/dist /var/appstore/web
+# 复制前端构建产物
+COPY --from=builder /web/dist /usr/share/appstore/dist
 
 # 复制 Go 构建产物
-COPY --from=go-builder /app/release/doocli /usr/local/bin/
+COPY --from=go-builder /app/appstore /usr/local/bin/
 
 # 设置权限
-RUN chmod +x /usr/local/bin/doocli
+RUN chmod +x /usr/local/bin/appstore
 
 # 设置入口点
-ENTRYPOINT ["doocli", "appstore", "--web", "/var/appstore/web", "--mode", "release"]
+ENTRYPOINT ["appstore", "--work-dir", "/var/www/docker/appstore", "--web-dir", "/usr/share/appstore/dist", "--mode", "release"]
