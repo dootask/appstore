@@ -29,8 +29,11 @@ RUN npm install
 # 复制源代码
 COPY . .
 
+# 定义构建参数，默认值为 /appstore/
+ARG VITE_BASE_PATH=/appstore/
+
 # 构建项目
-ENV VITE_BASE_PATH=/appstore/
+ENV VITE_BASE_PATH=${VITE_BASE_PATH}
 RUN npm run build
 
 # =============================================================

@@ -2,8 +2,10 @@ name: Build and Push Docker Image
 
 on:
   push:
+    branches:
+      - '**'
     tags:
-      - '*'   # 匹配所有标签
+      - '*'
 
 jobs:
   build-and-push:
@@ -17,12 +19,37 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+        with:
+          # 启用 buildx 构建缓存
+          driver-opts: image=moby/buildkit:latest
 
       - name: Login to DockerHub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Determine Docker tags and build args
+        id: docker_tags
+        run: |
+          if [[ "${{ github.ref_type }}" == "tag" ]]; then
+            TAGS="dootask/appstore:latest,dootask/appstore:${{ github.ref_name }}"
+            BASE_PATH="/appstore/"
+            echo "当前构建类型：标签"
+            echo "标签名：${{ github.ref_name }}"
+            echo "将推送的镜像标签：dootask/appstore:latest, dootask/appstore:${{ github.ref_name }}"
+            echo "VITE_BASE_PATH设置为：/appstore/"
+          elif [[ "${{ github.ref_type }}" == "branch" ]]; then
+            BRANCH_TAG=$(echo "${{ github.ref_name }}" | sed 's|/|-|g')
+            TAGS="dootask/appstore:$BRANCH_TAG"
+            BASE_PATH="/"
+            echo "当前构建类型：分支"
+            echo "分支名：${{ github.ref_name }}"
+            echo "将推送的镜像标签：dootask/appstore:$BRANCH_TAG"
+            echo "VITE_BASE_PATH设置为：/"
+          fi
+          echo "tags=$TAGS" >> $GITHUB_OUTPUT
+          echo "base_path=$BASE_PATH" >> $GITHUB_OUTPUT
 
       - name: Build and push Docker image (multi-arch)
         uses: docker/build-push-action@v5
@@ -31,6 +58,18 @@ jobs:
           file: ./Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: |
-            dootask/appstore:latest
-            dootask/appstore:${{ github.ref_name }} 
+          tags: ${{ steps.docker_tags.outputs.tags }}
+          # 传递 VITE_BASE_PATH 构建参数
+          build-args: |
+            VITE_BASE_PATH=${{ steps.docker_tags.outputs.base_path }}
+          # 启用缓存
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: 构建状态通知
+        if: always()
+        run: |
+          echo "::notice::Docker 镜像构建${{ job.status == 'success' && '成功' || '失败' }}"
+          echo "::notice::分支/标签: ${{ github.ref_name }}"
+          echo "::notice::镜像标签: ${{ steps.docker_tags.outputs.tags }}"
+          echo "::notice::VITE_BASE_PATH: ${{ steps.docker_tags.outputs.base_path }}"
