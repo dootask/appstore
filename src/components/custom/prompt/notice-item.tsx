@@ -4,9 +4,9 @@ import { useEffect, useRef, useState, useCallback } from 'react'
 import { Transition } from '@headlessui/react'
 import { CheckCircleIcon, ExclamationCircleIcon, InformationCircleIcon, XCircleIcon } from '@heroicons/react/24/outline'
 import { XMarkIcon } from '@heroicons/react/20/solid'
-import { type NoticeItem } from './notice'
+import type { __NoticeItem } from './notice'
 
-export default function NoticeItem({type, title, description, showClose, zIndex, onClose, afterClose, duration, delayShow, __closeIng}: NoticeItem) {
+export default function NoticeItem({type, title, description, showClose, zIndex, onClose, afterClose, duration, delayShow, __closeIng}: __NoticeItem) {
   const [show, setShow] = useState(false)
   const itemRef = useRef<HTMLDivElement>(null)
   const closeRef = useRef<HTMLButtonElement>(null)

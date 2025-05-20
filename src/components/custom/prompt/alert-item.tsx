@@ -5,9 +5,9 @@ import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/re
 import { CheckIcon, ExclamationTriangleIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { Loader2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import type { AlertItem } from "@/components/custom/prompt/alert.tsx";
+import type { __AlertItem } from "@/components/custom/prompt/alert.tsx";
 
-export default function AlertItem({type, title, description, placeholder, defaultValue, buttonText, showCancel, showConfirm, closeOnClickMask, zIndex, onConfirm, onCancel, afterClose, __closeIng}: AlertItem) {
+export default function AlertItem({type, title, description, placeholder, defaultValue, buttonText, showCancel, showConfirm, closeOnClickMask, zIndex, onConfirm, onCancel, afterClose, __closeIng}: __AlertItem) {
   const {t} = useTranslation();
   const [open, setOpen] = useState(false)
   const [confirmLoading, setConfirmLoading] = useState(false)
