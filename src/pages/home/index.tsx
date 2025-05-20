@@ -13,7 +13,8 @@ import { useTranslation, Trans } from 'react-i18next';
 import { useAppStore } from "@/store/app.ts";
 import HomeCard from './card';
 import PromptPortal, { Alert } from '@/components/custom/prompt';
-
+import Drawer from '@/components/custom/drawer';
+import type { App } from '@/types/api';
 const Home: React.FC = () => {
   const {t} = useTranslation();
   const {apps, categories, fetchApps} = useAppStore();
@@ -32,6 +33,7 @@ const Home: React.FC = () => {
   const [filterType, setFilterType] = useState<'popular' | 'featured' | 'category' | 'search'>('popular');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchKeyword, setSearchKeyword] = useState<string>('');
+  const [selectedApp, setSelectedApp] = useState<App | null>(null);
 
   const toggleThemeHandler = () => {
     const newTheme = currentTheme === 'light' ? 'dark' : 'light';
@@ -41,6 +43,21 @@ const Home: React.FC = () => {
   const handleLanguageChangeHandler = (langCode: string) => {
     setLanguage(langCode);
   };
+
+  const showAppDownloadUrl = (app: App) => {
+    Alert({
+      type: "prompt",
+      title: t('home.appDisplayCard.getButtonApp'),
+      description: t('home.appDisplayCard.copyButtonAppDescription'),
+      defaultValue: app.download_url,
+      buttonText: t('home.appDisplayCard.copyButton'),
+      showCancel: true,
+      showConfirm: true,
+      onConfirm: () => {
+        navigator.clipboard.writeText(app.download_url);
+      }
+    });
+  }
 
   useEffect(() => {
     const observer = new MutationObserver((mutationsList) => {
@@ -298,6 +315,12 @@ const Home: React.FC = () => {
                   textColorClass={colorConfig.textColorClass}
                   cardBgClass="bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-shadow duration-300"
                   app={app}
+                  onSelect={() => {
+                    setSelectedApp(app);
+                  }}
+                  onDownload={() => {
+                    showAppDownloadUrl(app);
+                  }}
                 />
               )
             })}
@@ -315,6 +338,19 @@ const Home: React.FC = () => {
         </div>
       </footer>
 
+      <Drawer
+        open={!!selectedApp}
+        onOpenChange={() => {
+          setSelectedApp(null);
+        }}
+        title={selectedApp?.name}
+        direction="bottom"
+        className="rounded-t-xl bg-white dark:bg-gray-800"
+      >
+        <div>
+          <h1>Hello</h1>
+        </div>
+      </Drawer>
       {/* 提示弹窗 */}
       <PromptPortal />
     </div>

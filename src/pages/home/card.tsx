@@ -2,8 +2,6 @@ import React from 'react';
 import { ArrowRight, Heart } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { App } from '@/types/api';
-import { Alert } from '@/components/custom/prompt';
-
 
 const HomeCard: React.FC<{
     bgColorClass: string;
@@ -12,26 +10,13 @@ const HomeCard: React.FC<{
     textColorClass: string;
     cardBgClass: string;
     app: App;
-  }> = ({bgColorClass, iconColorClass, buttonBgClass, textColorClass, cardBgClass, app}) => {
+    onSelect: () => void;
+    onDownload: () => void;
+  }> = ({bgColorClass, iconColorClass, buttonBgClass, textColorClass, cardBgClass, app, onSelect, onDownload}) => {
     const {t} = useTranslation();
 
-    const showAppDownloadUrl = () => {
-      Alert({
-        type: "prompt",
-        title: t('home.appDisplayCard.getButtonApp'),
-        description: t('home.appDisplayCard.copyButtonAppDescription'),
-        defaultValue: app.download_url,
-        buttonText: t('home.appDisplayCard.copyButton'),
-        showCancel: true,
-        showConfirm: true,
-        onConfirm: () => {
-          navigator.clipboard.writeText(app.download_url);
-        }
-      });
-    }
-  
     return (
-      <div className={`p-6 rounded-2xl shadow-lg ${cardBgClass} border border-gray-200 dark:border-gray-700 flex flex-col`}>
+      <div className={`p-6 rounded-2xl shadow-lg ${cardBgClass} border border-gray-200 dark:border-gray-700 flex flex-col`} onClick={onSelect}>
         <div className="flex items-center justify-between mb-4">
           <div className={`p-3 rounded-lg ${bgColorClass}`}>
             <img src={app.icon} alt={app.name} className={`w-7 h-7 ${iconColorClass}`} />
@@ -57,7 +42,7 @@ const HomeCard: React.FC<{
         <div className="h-px bg-gray-200 dark:bg-gray-700 my-5"></div>
         <div className="flex justify-between items-center">
           <span className="text-sm text-gray-700 dark:text-gray-300">{t('home.appDisplayCard.downloadAppButton')}</span>
-          <button className={`${buttonBgClass} text-white font-semibold py-2 px-4 rounded-lg flex items-center text-sm transition-colors duration-150`} onClick={() => showAppDownloadUrl()}>
+          <button className={`${buttonBgClass} text-white font-semibold py-2 px-4 rounded-lg flex items-center text-sm transition-colors duration-150`} onClick={onDownload}>
             {t('home.appDisplayCard.getButton')} <ArrowRight className="w-4 h-4 ml-2" />
           </button>
         </div>

@@ -52,7 +52,7 @@ export interface DrawerProps {
   title?: ReactNode                // 抽屉标题
   children?: ReactNode             // 抽屉内容
   className?: string               // 自定义类名
-  direction?: 'left' | 'right'     // 抽屉打开方向
+  direction?: 'left' | 'right' | 'bottom'     // 抽屉打开方向
   dismissible?: boolean            // 是否可关闭
   showBackdrop?: boolean           // 是否显示背景遮罩
   zIndex?: number                  // 自定义层级
@@ -82,22 +82,34 @@ export default function Drawer({open, onOpenChange, title, children, className, 
       <div ref={divRef} className="fixed inset-0 overflow-hidden">
         <div className="absolute inset-0 overflow-hidden">
           <div className={cn(
-            "pointer-events-none fixed inset-y-0 flex max-w-full",
-            direction === 'right' ? 'right-0 pl-10' : 'left-0 pr-10'
+            "pointer-events-none fixed flex",
+            direction === 'right' 
+              ? 'inset-y-0 right-0 pl-10 max-w-full' 
+              : direction === 'left' 
+                ? 'inset-y-0 left-0 pr-10 max-w-full' 
+                : 'inset-x-0 bottom-0 pt-10 max-h-full'
           )}>
             <DialogPanel
               transition
               className={cn(
-                "pointer-events-auto relative w-screen max-w-md bg-white dark:bg-black transform transition-transform duration-300 ease-out will-change-transform",
-                direction === 'right' ? 'data-closed:translate-x-full' : 'data-closed:-translate-x-full',
+                "pointer-events-auto relative bg-white dark:bg-black transform transition duration-300 ease-out data-closed:ease-in-out will-change-transform",
+                direction === 'right' 
+                  ? 'w-screen max-w-md data-closed:translate-x-2/5 data-closed:opacity-0' 
+                  : direction === 'left' 
+                    ? 'w-screen max-w-md data-closed:-translate-x-2/5 data-closed:opacity-0'
+                    : 'h-screen max-h-[80vh] w-full data-closed:translate-y-2/5 data-closed:opacity-0',
                 className
               )}>
 
               {/* 外侧关闭 */}
               <TransitionChild>
                 <div className={cn(
-                  "absolute top-0 duration-300 ease-out data-closed:opacity-0 w-10 h-10",
-                  direction === 'right' ? 'left-0 -ml-10' : 'right-0 -mr-10'
+                  "absolute w-10 h-10",
+                  direction === 'right' 
+                    ? 'top-0 left-0 -ml-10' 
+                    : direction === 'left' 
+                      ? 'top-0 right-0 -mr-10'
+                      : 'top-0 right-0 -mt-10'
                 )}>
                   <CloseButton
                     dismissible={dismissible}
