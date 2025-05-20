@@ -130,6 +130,22 @@
       "publish": "发布应用",
       "warning": "温馨提示",
       "maintenance": "功能维护，敬请期待..."
+    },
+    "appDetail": {
+      "noAppSelected": "请选择一个应用",
+      "latestVersion": "最新版本",
+      "rating": "评分",
+      "downloads": "下载量",
+      "users": "用户数",
+      "by": "作者：",
+      "favoriteButtonLabel": "收藏",
+      "visitWebsiteButtonLabel": "访问官网",
+      "downloadButton": "下载应用",
+      "tags": "标签",
+      "links": "相关链接",
+      "documentation": "查看文档",
+      "sourceCode": "查看源码",
+      "contentTitle": "详细内容"
     }
   }
 }

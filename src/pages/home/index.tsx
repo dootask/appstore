@@ -342,7 +342,7 @@ const Home: React.FC = () => {
           setShowAppDetail(false);
         }}
         direction="bottom"
-        className="rounded-t-xl bg-white dark:bg-zinc-900"
+        className="rounded-t-xl max-h-[90vh] bg-white dark:bg-zinc-900"
       >
         <AppDetail app={selectedApp} />
       </Drawer>
