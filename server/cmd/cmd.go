@@ -58,6 +58,7 @@ var (
 
 func init() {
 	rootCmd.PersistentFlags().StringVar(&global.WorkDir, "work-dir", ".", "工作目录路径")
+	rootCmd.PersistentFlags().StringVar(&global.EnvFile, "env-file", "", "环境变量文件路径")
 	rootCmd.PersistentFlags().StringVar(&global.WebDir, "web-dir", "", "前端静态文件目录")
 	rootCmd.PersistentFlags().StringVar(&mode, "mode", global.DefaultMode, "运行模式 (debug/release)")
 }
@@ -71,13 +72,12 @@ func runPre(*cobra.Command, []string) {
 	}
 
 	// 加载环境变量
-	envFile := filepath.Join(os.Getenv("HOST_PWD"), ".env")
-	if utils.IsFileExists(envFile) {
-		if err := godotenv.Load(envFile); err != nil {
+	if global.EnvFile != "" && utils.IsFileExists(global.EnvFile) {
+		if err := godotenv.Load(global.EnvFile); err != nil {
 			fmt.Printf("加载环境变量失败: %v\n", err)
 			os.Exit(1)
 		}
-		fmt.Printf("环境变量文件: %s\n", envFile)
+		fmt.Printf("环境变量文件: %s\n", global.EnvFile)
 	}
 
 	// 转换工作目录路径

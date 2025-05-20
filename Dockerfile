@@ -56,4 +56,4 @@ COPY --from=go-builder /app/appstore /usr/local/bin/
 RUN chmod +x /usr/local/bin/appstore
 
 # 设置入口点
-ENTRYPOINT ["appstore", "--work-dir", "/var/www/docker/appstore", "--web-dir", "/usr/share/appstore/dist", "--mode", "release"]
+ENTRYPOINT ["appstore", "--work-dir", "/var/www/docker/appstore", "--env-file", "/var/www/.env", "--web-dir", "/usr/share/appstore/dist", "--mode", "release"]

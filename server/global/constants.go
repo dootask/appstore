@@ -23,6 +23,7 @@ const (
 // 全局变量
 var (
 	WorkDir string // 工作目录，用于存储应用商店资源包
+	EnvFile string // 环境变量文件，需要加载的环境变量文件
 	WebDir  string // 前端静态文件目录，用于存储前端静态文件
 
 	BaseUrl  string // 基础URL
