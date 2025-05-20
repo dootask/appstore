@@ -10,7 +10,7 @@ import ReactMarkdown from "react-markdown"
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
 import { darcula as SyntaxStyle } from 'react-syntax-highlighter/dist/esm/styles/prism'
 
-export default function AppDetail({app}: {app: App | null}) {
+export default function AppDetail({app, onDownload}: {app: App | null, onDownload: () => void}) {
   const { t } = useTranslation();
   const [starred, setStarred] = useState(false);
   const [loading, setLoading] = useState(true)
@@ -103,25 +103,13 @@ export default function AppDetail({app}: {app: App | null}) {
               <ExternalLink className="w-5 h-5" />
             </a>
           )}
-          {app.download_url ? (
-            <a 
-              href={app.download_url}
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="ml-2 px-4 py-2.5 bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700 text-white font-semibold rounded-lg flex items-center justify-center transition-colors text-sm sm:text-base"
-            >
-              <Download className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
-              {t('home.appDetail.downloadButton')}
-            </a>
-          ) : (
-            <button
-              disabled
-              className="ml-2 px-4 py-2.5 bg-gray-300 dark:bg-zinc-600 text-gray-500 dark:text-zinc-400 font-semibold rounded-lg flex items-center justify-center text-sm sm:text-base cursor-not-allowed"
-            >
+          <button 
+            onClick={onDownload}
+            className="ml-2 px-4 py-2.5 bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700 text-white font-semibold rounded-lg flex items-center justify-center transition-colors text-sm sm:text-base"
+          >
               <Download className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
               {t('home.appDetail.downloadButton')}
             </button>
-          )}
         </div>
       </header>
 

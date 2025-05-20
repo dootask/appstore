@@ -9,7 +9,7 @@ import { AppCard } from '@/pages/internal/card';
 import { AppDetail } from "@/pages/internal/detail"
 import { beforeClose } from "@/lib/utils.ts";
 import { AppInstall } from '@/pages/internal/install';
-import PromptPortal, { Alert, Notice } from "@/components/custom/prompt";
+import { Alert, Notice } from "@/components/custom/prompt";
 import { useAppStore } from '@/store/app';
 import Dropdown from "@/components/custom/dropdown.tsx";
 import Drawer from "@/components/custom/drawer.tsx";
@@ -457,9 +457,6 @@ const Internal = () => {
         className="rounded-l-xl w-[600px] max-w-[80vw]">
         {selectedApp && <AppInstall appId={selectedApp.id} onClose={() => setOpenInstall(false)} />}
       </Drawer>
-
-      {/* 提示弹窗 */}
-      <PromptPortal />
     </main>
   )
 }

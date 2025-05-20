@@ -7,7 +7,7 @@ import { supportedLanguagesMap, languageOptionsForDropdown, setTheme, setLanguag
 import { useTranslation, Trans } from 'react-i18next';
 import { useAppStore } from "@/store/app.ts";
 import HomeCard from './card';
-import PromptPortal, { Alert } from '@/components/custom/prompt';
+import { Alert } from '@/components/custom/prompt';
 import Drawer from '@/components/custom/drawer';
 import type { App } from '@/types/api';
 import AppDetail from './detail';
@@ -344,10 +344,12 @@ const Home: React.FC = () => {
         direction="bottom"
         className="rounded-t-xl max-h-[90vh] bg-white dark:bg-zinc-900"
       >
-        <AppDetail app={selectedApp} />
+        <AppDetail app={selectedApp} onDownload={() => {
+          if (selectedApp) {
+            showAppDownloadUrl(selectedApp);
+          }
+        }}/>
       </Drawer>
-      {/* 提示弹窗 */}
-      <PromptPortal />
     </div>
   );
 }
