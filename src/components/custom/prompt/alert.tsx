@@ -6,48 +6,6 @@ import { nextZIndex } from "@dootask/tools";
 import { uuidv4 } from "@/lib/utils";
 import AlertItem from "./alert-item";
 
-/**
- * 弹窗提示组件 - 用于显示模态对话框
- * 
- * 支持多种类型的提示（成功、警告、错误、输入框、关闭），可自定义标题、描述、按钮等。
- * 通过事件系统触发显示，支持异步操作和自定义回调。
- * 
- * @example
- * ```tsx
- * // 基本用法
- * import { eventEmit } from '@/lib/events'
- * 
- * // 成功提示
- * eventEmit('alert', {
- *   type: 'success',
- *   title: '操作成功',
- *   description: '数据已保存'
- * })
- * 
- * // 带确认和取消的警告
- * eventEmit('alert', {
- *   type: 'warning',
- *   title: '确认删除',
- *   description: '此操作不可恢复',
- *   onConfirm: async () => {
- *     await deleteData()
- *   }
- * })
- * 
- * // 输入框提示
- * eventEmit('alert', {
- *   type: 'prompt',
- *   title: '请输入名称',
- *   placeholder: '请输入',
- *   defaultValue: '默认值',
- *   buttonText: '确定',
- *   onConfirm: (value) => {
- *     console.log('输入的值:', value)
- *   }
- * })
- * ```
- */
-
 export type AlertType = "success" | "warning" | "error" | "prompt" | "close"
 
 export interface AlertProps {

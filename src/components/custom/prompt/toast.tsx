@@ -5,33 +5,7 @@ import { eventOn } from "@/lib/events";
 import { uuidv4 } from "@/lib/utils";
 import { nextZIndex } from "@dootask/tools";
 import { Portal } from "./portal";
-import ToastItem from "./toast-item.tsx";
-
-/**
- * Toast 组件 - 用于显示轻量级的反馈信息。
- *
- * 支持多种类型的消息（成功、警告、错误、信息、纯文本），可自定义显示时长、内容和位置。
- * 通过事件系统触发显示，支持自动关闭。
- *
- * @example
- * ```tsx
- * // 基本用法
- * import { eventEmit } from '@/lib/events'
- *
- * // 普通消息
- * eventEmit('toast', {
- *   content: '一条新的消息'
- * })
- *
- * // 警告消息，从底部弹出
- * eventEmit('toast', {
- *   type: 'warning',
- *   content: '请注意...',
- *   direction: 'bottom',
- *   duration: 5000 // 5秒后自动关闭
- * })
- * ```
- */
+import ToastItem from "./toast-item";
 
 export type ToastDirection = "top" | "bottom" | "middle";
 export type ToastType = "success" | "warning" | "error" | "info" | "text";
@@ -81,7 +55,7 @@ export default function ToastPortal() {
       item.type = item.type ?? "info";
       item.zIndex = Math.max(zIndex, item.zIndex ?? (nextZIndex() + 2000)); // Toast zIndex 基础值设置为2000
       item.afterClose = () => setToasts(prev => prev.filter(({id}) => id !== item.id));
-
+      
       setToasts(prev => {
         // 根据 direction 将新消息插入到不同位置
         if (item.direction === 'bottom') {
