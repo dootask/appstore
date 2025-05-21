@@ -1,85 +1,85 @@
 #多个参数
-无法确定应用 %s 的最新版本: %v
-未找到应用 %s 的指定版本 %s
-更新版本 %s，需要先卸载已安装的版本（%s）
+CannotDetermineLatestVersion: "无法确定应用 {{.appId}} 的最新版本: {{.err}}"
+VersionNotFound: "未找到应用 {{.appId}} 的指定版本 {{.version}}"
+NeedUninstallBeforeUpdate: "更新版本 {{.version}}，需要先卸载已安装的版本（{{.reason}}）"
 
 #单个参数
-未找到应用目录: %s
-无法确定应用 %s 的最新版本
-更新版本 %s，需要先卸载已安装的版本
-读取配置文件失败：%s
-YAML解析失败：%s
-复制文件失败：%s
-服务名称 '%s' 被保护，不能使用
-YAML解析失败：%s
-检查配置文件失败: %v
-读取配置文件失败: %v
-解析配置文件失败: %v
-未找到应用 %s 的版本
-读取docker-compose模板失败: %v
-解析docker-compose模板失败: %v
-网络不存在: %v
-服务名称 '%s' 被保护，不能使用
-序列化docker-compose配置失败: %v
-保存docker-compose配置失败: %v
-切换目录失败: %v
-打开日志文件失败: %v
-更新应用状态失败: %v
-读取nginx配置模板失败: %v
-保存nginx配置失败: %v
+AppDirectoryNotFound: "未找到应用目录: %s"
+CannotDetermineLatestVersionSingle: "无法确定应用 %s 的最新版本"
+NeedUninstallBeforeUpdateSingle: "更新版本 %s，需要先卸载已安装的版本"
+ReadConfigFailed: "读取配置文件失败：%s"
+YamlParseFailed: "YAML解析失败：%s"
+CopyFileFailed: "复制文件失败：%s"
+ProtectedServiceName: "服务名称 '%s' 被保护，不能使用"
+YamlParseError: "YAML解析失败：%s"
+CheckConfigFailed: "检查配置文件失败: %v"
+ReadConfigError: "读取配置文件失败: %v"
+ParseConfigFailed: "解析配置文件失败: %v"
+AppVersionNotFound: "未找到应用 %s 的版本"
+ReadDockerComposeTemplateFailed: "读取docker-compose模板失败: %v"
+ParseDockerComposeTemplateFailed: "解析docker-compose模板失败: %v"
+NetworkNotFound: "网络不存在: %v"
+ProtectedServiceNameError: "服务名称 '%s' 被保护，不能使用"
+SerializeDockerComposeFailed: "序列化docker-compose配置失败: %v"
+SaveDockerComposeFailed: "保存docker-compose配置失败: %v"
+ChangeDirectoryFailed: "切换目录失败: %v"
+OpenLogFileFailed: "打开日志文件失败: %v"
+UpdateAppStatusFailed: "更新应用状态失败: %v"
+ReadNginxTemplateFailed: "读取nginx配置模板失败: %v"
+SaveNginxConfigFailed: "保存nginx配置失败: %v"
 
 #无参数
-获取应用详情失败
-App ID 不能为空
-无效的App ID
-无效或格式错误的版本参数
-应用正在执行中，请稍后再试
-获取应用详情失败
-创建配置目录失败
-保存配置失败
-生成docker-compose.yml失败
-生成nginx配置失败
-启动应用失败
-应用安装中...
-应用未安装，无需卸载
-卸载应用失败
-应用卸载中...
-清理临时目录失败
-创建临时目录失败
-下载源列表失败
-读取下载数据失败
-保存zip文件失败
-解压文件失败
-读取目录失败
-未找到config.yml配置文件
-配置文件不正确
-URL格式不正确
-URL格式不正确
-应用已存在，请先卸载后再安装
-应用正在安装中，请稍后再试
-应用正在卸载中，请稍后再试
-清理临时目录失败
-创建临时目录失败
-Git克隆失败
-下载失败
-读取下载数据失败
-保存zip文件失败
-解压文件失败
-未找到config.yml配置文件
-读取配置文件失败
-配置文件不正确
-移动文件失败
-apps目录不存在
-获取应用列表失败
-清理临时目录失败
-创建临时目录失败
-创建压缩文件失败
-打包文件失败
-应用ID不能为空
-无效的应用ID
-参数错误
-无效的参数
-无效的参数
-未找到资源文件
-配置无效
-权限不足
+GetAppDetailFailed: "获取应用详情失败"
+AppIdRequired: "App ID 不能为空"
+InvalidAppId: "无效的App ID"
+InvalidVersionFormat: "无效或格式错误的版本参数"
+AppIsRunning: "应用正在执行中，请稍后再试"
+GetAppDetailError: "获取应用详情失败"
+CreateConfigDirFailed: "创建配置目录失败"
+SaveConfigFailed: "保存配置失败"
+GenerateDockerComposeFailed: "生成docker-compose.yml失败"
+GenerateNginxConfigFailed: "生成nginx配置失败"
+StartAppFailed: "启动应用失败"
+AppInstalling: "应用安装中..."
+AppNotInstalled: "应用未安装，无需卸载"
+UninstallAppFailed: "卸载应用失败"
+AppUninstalling: "应用卸载中..."
+CleanTempDirFailed: "清理临时目录失败"
+CreateTempDirFailed: "创建临时目录失败"
+DownloadSourceListFailed: "下载源列表失败"
+ReadDownloadDataFailed: "读取下载数据失败"
+SaveZipFileFailed: "保存zip文件失败"
+ExtractFileFailed: "解压文件失败"
+ReadDirectoryFailed: "读取目录失败"
+ConfigYmlNotFound: "未找到config.yml配置文件"
+InvalidConfig: "配置文件不正确"
+InvalidUrlFormat: "URL格式不正确"
+InvalidUrlFormatError: "URL格式不正确"
+AppAlreadyExists: "应用已存在，请先卸载后再安装"
+AppInstallingWait: "应用正在安装中，请稍后再试"
+AppUninstallingWait: "应用正在卸载中，请稍后再试"
+CleanTempDirError: "清理临时目录失败"
+CreateTempDirError: "创建临时目录失败"
+GitCloneFailed: "Git克隆失败"
+DownloadFailed: "下载失败"
+ReadDownloadDataError: "读取下载数据失败"
+SaveZipFileError: "保存zip文件失败"
+ExtractFileError: "解压文件失败"
+ConfigYmlNotFoundError: "未找到config.yml配置文件"
+ReadConfigFileFailed: "读取配置文件失败"
+InvalidConfigFile: "配置文件不正确"
+MoveFileFailed: "移动文件失败"
+AppsDirNotFound: "apps目录不存在"
+GetAppListFailed: "获取应用列表失败"
+CleanTempDirFailedError: "清理临时目录失败"
+CreateTempDirFailedError: "创建临时目录失败"
+CreateZipFileFailed: "创建压缩文件失败"
+PackageFileFailed: "打包文件失败"
+AppIdRequiredError: "应用ID不能为空"
+InvalidAppIdError: "无效的应用ID"
+ParameterError: "参数错误"
+InvalidParameter: "无效的参数"
+InvalidParameterError: "无效的参数"
+ResourceFileNotFound: "未找到资源文件"
+InvalidConfiguration: "配置无效"
+InsufficientPermissions: "权限不足"

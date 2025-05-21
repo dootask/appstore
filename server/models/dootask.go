@@ -4,7 +4,6 @@ import (
 	"appstore/server/i18n"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"net/http"
 	"slices"
 	"time"
@@ -93,7 +92,7 @@ func DooTaskCheckUserIdentity(token string, identity string) (*DooTaskUser, erro
 	}
 
 	if !slices.Contains(user.Identity, identity) {
-		return nil, errors.New(i18n.T("权限不足"))
+		return nil, errors.New(i18n.T("InsufficientPermissions"))
 	}
 
 	return user, nil

@@ -21,14 +21,14 @@ func GenerateNginxConfig(appId string, version string, config *AppConfig) error 
 		if os.IsNotExist(err) {
 			return nil
 		} else {
-			return errors.New(i18n.T("读取nginx配置模板失败: %v", err))
+			return errors.New(i18n.T("ReadNginxTemplateFailed", err))
 		}
 	}
 
 	// 生成新的nginx配置文件
 	outputPath := filepath.Join(global.WorkDir, "config", appId, "nginx.conf")
 	if err := os.WriteFile(outputPath, templateData, 0644); err != nil {
-		return errors.New(i18n.T("保存nginx配置失败: %v", err))
+		return errors.New(i18n.T("SaveNginxConfigFailed", err))
 	}
 
 	return nil

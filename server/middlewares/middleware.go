@@ -89,7 +89,7 @@ func DooTaskTokenMiddleware(identity ...string) gin.HandlerFunc {
 			_, err = models.DooTaskCheckUser(token)
 		}
 		if err != nil {
-			response.ErrorWithDetail(c, global.CodeError, "权限不足", err)
+			response.ErrorWithDetail(c, global.CodeError, "InsufficientPermissions", err)
 			c.Abort()
 			return
 		}

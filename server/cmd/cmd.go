@@ -196,7 +196,7 @@ func routeAppOne(c *gin.Context) {
 	appId := c.Param("appId")
 	app, err := models.NewApp(appId)
 	if err != nil {
-		response.ErrorWithDetail(c, global.CodeError, i18n.T("获取应用详情失败"), err)
+		response.ErrorWithDetail(c, global.CodeError, i18n.T("GetAppDetailFailed"), err)
 		return
 	}
 	response.SuccessWithData(c, app)
@@ -235,18 +235,18 @@ func routeAppDownload(c *gin.Context) {
 	versionParam := strings.TrimPrefix(c.Param("version"), "/")
 
 	if appId == "" {
-		c.String(http.StatusBadRequest, i18n.T("App ID 不能为空"))
+		c.String(http.StatusBadRequest, i18n.T("AppIdRequired"))
 		return
 	}
 	cleanedAppId := filepath.Clean(appId)
 	if cleanedAppId != appId || strings.Contains(cleanedAppId, "..") || strings.Contains(cleanedAppId, "/") || strings.Contains(cleanedAppId, "\\") {
-		c.String(http.StatusBadRequest, i18n.T("无效的App ID"))
+		c.String(http.StatusBadRequest, i18n.T("InvalidAppId"))
 		return
 	}
 
 	appRootPath := filepath.Join(global.WorkDir, "apps", cleanedAppId)
 	if !utils.IsDirExists(appRootPath) {
-		c.String(http.StatusNotFound, i18n.T("未找到应用目录: %s", appRootPath))
+		c.String(http.StatusNotFound, i18n.T("AppDirectoryNotFound", appRootPath))
 		return
 	}
 
@@ -257,7 +257,7 @@ func routeAppDownload(c *gin.Context) {
 	if versionParam == "latest" {
 		latestV, err := models.FindLatestVersion(cleanedAppId)
 		if err != nil {
-			c.String(http.StatusNotFound, i18n.T("无法确定应用 %s 的最新版本: %v", map[string]interface{}{
+			c.String(http.StatusNotFound, i18n.T("CannotDetermineLatestVersion", map[string]interface{}{
 				"appId": cleanedAppId,
 				"err":   err,
 			}))
@@ -268,11 +268,11 @@ func routeAppDownload(c *gin.Context) {
 	} else if versionParam != "" {
 		cleanedVersion := filepath.Clean(effectiveVersion)
 		if cleanedVersion != effectiveVersion || strings.Contains(cleanedVersion, "..") || strings.Contains(cleanedVersion, "/") || strings.Contains(cleanedVersion, "\\") || !versionRegex.MatchString(cleanedVersion) {
-			c.String(http.StatusBadRequest, i18n.T("无效或格式错误的版本参数"))
+			c.String(http.StatusBadRequest, i18n.T("InvalidVersionFormat"))
 			return
 		}
 		if !utils.IsDirExists(filepath.Join(appRootPath, cleanedVersion)) {
-			c.String(http.StatusNotFound, i18n.T("未找到应用 %s 的指定版本 %s", map[string]interface{}{
+			c.String(http.StatusNotFound, i18n.T("VersionNotFound", map[string]interface{}{
 				"appId":   cleanedAppId,
 				"version": cleanedVersion,
 			}))
@@ -365,7 +365,7 @@ func routeInternalInstall(c *gin.Context) {
 	if req.Version == "latest" {
 		latestV, err := models.FindLatestVersion(req.AppID)
 		if err != nil {
-			response.ErrorWithDetail(c, global.CodeError, i18n.T("无法确定应用 %s 的最新版本", req.AppID), err)
+			response.ErrorWithDetail(c, global.CodeError, i18n.T("CannotDetermineLatestVersionSingle", req.AppID), err)
 			return
 		}
 		req.Version = latestV
@@ -376,7 +376,7 @@ func routeInternalInstall(c *gin.Context) {
 
 	// 判断当前状态
 	if appConfig.Status == "installing" || appConfig.Status == "uninstalling" {
-		response.ErrorWithDetail(c, global.CodeError, i18n.T("应用正在执行中，请稍后再试"), nil)
+		response.ErrorWithDetail(c, global.CodeError, i18n.T("AppIsRunning"), nil)
 		return
 	}
 
@@ -384,15 +384,15 @@ func routeInternalInstall(c *gin.Context) {
 	if appConfig.Status == "installed" && appConfig.InstallVersion != "" {
 		app, err := models.NewApp(req.AppID)
 		if err != nil {
-			response.ErrorWithDetail(c, global.CodeError, i18n.T("获取应用详情失败"), err)
+			response.ErrorWithDetail(c, global.CodeError, i18n.T("GetAppDetailFailed"), err)
 			return
 		}
 		for _, require := range app.RequireUninstalls {
 			if utils.CheckVersionRequirement(appConfig.InstallVersion, require.Operator, require.Version) {
 				reason := require.Reason.(string)
-				message := i18n.T("更新版本 %s，需要先卸载已安装的版本", req.Version)
+				message := i18n.T("NeedUninstallBeforeUpdateSingle", req.Version)
 				if reason == "" {
-					message = i18n.T("更新版本 %s，需要先卸载已安装的版本（%s）", map[string]interface{}{
+					message = i18n.T("NeedUninstallBeforeUpdate", map[string]interface{}{
 						"version": req.Version,
 						"reason":  reason,
 					})
@@ -406,7 +406,7 @@ func routeInternalInstall(c *gin.Context) {
 	// 创建配置目录
 	configDir := filepath.Join(global.WorkDir, "config", req.AppID)
 	if err := os.MkdirAll(configDir, 0755); err != nil {
-		response.ErrorWithDetail(c, global.CodeError, i18n.T("创建配置目录失败"), err)
+		response.ErrorWithDetail(c, global.CodeError, i18n.T("CreateConfigDirFailed"), err)
 		return
 	}
 
@@ -417,29 +417,29 @@ func routeInternalInstall(c *gin.Context) {
 
 	// 保存配置到文件
 	if err := models.SaveAppConfig(req.AppID, appConfig); err != nil {
-		response.ErrorWithDetail(c, global.CodeError, i18n.T("保存配置失败"), err)
+		response.ErrorWithDetail(c, global.CodeError, i18n.T("SaveConfigFailed"), err)
 		return
 	}
 
 	// 生成docker-compose.yml文件
 	if err := models.GenerateDockerCompose(req.AppID, req.Version, appConfig); err != nil {
-		response.ErrorWithDetail(c, global.CodeError, i18n.T("生成docker-compose.yml失败"), err)
+		response.ErrorWithDetail(c, global.CodeError, i18n.T("GenerateDockerComposeFailed"), err)
 		return
 	}
 
 	// 生成nginx配置文件
 	if err := models.GenerateNginxConfig(req.AppID, req.Version, appConfig); err != nil {
-		response.ErrorWithDetail(c, global.CodeError, i18n.T("生成nginx配置失败"), err)
+		response.ErrorWithDetail(c, global.CodeError, i18n.T("GenerateNginxConfigFailed"), err)
 		return
 	}
 
 	// 执行docker-compose up命令
 	if err := models.RunDockerCompose(req.AppID, "up"); err != nil {
-		response.ErrorWithDetail(c, global.CodeError, i18n.T("启动应用失败"), err)
+		response.ErrorWithDetail(c, global.CodeError, i18n.T("StartAppFailed"), err)
 		return
 	}
 
-	response.SuccessWithMsg(c, i18n.T("应用安装中..."))
+	response.SuccessWithMsg(c, i18n.T("AppInstalling"))
 }
 
 // @Summary 卸载应用
@@ -458,7 +458,7 @@ func routeInternalUninstall(c *gin.Context) {
 
 	// 判断当前状态
 	if appConfig.Status != "installed" {
-		response.ErrorWithDetail(c, global.CodeError, i18n.T("应用未安装，无需卸载"), nil)
+		response.ErrorWithDetail(c, global.CodeError, i18n.T("AppNotInstalled"), nil)
 		return
 	}
 
@@ -467,11 +467,11 @@ func routeInternalUninstall(c *gin.Context) {
 
 	// 执行docker-compose down命令
 	if err := models.RunDockerCompose(appId, "down"); err != nil {
-		response.ErrorWithDetail(c, global.CodeError, i18n.T("卸载应用失败"), err)
+		response.ErrorWithDetail(c, global.CodeError, i18n.T("UninstallAppFailed"), err)
 		return
 	}
 
-	response.SuccessWithMsg(c, i18n.T("应用卸载中..."))
+	response.SuccessWithMsg(c, i18n.T("AppUninstalling"))
 }
 
 // @Summary 获取已安装应用列表
@@ -523,19 +523,19 @@ func routeInternalUpdateList(c *gin.Context) {
 	// 清空临时目录
 	if utils.IsDirExists(tempDir) {
 		if err := os.RemoveAll(tempDir); err != nil {
-			response.ErrorWithDetail(c, global.CodeError, i18n.T("清理临时目录失败"), err)
+			response.ErrorWithDetail(c, global.CodeError, i18n.T("CleanTempDirFailed"), err)
 			return
 		}
 	}
 	if err := os.MkdirAll(tempDir, 0755); err != nil {
-		response.ErrorWithDetail(c, global.CodeError, i18n.T("创建临时目录失败"), err)
+		response.ErrorWithDetail(c, global.CodeError, i18n.T("CreateTempDirFailed"), err)
 		return
 	}
 
 	// 下载源列表
 	resp, err := http.Get("https://appstore.dootask.com/api/v1/sources/package")
 	if err != nil {
-		response.ErrorWithDetail(c, global.CodeError, i18n.T("下载源列表失败"), err)
+		response.ErrorWithDetail(c, global.CodeError, i18n.T("DownloadSourceListFailed"), err)
 		return
 	}
 	defer resp.Body.Close()
@@ -543,17 +543,17 @@ func routeInternalUpdateList(c *gin.Context) {
 	// 保存zip文件
 	zipData, err := io.ReadAll(resp.Body)
 	if err != nil {
-		response.ErrorWithDetail(c, global.CodeError, i18n.T("读取下载数据失败"), err)
+		response.ErrorWithDetail(c, global.CodeError, i18n.T("ReadDownloadDataFailed"), err)
 		return
 	}
 	if err := os.WriteFile(zipFile, zipData, 0644); err != nil {
-		response.ErrorWithDetail(c, global.CodeError, i18n.T("保存zip文件失败"), err)
+		response.ErrorWithDetail(c, global.CodeError, i18n.T("SaveZipFileFailed"), err)
 		return
 	}
 
 	// 解压文件
 	if err := utils.Unzip(zipFile, tempDir); err != nil {
-		response.ErrorWithDetail(c, global.CodeError, i18n.T("解压文件失败"), err)
+		response.ErrorWithDetail(c, global.CodeError, i18n.T("ExtractFileFailed"), err)
 		return
 	}
 	os.Remove(zipFile)
@@ -561,7 +561,7 @@ func routeInternalUpdateList(c *gin.Context) {
 	// 遍历目录
 	entries, err := os.ReadDir(tempDir)
 	if err != nil {
-		response.ErrorWithDetail(c, global.CodeError, i18n.T("读取目录失败"), err)
+		response.ErrorWithDetail(c, global.CodeError, i18n.T("ReadDirectoryFailed"), err)
 		return
 	}
 
@@ -590,7 +590,7 @@ func routeInternalUpdateList(c *gin.Context) {
 		if !utils.IsFileExists(configFile) {
 			results.Failed = append(results.Failed, map[string]string{
 				"id":     appId,
-				"reason": i18n.T("未找到config.yml配置文件"),
+				"reason": i18n.T("ConfigYmlNotFound"),
 			})
 			continue
 		}
@@ -600,7 +600,7 @@ func routeInternalUpdateList(c *gin.Context) {
 		if err != nil {
 			results.Failed = append(results.Failed, map[string]string{
 				"id":     appId,
-				"reason": i18n.T("读取配置文件失败：%s", err.Error()),
+				"reason": i18n.T("ReadConfigFailed", err.Error()),
 			})
 			continue
 		}
@@ -609,7 +609,7 @@ func routeInternalUpdateList(c *gin.Context) {
 		if err := yaml.Unmarshal(configData, &config); err != nil {
 			results.Failed = append(results.Failed, map[string]string{
 				"id":     appId,
-				"reason": i18n.T("YAML解析失败：%s", err.Error()),
+				"reason": i18n.T("YamlParseFailed", err.Error()),
 			})
 			continue
 		}
@@ -618,7 +618,7 @@ func routeInternalUpdateList(c *gin.Context) {
 		if _, ok := config["name"]; !ok {
 			results.Failed = append(results.Failed, map[string]string{
 				"id":     appId,
-				"reason": i18n.T("配置文件不正确"),
+				"reason": i18n.T("InvalidConfig"),
 			})
 			continue
 		}
@@ -630,7 +630,7 @@ func routeInternalUpdateList(c *gin.Context) {
 		if err := utils.CopyDir(sourceDir, targetDir, true); err != nil {
 			results.Failed = append(results.Failed, map[string]string{
 				"id":     appId,
-				"reason": i18n.T("复制文件失败：%s", err.Error()),
+				"reason": i18n.T("CopyFileFailed", err.Error()),
 			})
 			continue
 		}
@@ -662,7 +662,7 @@ func routeInternalDownloadByURL(c *gin.Context) {
 
 	// 验证URL格式
 	if !utils.IsValidURL(req.URL) {
-		response.ErrorWithDetail(c, global.CodeError, i18n.T("URL格式不正确"), nil)
+		response.ErrorWithDetail(c, global.CodeError, i18n.T("InvalidUrlFormat"), nil)
 		return
 	}
 
@@ -683,13 +683,13 @@ func routeInternalDownloadByURL(c *gin.Context) {
 	appId = strings.ReplaceAll(appId, ".", "_")
 	appId = utils.Camel2Snake(appId)
 	if appId == "" {
-		response.ErrorWithDetail(c, global.CodeError, i18n.T("URL格式不正确"), nil)
+		response.ErrorWithDetail(c, global.CodeError, i18n.T("InvalidUrlFormat"), nil)
 		return
 	}
 
 	// 检查appId是否被保护
 	if slices.Contains(models.ProtectedNames, appId) {
-		response.ErrorWithDetail(c, global.CodeError, i18n.T("服务名称 '%s' 被保护，不能使用", appId), nil)
+		response.ErrorWithDetail(c, global.CodeError, i18n.T("ProtectedServiceName", appId), nil)
 		return
 	}
 
@@ -697,9 +697,9 @@ func routeInternalDownloadByURL(c *gin.Context) {
 	appConfig := models.GetAppConfig(appId)
 	if appConfig != nil {
 		errorMessages := map[string]string{
-			"installed":    i18n.T("应用已存在，请先卸载后再安装"),
-			"installing":   i18n.T("应用正在安装中，请稍后再试"),
-			"uninstalling": i18n.T("应用正在卸载中，请稍后再试"),
+			"installed":    i18n.T("AppAlreadyExists"),
+			"installing":   i18n.T("AppInstallingWait"),
+			"uninstalling": i18n.T("AppUninstallingWait"),
 		}
 		if msg, ok := errorMessages[appConfig.Status]; ok {
 			response.ErrorWithDetail(c, global.CodeError, msg, nil)
@@ -713,12 +713,12 @@ func routeInternalDownloadByURL(c *gin.Context) {
 	// 清空临时目录
 	if utils.IsDirExists(tempDir) {
 		if err := os.RemoveAll(tempDir); err != nil {
-			response.ErrorWithDetail(c, global.CodeError, i18n.T("清理临时目录失败"), err)
+			response.ErrorWithDetail(c, global.CodeError, i18n.T("CleanTempDirFailed"), err)
 			return
 		}
 	}
 	if err := os.MkdirAll(tempDir, 0755); err != nil {
-		response.ErrorWithDetail(c, global.CodeError, i18n.T("创建临时目录失败"), err)
+		response.ErrorWithDetail(c, global.CodeError, i18n.T("CreateTempDirFailed"), err)
 		return
 	}
 
@@ -730,14 +730,14 @@ func routeInternalDownloadByURL(c *gin.Context) {
 		// 克隆Git仓库
 		cmd := exec.Command("git", "clone", "--depth=1", req.URL, tempDir)
 		if err := cmd.Run(); err != nil {
-			response.ErrorWithDetail(c, global.CodeError, i18n.T("Git克隆失败"), err)
+			response.ErrorWithDetail(c, global.CodeError, i18n.T("GitCloneFailed"), err)
 			return
 		}
 	} else {
 		// 下载ZIP文件
 		resp, err := http.Get(req.URL)
 		if err != nil {
-			response.ErrorWithDetail(c, global.CodeError, i18n.T("下载失败"), err)
+			response.ErrorWithDetail(c, global.CodeError, i18n.T("DownloadFailed"), err)
 			return
 		}
 		defer resp.Body.Close()
@@ -745,17 +745,17 @@ func routeInternalDownloadByURL(c *gin.Context) {
 		zipFile := filepath.Join(tempDir, "app.zip")
 		zipData, err := io.ReadAll(resp.Body)
 		if err != nil {
-			response.ErrorWithDetail(c, global.CodeError, i18n.T("读取下载数据失败"), err)
+			response.ErrorWithDetail(c, global.CodeError, i18n.T("ReadDownloadDataFailed"), err)
 			return
 		}
 		if err := os.WriteFile(zipFile, zipData, 0644); err != nil {
-			response.ErrorWithDetail(c, global.CodeError, i18n.T("保存zip文件失败"), err)
+			response.ErrorWithDetail(c, global.CodeError, i18n.T("SaveZipFileFailed"), err)
 			return
 		}
 
 		// 解压ZIP文件
 		if err := utils.Unzip(zipFile, tempDir); err != nil {
-			response.ErrorWithDetail(c, global.CodeError, i18n.T("解压文件失败"), err)
+			response.ErrorWithDetail(c, global.CodeError, i18n.T("ExtractFileFailed"), err)
 			return
 		}
 		os.Remove(zipFile)
@@ -764,27 +764,27 @@ func routeInternalDownloadByURL(c *gin.Context) {
 	// 检查config.yml文件
 	configFile := filepath.Join(tempDir, "config.yml")
 	if !utils.IsFileExists(configFile) {
-		response.ErrorWithDetail(c, global.CodeError, i18n.T("未找到config.yml配置文件"), nil)
+		response.ErrorWithDetail(c, global.CodeError, i18n.T("ConfigYmlNotFound"), nil)
 		return
 	}
 
 	// 解析配置文件
 	configData, err := os.ReadFile(configFile)
 	if err != nil {
-		response.ErrorWithDetail(c, global.CodeError, i18n.T("读取配置文件失败"), err)
+		response.ErrorWithDetail(c, global.CodeError, i18n.T("ReadConfigFileFailed"), err)
 		return
 	}
 
 	var config map[string]interface{}
 	if err := yaml.Unmarshal(configData, &config); err != nil {
-		response.ErrorWithDetail(c, global.CodeError, i18n.T("YAML解析失败：%s", err.Error()), nil)
+		response.ErrorWithDetail(c, global.CodeError, i18n.T("YamlParseFailed", err.Error()), nil)
 		return
 	}
 
 	// 检查name字段
 	name, ok := config["name"].(string)
 	if !ok || name == "" {
-		response.ErrorWithDetail(c, global.CodeError, i18n.T("配置文件不正确"), nil)
+		response.ErrorWithDetail(c, global.CodeError, i18n.T("InvalidConfig"), nil)
 		return
 	}
 
@@ -798,7 +798,7 @@ func routeInternalDownloadByURL(c *gin.Context) {
 
 	// 移动文件到目标目录
 	if err := os.Rename(tempDir, targetDir); err != nil {
-		response.ErrorWithDetail(c, global.CodeError, i18n.T("移动文件失败"), err)
+		response.ErrorWithDetail(c, global.CodeError, i18n.T("MoveFileFailed"), err)
 		return
 	}
 
@@ -832,33 +832,33 @@ func routeSourcesPackage(c *gin.Context) {
 	// 获取apps目录
 	appsDir := filepath.Join(global.WorkDir, "apps")
 	if !utils.IsDirExists(appsDir) {
-		c.String(http.StatusInternalServerError, i18n.T("apps目录不存在"))
+		c.String(http.StatusInternalServerError, i18n.T("AppsDirNotFound"))
 		return
 	}
 
 	// 获取所有子目录
 	appIds, err := utils.GetSubDirs(appsDir)
 	if err != nil {
-		c.String(http.StatusInternalServerError, i18n.T("获取应用列表失败"))
+		c.String(http.StatusInternalServerError, i18n.T("GetAppListFailed"))
 		return
 	}
 
 	// 清空并创建临时目录
 	if utils.IsDirExists(sourcesDir) {
 		if err := os.RemoveAll(sourcesDir); err != nil {
-			c.String(http.StatusInternalServerError, i18n.T("清理临时目录失败"))
+			c.String(http.StatusInternalServerError, i18n.T("CleanTempDirFailed"))
 			return
 		}
 	}
 	if err := os.MkdirAll(sourcesDir, 0755); err != nil {
-		c.String(http.StatusInternalServerError, i18n.T("创建临时目录失败"))
+		c.String(http.StatusInternalServerError, i18n.T("CreateTempDirFailed"))
 		return
 	}
 
 	// 创建tar.gz文件
 	file, err := os.Create(tarFile)
 	if err != nil {
-		c.String(http.StatusInternalServerError, i18n.T("创建压缩文件失败"))
+		c.String(http.StatusInternalServerError, i18n.T("CreateZipFileFailed"))
 		return
 	}
 	defer file.Close()
@@ -914,7 +914,7 @@ func routeSourcesPackage(c *gin.Context) {
 		})
 
 		if err != nil {
-			c.String(http.StatusInternalServerError, i18n.T("打包文件失败"))
+			c.String(http.StatusInternalServerError, i18n.T("PackageFileFailed"))
 			return
 		}
 	}
