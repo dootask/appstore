@@ -73,8 +73,7 @@ func WebStaticMiddleware() gin.HandlerFunc {
 // DooTaskTokenMiddleware 是一个 DooTask 的 token 验证中间件
 func DooTaskTokenMiddleware(identity ...string) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		token := c.GetHeader("Authorization")
-		token = strings.TrimPrefix(token, "Bearer ")
+		token := c.GetHeader("Token")
 		if token == "" {
 			response.ErrorWithDetail(c, global.CodeError, "身份验证失败", nil)
 			c.Abort()

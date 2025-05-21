@@ -75,7 +75,7 @@ const docTemplate = `{
         },
         "/internal/apps/update": {
             "get": {
-                "description": "从远程仓库更新应用列表",
+                "description": "从远程仓库更新应用列表，给 DooTask 内部应用商店使用",
                 "consumes": [
                     "application/json"
                 ],
@@ -381,14 +381,14 @@ const docTemplate = `{
                 }
             }
         },
-        "/sources.list": {
+        "/sources/package": {
             "get": {
                 "description": "获取应用商店源列表压缩包",
                 "consumes": [
                     "application/json"
                 ],
                 "produces": [
-                    "application/zip"
+                    "application/gzip"
                 ],
                 "tags": [
                     "资源"
@@ -396,7 +396,7 @@ const docTemplate = `{
                 "summary": "应用商店源列表",
                 "responses": {
                     "200": {
-                        "description": "sources.list.zip",
+                        "description": "sources.tar.gz",
                         "schema": {
                             "type": "file"
                         }

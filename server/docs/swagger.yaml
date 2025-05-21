@@ -208,7 +208,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: 从远程仓库更新应用列表
+      description: 从远程仓库更新应用列表，给 DooTask 内部应用商店使用
       produces:
       - application/json
       responses:
@@ -391,16 +391,16 @@ paths:
       summary: 获取应用自述文件
       tags:
       - 应用
-  /sources.list:
+  /sources/package:
     get:
       consumes:
       - application/json
       description: 获取应用商店源列表压缩包
       produces:
-      - application/zip
+      - application/gzip
       responses:
         "200":
-          description: sources.list.zip
+          description: sources.tar.gz
           schema:
             type: file
       summary: 应用商店源列表

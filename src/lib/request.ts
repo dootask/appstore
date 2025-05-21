@@ -19,7 +19,7 @@ instance.interceptors.request.use(
   (config) => {
     const token = getUrlParam('token') || props?.userToken;
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+      config.headers.Token = token;
     }
     if (i18n.language) {
       config.headers.Language = i18n.language;

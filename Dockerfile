@@ -7,7 +7,8 @@ WORKDIR /app
 COPY server/ .
 
 # 构建 Go 应用
-RUN mkdir -p release && \
+RUN go install github.com/swaggo/swag/cmd/swag@latest && \
+    swag init -g cmd/cmd.go && \
     env CGO_ENABLED=0 go build -trimpath -ldflags "-s -w" -o ./cli .
 
 # =============================================================
