@@ -129,10 +129,15 @@ const Home: React.FC = () => {
     }
 
     filtered = [...filtered].sort(() => Math.random() - 0.5);
-    if (isEffectiveSearch || filterType === 'category') {
-      return filtered.slice(0, 12);
+    if (filtered.length <= 3) {
+      return filtered;
     }
-    return filtered.slice(0, 3);
+    if (isEffectiveSearch || filterType === 'category') {
+      filtered = filtered.slice(0, 12);
+    } else {
+      filtered = filtered.slice(0, 3);
+    }
+    return filtered.slice(0, Math.floor(filtered.length / 3) * 3);
   }, [apps, filterType, selectedCategory, searchKeyword]);
 
   const handleSearch = (keyword: string) => {
