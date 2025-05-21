@@ -4,7 +4,6 @@ import (
 	"appstore/server/global"
 	"embed"
 	"fmt"
-	"reflect"
 	"regexp"
 	"strings"
 	"sync"
@@ -15,10 +14,11 @@ import (
 )
 
 var (
-	bundle      *i18n.Bundle
-	localizer   *i18n.Localizer
-	initialized bool
-	initMutex   sync.Mutex
+	bundle    *i18n.Bundle
+	localizer *i18n.Localizer
+	initOnce  sync.Once
+
+	placeholderRegex = regexp.MustCompile(`%[sdv]`)
 )
 
 // T 获取翻译文本
@@ -51,55 +51,71 @@ var (
 //     T("non_exist_id")  // 返回: "non_exist_id"
 func T(messageID string, args ...interface{}) string {
 	initI18n()
-
 	if localizer == nil {
 		return messageID
 	}
 
-	// 创建配置
+	// 创建本地化配置
 	config := &i18n.LocalizeConfig{
 		MessageID: messageID,
 	}
 
-	// 处理参数
-	if len(args) > 0 {
-		if reflect.TypeOf(args[0]).Kind() == reflect.Map {
-			// 合并所有map参数
-			mergedMap := make(map[string]interface{})
-			for _, arg := range args {
-				if m, ok := arg.(map[string]interface{}); ok {
-					for k, v := range m {
-						mergedMap[k] = v
-					}
-				}
+	// 快速路径：无参数时直接返回
+	if len(args) == 0 {
+		message, err := localizer.Localize(config)
+		if err != nil {
+			return messageID
+		}
+		return message
+	}
+
+	// 检查是否包含 map 类型参数
+	hasMap := false
+	mergedMap := make(map[string]interface{})
+
+	for _, arg := range args {
+		if m, ok := arg.(map[string]interface{}); ok {
+			hasMap = true
+			for k, v := range m {
+				mergedMap[k] = v
 			}
-			config.TemplateData = mergedMap
-		} else {
-			// 非map参数手动替换
-			message, err := localizer.Localize(config)
-			if err != nil {
-				message = messageID
-			}
-			matches := regexp.MustCompile(`%[sdv]`).FindAllString(message, -1)
-			for i, match := range matches {
-				if i < len(args) {
-					message = strings.Replace(message, match, fmt.Sprintf("%"+match[1:], args[i]), 1)
-				}
-			}
-			if len(args) > len(matches) {
-				for i := len(matches); i < len(args); i++ {
-					message += fmt.Sprintf(" %v", args[i])
-				}
-			}
-			return message
 		}
 	}
 
-	// 获取翻译
+	if hasMap {
+		config.TemplateData = mergedMap
+		message, err := localizer.Localize(config)
+		if err != nil {
+			return messageID
+		}
+		return message
+	}
+
+	// 处理非 map 参数
 	message, err := localizer.Localize(config)
 	if err != nil {
 		return messageID
 	}
+
+	// 处理占位符替换
+	if len(args) > 0 {
+		matches := placeholderRegex.FindAllString(message, -1)
+
+		// 替换匹配的占位符
+		for i, match := range matches {
+			if i < len(args) {
+				message = strings.Replace(message, match, fmt.Sprintf("%"+match[1:], args[i]), 1)
+			}
+		}
+
+		// 如果参数数量多于占位符数量，将多余的参数拼接在后面
+		if len(args) > len(matches) {
+			for i := len(matches); i < len(args); i++ {
+				message += fmt.Sprintf(" %v", args[i])
+			}
+		}
+	}
+
 	return message
 }
 
@@ -119,26 +135,20 @@ var LocaleFS embed.FS
 
 // initI18n 初始化国际化
 func initI18n() {
-	if initialized {
-		return
-	}
+	initOnce.Do(func() {
+		// 创建语言包
+		bundle = i18n.NewBundle(language.English)
+		bundle.RegisterUnmarshalFunc("yaml", yaml.Unmarshal)
 
-	initMutex.Lock()
-	defer initMutex.Unlock()
-
-	// 创建语言包
-	bundle = i18n.NewBundle(language.English)
-	bundle.RegisterUnmarshalFunc("yaml", yaml.Unmarshal)
-
-	// 加载翻译文件
-	entries, _ := LocaleFS.ReadDir("locales")
-	for _, entry := range entries {
-		if strings.HasSuffix(entry.Name(), ".yaml") {
-			_, _ = bundle.LoadMessageFileFS(LocaleFS, "locales/"+entry.Name())
+		// 加载翻译文件
+		entries, _ := LocaleFS.ReadDir("locales")
+		for _, entry := range entries {
+			if strings.HasSuffix(entry.Name(), ".yaml") {
+				_, _ = bundle.LoadMessageFileFS(LocaleFS, "locales/"+entry.Name())
+			}
 		}
-	}
 
-	// 创建默认本地化器
-	localizer = i18n.NewLocalizer(bundle, global.Language, global.DefaultLanguage)
-	initialized = true
+		// 创建默认本地化器
+		localizer = i18n.NewLocalizer(bundle, global.Language, global.DefaultLanguage)
+	})
 }
