@@ -12,25 +12,31 @@ import Drawer from '@/components/custom/drawer';
 import type { App } from '@/types/api';
 import AppDetail from './detail';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { useNavigate } from 'react-router-dom';
 
-const Home: React.FC = () => {
+export function Header({onCategoryChange}: {onCategoryChange: (category: string) => void}) {
+  const navigate = useNavigate();
   const {t} = useTranslation();
-  const {apps, categories, fetchApps} = useAppStore();
-  const marketplaceRef = useRef<HTMLElement>(null);
+  const {baseUrl, categories} = useAppStore();
   const [currentLanguage, setCurrentLanguageLocal] = useState(i18n.language);
   const [currentLanguageLabel, setCurrentLanguageLabelLocal] = useState(supportedLanguagesMap[i18n.language] || i18n.language);
-  const [filterType, setFilterType] = useState<'popular' | 'featured' | 'category' | 'search'>('popular');
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [searchKeyword, setSearchKeyword] = useState<string>('');
-  const [selectedApp, setSelectedApp] = useState<App | null>(null);
-  const [showAppDetail, setShowAppDetail] = useState<boolean>(false);
-
   const [currentTheme, setCurrentThemeLocal] = useState(() => {
     if (typeof window !== 'undefined') {
       return document.body.classList.contains('dark') ? 'dark' : 'light';
     }
     return 'light';
   });
+
+  const supportOptions = [
+    {
+      label: t('home.support.development'),
+      value: 'development'
+    },
+    {
+      label: t('home.support.publish'),
+      value: 'publish'
+    },
+  ];
 
   const toggleThemeHandler = () => {
     setTheme(currentTheme === 'light' ? 'dark' : 'light');
@@ -39,6 +45,15 @@ const Home: React.FC = () => {
   const handleLanguageChangeHandler = (langCode: string) => {
     setLanguage(langCode);
   };
+
+  const handleMaintenance = () => {
+    Alert({
+      type: 'info',
+      title: t('home.support.warning'),
+      description: t('home.support.maintenance'),
+      showCancel: false,
+    });
+  }
 
   useEffect(() => {
     const observer = new MutationObserver((mutationsList) => {
@@ -67,6 +82,75 @@ const Home: React.FC = () => {
     };
   }, [currentTheme]);
 
+  return (
+    <header className="px-8 md:px-16 h-17 flex items-center">
+      <div className="container mx-auto flex items-center">
+        <a href="https://www.dootask.com" target="_blank" rel="noopener noreferrer" className="flex items-center space-x-2 flex-1 justify-start">
+          <img src={LogoIcon} alt="Logo" className="w-7 h-7" />
+          <span className="text-lg font-semibold text-gray-500 dark:text-gray-400">{t('home.header.title')}</span>
+        </a>
+        <nav className="hidden md:flex items-center space-x-6 flex-1 justify-center min-w-0">
+          <Dropdown
+            options={
+              categories.slice(0, 10).map(cat => ({label: cat === 'all' ? t('app.all') : cat, value: cat}))
+            }
+            onChange={(value) => {
+              onCategoryChange(value)
+            }}
+            className="py-3 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white flex items-center truncate min-w-0 max-w-full cursor-pointer"
+          >
+            <span className='whitespace-nowrap overflow-hidden text-ellipsis'>{t('home.header.category')}</span>
+            <ChevronDown className="w-4 h-4 ml-1 shrink-0" />
+          </Dropdown>
+          <Dropdown
+            options={supportOptions}
+            onChange={(value) => {
+              navigate(`${baseUrl}${value}`);
+            }}
+            className="py-3 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white flex items-center truncate min-w-0 max-w-full cursor-pointer"
+          >
+            <span className='whitespace-nowrap overflow-hidden text-ellipsis'>{t('home.header.support')}</span>
+            <ChevronDown className="w-4 h-4 ml-1 shrink-0" />
+          </Dropdown>
+        </nav>
+        <div className="flex items-center space-x-4 flex-1 justify-end">
+          <Dropdown
+            options={languageOptionsForDropdown}
+            defaultValue={currentLanguage}
+            onChange={handleLanguageChangeHandler}
+            className="flex items-center text-sm p-2 py-3 gap-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white cursor-pointer"
+          >
+            <Globe className="w-5 h-5 flex-shrink-0" />
+            <span className="hidden lg:block">{currentLanguageLabel}</span>
+          </Dropdown>
+          <button
+            onClick={toggleThemeHandler}
+            className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white p-2 rounded-md cursor-pointer"
+            aria-label={t(currentTheme === 'dark' ? 'home.header.themeToggleLight' : 'home.header.themeToggleDark')}
+          >
+            {currentTheme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+          </button>
+          <div className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white cursor-pointer" onClick={() => {
+            handleMaintenance()
+          }}>
+            <UserCircle className="w-8 h-8" />
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+}
+
+const Home: React.FC = () => {
+  const {t} = useTranslation();
+  const {apps, categories, fetchApps} = useAppStore();
+  const marketplaceRef = useRef<HTMLElement>(null);
+  const [filterType, setFilterType] = useState<'popular' | 'featured' | 'category' | 'search'>('popular');
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [searchKeyword, setSearchKeyword] = useState<string>('');
+  const [selectedApp, setSelectedApp] = useState<App | null>(null);
+  const [showAppDetail, setShowAppDetail] = useState<boolean>(false);
+
   const showAppDownloadUrl = (app: App) => {
     Alert({
       type: "prompt",
@@ -93,15 +177,6 @@ const Home: React.FC = () => {
           console.error(error);
         }
       }
-    });
-  }
-
-  const handleMaintenance = () => {
-    Alert({
-      type: 'info',
-      title: t('home.support.warning'),
-      description: t('home.support.maintenance'),
-      showCancel: false,
     });
   }
 
@@ -157,76 +232,13 @@ const Home: React.FC = () => {
     fetchApps()
   }, []);
 
-  const supportOptions = [
-    {
-      label: t('home.support.development'),
-      value: 'development'
-    },
-    {
-      label: t('home.support.publish'),
-      value: 'publish'
-    },
-  ];
-
   return (
     <ScrollArea className="bg-white dark:bg-black text-gray-900 dark:text-white h-screen">
       {/* Header */}
-      <header className="px-8 md:px-16 h-17 flex items-center">
-        <div className="container mx-auto flex items-center">
-          <a href="https://www.dootask.com" target="_blank" rel="noopener noreferrer" className="flex items-center space-x-2 flex-1 justify-start">
-            <img src={LogoIcon} alt="Logo" className="w-7 h-7" />
-            <span className="text-lg font-semibold text-gray-500 dark:text-gray-400">{t('home.header.title')}</span>
-          </a>
-          <nav className="hidden md:flex items-center space-x-6 flex-1 justify-center min-w-0">
-            <Dropdown
-              options={
-                categories.slice(0, 10).map(cat => ({label: cat === 'all' ? t('app.all') : cat, value: cat}))
-              }
-              onChange={(value) => {
-                handleCategoryChange(value)
-                marketplaceRef.current?.scrollIntoView({behavior: 'smooth', block: 'start'});
-              }}
-              className="py-3 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white flex items-center truncate min-w-0 max-w-full cursor-pointer"
-            >
-              <span className='whitespace-nowrap overflow-hidden text-ellipsis'>{t('home.header.category')}</span>
-              <ChevronDown className="w-4 h-4 ml-1 shrink-0" />
-            </Dropdown>
-            <Dropdown
-              options={supportOptions}
-              onChange={() => {
-                handleMaintenance()
-              }}
-              className="py-3 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white flex items-center truncate min-w-0 max-w-full cursor-pointer"
-            >
-              <span className='whitespace-nowrap overflow-hidden text-ellipsis'>{t('home.header.support')}</span>
-              <ChevronDown className="w-4 h-4 ml-1 shrink-0" />
-            </Dropdown>
-          </nav>
-          <div className="flex items-center space-x-4 flex-1 justify-end">
-            <Dropdown
-              options={languageOptionsForDropdown}
-              defaultValue={currentLanguage}
-              onChange={handleLanguageChangeHandler}
-              className="flex items-center text-sm p-2 py-3 gap-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white cursor-pointer"
-            >
-              <Globe className="w-5 h-5 flex-shrink-0" />
-              <span className="hidden lg:block">{currentLanguageLabel}</span>
-            </Dropdown>
-            <button
-              onClick={toggleThemeHandler}
-              className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white p-2 rounded-md cursor-pointer"
-              aria-label={t(currentTheme === 'dark' ? 'home.header.themeToggleLight' : 'home.header.themeToggleDark')}
-            >
-              {currentTheme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-            </button>
-            <div className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white cursor-pointer" onClick={() => {
-              handleMaintenance()
-            }}>
-              <UserCircle className="w-8 h-8" />
-            </div>
-          </div>
-        </div>
-      </header>
+      <Header onCategoryChange={(category) => {
+        handleCategoryChange(category)
+        marketplaceRef.current?.scrollIntoView({behavior: 'smooth', block: 'start'});
+      }}/>
 
       {/* Hero Section */}
       <section className="py-16 md:py-24 px-8 text-center">
