@@ -137,15 +137,20 @@ func runServer(*cobra.Command, []string) {
 		v1.GET("/download/:appId/*version", routeAppDownload) // 下载应用压缩包
 		v1.GET("/sources/package", routeSourcesPackage)       // 下载应用商店资源包
 
-		// 内部使用接口
+		// 内部使用接口（需要管理员）
 		internal := v1.Group("/internal", middlewares.DooTaskTokenMiddleware("admin"))
 		{
 			internal.POST("/install", routeInternalInstall)             // 安装应用
 			internal.GET("/uninstall/:appId", routeInternalUninstall)   // 卸载应用
-			internal.GET("/installed", routeInternalInstalled)          // 获取已安装应用列表
-			internal.GET("/log/:appId", routeInternalLog)               // 获取应用日志
 			internal.GET("/apps/update", routeInternalUpdateList)       // 更新应用列表
 			internal.POST("/apps/download", routeInternalDownloadByURL) // 通过URL下载应用
+		}
+
+		// 内部使用接口（无须管理员）
+		internalBasic := v1.Group("/internal", middlewares.DooTaskTokenMiddleware())
+		{
+			internalBasic.GET("/installed", routeInternalInstalled) // 获取已安装应用列表
+			internalBasic.GET("/log/:appId", routeInternalLog)      // 获取应用日志
 		}
 	}
 
