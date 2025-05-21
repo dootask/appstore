@@ -5,6 +5,7 @@ import (
 	"embed"
 	"fmt"
 	"reflect"
+	"regexp"
 	"strings"
 	"sync"
 
@@ -74,12 +75,23 @@ func T(messageID string, args ...interface{}) string {
 			}
 			config.TemplateData = mergedMap
 		} else {
-			// 非map参数使用Sprintf格式化
+			// 非map参数手动替换
 			message, err := localizer.Localize(config)
 			if err != nil {
-				return messageID
+				message = messageID
 			}
-			return fmt.Sprintf(message, args...)
+			matches := regexp.MustCompile(`%[sdv]`).FindAllString(message, -1)
+			for i, match := range matches {
+				if i < len(args) {
+					message = strings.Replace(message, match, fmt.Sprintf("%"+match[1:], args[i]), 1)
+				}
+			}
+			if len(args) > len(matches) {
+				for i := len(matches); i < len(args); i++ {
+					message += fmt.Sprintf(" %v", args[i])
+				}
+			}
+			return message
 		}
 	}
 
