@@ -528,7 +528,7 @@ func routeInternalLog(c *gin.Context) {
 func routeInternalUpdateList(c *gin.Context) {
 	// 临时目录
 	tempDir := filepath.Join(global.WorkDir, "temp", "sources")
-	zipFile := filepath.Join(tempDir, "sources.zip")
+	tarFile := filepath.Join(tempDir, "sources.tar.gz")
 
 	// 清空临时目录
 	if utils.IsDirExists(tempDir) {
@@ -550,23 +550,23 @@ func routeInternalUpdateList(c *gin.Context) {
 	}
 	defer resp.Body.Close()
 
-	// 保存zip文件
-	zipData, err := io.ReadAll(resp.Body)
+	// 保存tar.gz文件
+	tarData, err := io.ReadAll(resp.Body)
 	if err != nil {
 		response.ErrorWithDetail(c, global.CodeError, i18n.T("ReadDownloadDataFailed"), err)
 		return
 	}
-	if err := os.WriteFile(zipFile, zipData, 0644); err != nil {
-		response.ErrorWithDetail(c, global.CodeError, i18n.T("SaveZipFileFailed"), err)
+	if err := os.WriteFile(tarFile, tarData, 0644); err != nil {
+		response.ErrorWithDetail(c, global.CodeError, i18n.T("SaveTarFileFailed"), err)
 		return
 	}
 
-	// 解压文件
-	if err := utils.Unzip(zipFile, tempDir); err != nil {
+	// 解压tar.gz文件
+	if err := utils.UnTarGz(tarFile, tempDir); err != nil {
 		response.ErrorWithDetail(c, global.CodeError, i18n.T("ExtractFileFailed"), err)
 		return
 	}
-	os.Remove(zipFile)
+	os.Remove(tarFile)
 
 	// 遍历目录
 	entries, err := os.ReadDir(tempDir)

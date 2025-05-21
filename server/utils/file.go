@@ -1,7 +1,9 @@
 package utils
 
 import (
+	"archive/tar"
 	"archive/zip"
+	"compress/gzip"
 	"fmt"
 	"io"
 	"os"
@@ -81,6 +83,69 @@ func Unzip(zipFile string, destDir string) error {
 		reader.Close()
 		if err != nil {
 			return err
+		}
+	}
+
+	return nil
+}
+
+// UnTarGz 解压tar.gz文件到指定目录
+func UnTarGz(tarFile string, destDir string) error {
+	// 打开tar.gz文件
+	file, err := os.Open(tarFile)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	// 创建gzip读取器
+	gzr, err := gzip.NewReader(file)
+	if err != nil {
+		return err
+	}
+	defer gzr.Close()
+
+	// 创建tar读取器
+	tr := tar.NewReader(gzr)
+
+	// 遍历tar文件中的每个文件
+	for {
+		header, err := tr.Next()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return err
+		}
+
+		// 构建目标文件路径
+		target := filepath.Join(destDir, header.Name)
+
+		// 根据文件类型处理
+		switch header.Typeflag {
+		case tar.TypeDir:
+			// 创建目录
+			if err := os.MkdirAll(target, 0755); err != nil {
+				return err
+			}
+		case tar.TypeReg:
+			// 创建目标目录
+			if err := os.MkdirAll(filepath.Dir(target), 0755); err != nil {
+				return err
+			}
+
+			// 创建目标文件
+			f, err := os.OpenFile(target, os.O_CREATE|os.O_RDWR, os.FileMode(header.Mode))
+			if err != nil {
+				return err
+			}
+
+			// 复制文件内容
+			if _, err := io.Copy(f, tr); err != nil {
+				f.Close()
+				return err
+			}
+			f.Close()
 		}
 	}
 
