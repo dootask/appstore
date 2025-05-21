@@ -102,7 +102,7 @@ func GenerateDockerCompose(appId string, version string, config *AppConfig) erro
 	networkName := "dootask-networks-" + os.Getenv("APP_ID")
 
 	// 处理挂载路径
-	versionPwd := fmt.Sprintf("${HOST_PWD}/docker/appstore/apps/%s/%s", appId, version)
+	versionPwd := filepath.Join(global.HostWorkDir, "apps", appId, version)
 
 	// 判断网络是否存在
 	if _, err := utils.Execf("docker network inspect " + networkName); err != nil {

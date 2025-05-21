@@ -60,14 +60,15 @@ var (
 
 func init() {
 	rootCmd.PersistentFlags().StringVar(&global.WorkDir, "work-dir", ".", "工作目录路径")
+	rootCmd.PersistentFlags().StringVar(&global.HostWorkDir, "host-work-dir", "", "宿主机工作目录路径")
 	rootCmd.PersistentFlags().StringVar(&global.EnvFile, "env-file", "", "环境变量文件路径")
 	rootCmd.PersistentFlags().StringVar(&global.WebDir, "web-dir", "", "前端静态文件目录")
-	rootCmd.PersistentFlags().StringVar(&mode, "mode", global.DefaultMode, "运行模式 (debug/release)")
+	rootCmd.PersistentFlags().StringVar(&mode, "mode", "debug", "运行模式 (debug/release/strict)")
 }
 
 func runPre(*cobra.Command, []string) {
 	// 设置gin模式
-	if mode == global.ModeRelease {
+	if mode == global.ModeRelease || mode == global.ModeStrict {
 		gin.SetMode(gin.ReleaseMode)
 	} else {
 		gin.SetMode(gin.DebugMode)
@@ -124,6 +125,11 @@ func runServer(*cobra.Command, []string) {
 	// 创建v1路由组
 	v1 := r.Group("/api/" + global.APIVersion)
 	{
+		// 判断严谨模式必须有会员身份
+		if mode == global.ModeStrict {
+			v1.Use(middlewares.DooTaskTokenMiddleware())
+		}
+
 		v1.GET("/list", routeList)                            // 获取应用列表
 		v1.GET("/one/:appId", routeAppOne)                    // 获取单个应用
 		v1.GET("/readme/:appId", routeAppReadme)              // 获取应用自述文件
