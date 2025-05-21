@@ -1,6 +1,7 @@
 package models
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -11,6 +12,7 @@ import (
 	"time"
 
 	"appstore/server/global"
+	"appstore/server/i18n"
 	"appstore/server/utils"
 
 	"gopkg.in/yaml.v3"
@@ -69,7 +71,7 @@ func GenerateDockerCompose(appId string, version string, config *AppConfig) erro
 	templatePath := filepath.Join(global.WorkDir, "apps", appId, version, "docker-compose.yml")
 	templateData, err := os.ReadFile(templatePath)
 	if err != nil {
-		return fmt.Errorf("读取docker-compose模板失败: %v", err)
+		return errors.New(i18n.T("读取docker-compose模板失败: %v", err))
 	}
 	composeData := string(templateData)
 
@@ -85,12 +87,12 @@ func GenerateDockerCompose(appId string, version string, config *AppConfig) erro
 	// 解析模板
 	composeMap := make(map[string]interface{})
 	if err = yaml.Unmarshal([]byte(composeData), &composeMap); err != nil {
-		return fmt.Errorf("解析docker-compose模板失败: %v", err)
+		return errors.New(i18n.T("解析docker-compose模板失败: %v", err))
 	}
 
 	// 检查services配置是否存在
 	if _, ok := composeMap["services"].(map[string]interface{}); !ok {
-		return fmt.Errorf("配置无效")
+		return errors.New(i18n.T("配置无效"))
 	}
 
 	// 服务名称
@@ -104,7 +106,7 @@ func GenerateDockerCompose(appId string, version string, config *AppConfig) erro
 
 	// 判断网络是否存在
 	if _, err := utils.Execf("docker network inspect " + networkName); err != nil {
-		return fmt.Errorf("网络不存在: %v", err)
+		return errors.New(i18n.T("网络不存在: %v", err))
 	}
 
 	// 加入网络
@@ -120,7 +122,7 @@ func GenerateDockerCompose(appId string, version string, config *AppConfig) erro
 
 		// 检查服务名称是否被保护
 		if slices.Contains(ProtectedNames, serviceName) {
-			return fmt.Errorf("服务名称 '%s' 被保护，不能使用", serviceName)
+			return errors.New(i18n.T("服务名称 '%s' 被保护，不能使用", serviceName))
 		}
 
 		// 确保所有服务都有网络配置
@@ -170,11 +172,11 @@ func GenerateDockerCompose(appId string, version string, config *AppConfig) erro
 	outputPath := filepath.Join(global.WorkDir, "config", appId, "docker-compose.yml")
 	outputData, err := yaml.Marshal(composeMap)
 	if err != nil {
-		return fmt.Errorf("序列化docker-compose配置失败: %v", err)
+		return errors.New(i18n.T("序列化docker-compose配置失败: %v", err))
 	}
 
 	if err := os.WriteFile(outputPath, outputData, 0644); err != nil {
-		return fmt.Errorf("保存docker-compose配置失败: %v", err)
+		return errors.New(i18n.T("保存docker-compose配置失败: %v", err))
 	}
 
 	return nil
@@ -185,14 +187,14 @@ func RunDockerCompose(appId, action string) error {
 	// 切换到应用配置目录
 	configDir := filepath.Join(global.WorkDir, "config", appId)
 	if err := os.Chdir(configDir); err != nil {
-		return fmt.Errorf("切换目录失败: %v", err)
+		return errors.New(i18n.T("切换目录失败: %v", err))
 	}
 
 	// 日志文件
 	logPath := filepath.Join(global.WorkDir, "log", appId+".log")
 	logFile, err := os.OpenFile(logPath, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
-		return fmt.Errorf("打开日志文件失败: %v", err)
+		return errors.New(i18n.T("打开日志文件失败: %v", err))
 	}
 
 	// 更新状态
@@ -205,7 +207,7 @@ func RunDockerCompose(appId, action string) error {
 		appConfig.Status = "uninstalling"
 	}
 	if err := SaveAppConfig(appId, appConfig); err != nil {
-		return fmt.Errorf("更新应用状态失败: %v", err)
+		return errors.New(i18n.T("更新应用状态失败: %v", err))
 	}
 
 	// 写入日志

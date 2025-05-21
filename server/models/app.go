@@ -2,7 +2,9 @@ package models
 
 import (
 	"appstore/server/global"
+	"appstore/server/i18n"
 	"appstore/server/utils"
+	"errors"
 	"fmt"
 	"math"
 	"math/rand"
@@ -214,10 +216,10 @@ func NewApps(appIds []string) []*App {
 // NewApp 创建新的应用实例
 func NewApp(appId string) (*App, error) {
 	if appId == "" {
-		return nil, fmt.Errorf("应用ID不能为空")
+		return nil, errors.New(i18n.T("应用ID不能为空"))
 	}
 	if slices.Contains([]string{"..", "/", "\\", ".git", ".DS_Store"}, appId) {
-		return nil, fmt.Errorf("无效的应用ID")
+		return nil, errors.New(i18n.T("无效的应用ID"))
 	}
 
 	appDir := filepath.Join(global.WorkDir, "apps", appId)
@@ -228,18 +230,18 @@ func NewApp(appId string) (*App, error) {
 	// 检查配置文件是否存在
 	if _, err := os.Stat(configFile); err != nil {
 		if !os.IsNotExist(err) {
-			return nil, fmt.Errorf("检查配置文件失败: %v", err)
+			return nil, errors.New(i18n.T("检查配置文件失败: %v", err))
 		}
 	} else {
 		// 读取配置文件
 		data, err := os.ReadFile(configFile)
 		if err != nil {
-			return nil, fmt.Errorf("读取配置文件失败: %v", err)
+			return nil, errors.New(i18n.T("读取配置文件失败: %v", err))
 		}
 
 		// 解析YAML
 		if err := yaml.Unmarshal(data, &app); err != nil {
-			return nil, fmt.Errorf("解析配置文件失败: %v", err)
+			return nil, errors.New(i18n.T("解析配置文件失败: %v", err))
 		}
 	}
 
@@ -496,7 +498,7 @@ func GetLog(appId string, limit int) string {
 func FindLatestVersion(appId string) (string, error) {
 	versions := findVersions(appId)
 	if len(versions) == 0 {
-		return "", fmt.Errorf("未找到应用 %s 的版本", appId)
+		return "", errors.New(i18n.T("未找到应用 %s 的版本", appId))
 	}
 	return versions[0], nil
 }
@@ -504,24 +506,24 @@ func FindLatestVersion(appId string) (string, error) {
 // FindAsset 查找应用资源文件
 func FindAsset(appId, assetPath string) (string, error) {
 	if appId == "" || assetPath == "" {
-		return "", fmt.Errorf("参数错误")
+		return "", errors.New(i18n.T("参数错误"))
 	}
 
 	cleanedAppId := filepath.Clean(appId)
 	cleanedAssetPath := filepath.Clean(strings.TrimPrefix(assetPath, "/"))
 
 	if cleanedAppId != appId || strings.Contains(cleanedAppId, "..") || strings.Contains(cleanedAppId, "/") || strings.Contains(cleanedAppId, "\\") {
-		return "", fmt.Errorf("无效的参数")
+		return "", errors.New(i18n.T("无效的参数"))
 	}
 
 	if strings.Contains(cleanedAssetPath, "..") || filepath.IsAbs(cleanedAssetPath) {
-		return "", fmt.Errorf("无效的参数")
+		return "", errors.New(i18n.T("无效的参数"))
 	}
 
 	assetFullPath := filepath.Join(global.WorkDir, "apps", cleanedAppId, cleanedAssetPath)
 
 	if _, err := os.Stat(assetFullPath); os.IsNotExist(err) {
-		return "", fmt.Errorf("未找到资源文件")
+		return "", errors.New(i18n.T("未找到资源文件"))
 	}
 
 	return assetFullPath, nil

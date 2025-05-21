@@ -1,12 +1,14 @@
 package models
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
 	"time"
 
 	"appstore/server/global"
+	"appstore/server/i18n"
 	"appstore/server/utils"
 )
 
@@ -19,14 +21,14 @@ func GenerateNginxConfig(appId string, version string, config *AppConfig) error 
 		if os.IsNotExist(err) {
 			return nil
 		} else {
-			return fmt.Errorf("读取nginx配置模板失败: %v", err)
+			return errors.New(i18n.T("读取nginx配置模板失败: %v", err))
 		}
 	}
 
 	// 生成新的nginx配置文件
 	outputPath := filepath.Join(global.WorkDir, "config", appId, "nginx.conf")
 	if err := os.WriteFile(outputPath, templateData, 0644); err != nil {
-		return fmt.Errorf("保存nginx配置失败: %v", err)
+		return errors.New(i18n.T("保存nginx配置失败: %v", err))
 	}
 
 	return nil
@@ -48,7 +50,7 @@ func ReloadNginx(appId string, retry int) (string, error) {
 	// 容器名称
 	nginxContainerName := "dootask-nginx-" + os.Getenv("APP_ID")
 	if utils.CheckIllegal(nginxContainerName) {
-		return "Invalid parameter", fmt.Errorf("nginx name contains illegal characters")
+		return "Invalid parameter", errors.New("nginx name contains illegal characters")
 	}
 
 	// 执行重启
@@ -70,7 +72,7 @@ func ReloadNginx(appId string, retry int) (string, error) {
 
 		// 最后一次重试失败
 		if out != "" {
-			return "Command execution failed with output", fmt.Errorf("%s", out)
+			return "Command execution failed with output", errors.New(out)
 		}
 		return "Command execution failed", err
 	}

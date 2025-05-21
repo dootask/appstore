@@ -31,7 +31,7 @@ func GetSubDirs(dir string) ([]string, error) {
 	dirs := []string{}
 	entries, err := os.ReadDir(dir)
 	if err != nil {
-		return nil, fmt.Errorf("读取目录失败: %v", err)
+		return nil, fmt.Errorf("failed to read directory: %v", err)
 	}
 
 	for _, entry := range entries {

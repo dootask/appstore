@@ -39,7 +39,7 @@ func ExecWithTimeOut(cmdStr string, timeout time.Duration) (string, error) {
 	select {
 	case <-after:
 		_ = cmd.Process.Kill()
-		return "", fmt.Errorf("command timed out")
+		return "", errors.New("command timed out")
 	case err := <-done:
 		if err != nil {
 			return handleErr(stdout, stderr, err)

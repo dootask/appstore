@@ -1,7 +1,9 @@
 package models
 
 import (
+	"appstore/server/i18n"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"slices"
@@ -70,7 +72,7 @@ func DooTaskCheckUser(token string) (*DooTaskUser, error) {
 	}
 
 	if response.Ret != 1 {
-		return nil, fmt.Errorf(response.Msg)
+		return nil, errors.New(response.Msg)
 	}
 
 	// 更新缓存
@@ -91,7 +93,7 @@ func DooTaskCheckUserIdentity(token string, identity string) (*DooTaskUser, erro
 	}
 
 	if !slices.Contains(user.Identity, identity) {
-		return nil, fmt.Errorf("权限不足")
+		return nil, errors.New(i18n.T("权限不足"))
 	}
 
 	return user, nil
