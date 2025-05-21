@@ -108,7 +108,8 @@ type AppInternalInstalledResponse struct {
 
 // AppInternalDownloadRequest 通过URL下载应用的请求结构
 type AppInternalDownloadRequest struct {
-	URL string `json:"url" binding:"required"`
+	URL   string `json:"url" binding:"required"`
+	AppID string `json:"appid" binding:"omitempty"`
 }
 
 // getLocalizedValue 获取多语言字符串值

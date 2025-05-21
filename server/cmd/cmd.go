@@ -22,6 +22,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"unicode"
 
 	_ "appstore/server/docs"
 
@@ -698,14 +699,10 @@ func routeInternalDownloadByURL(c *gin.Context) {
 	}
 
 	// 从URL提取appId
-	u, _ := url.Parse(req.URL)
-	pathParts := strings.Split(strings.Trim(u.Path, "/"), "/")
-	appId := pathParts[len(pathParts)-1]
-	if lastDotIndex := strings.LastIndex(appId, "."); lastDotIndex != -1 {
-		appId = appId[:lastDotIndex]
+	appId := req.AppID
+	if appId == "" {
+		appId = extractAppId(req.URL)
 	}
-	appId = strings.ReplaceAll(appId, ".", "_")
-	appId = utils.Camel2Snake(appId)
 	if appId == "" {
 		response.ErrorWithDetail(c, global.CodeError, i18n.T("InvalidUrlFormat"), nil)
 		return
@@ -981,4 +978,55 @@ func routeAppAsset(c *gin.Context) {
 		return
 	}
 	c.File(filePath)
+}
+
+// extractAppId 从 URL 或文件名提取 appId
+func extractAppId(input string) string {
+	// 如果是 URL
+	if strings.HasPrefix(input, "http://") || strings.HasPrefix(input, "https://") {
+		u, err := url.Parse(input)
+		if err != nil {
+			return ""
+		}
+
+		// 处理 GitHub 或其他 Git 仓库 URL
+		if strings.Contains(u.Host, "github.com") || strings.Contains(u.Host, "gitlab.com") || strings.Contains(u.Host, "gitee.com") {
+			pathParts := strings.Split(strings.Trim(u.Path, "/"), "/")
+			if len(pathParts) >= 2 {
+				owner := pathParts[0]
+				repo := pathParts[1]
+				// 移除 .git 后缀
+				repo = strings.TrimSuffix(repo, ".git")
+				// 移除可能的 tree/branch 部分
+				if idx := strings.Index(repo, "/"); idx != -1 {
+					repo = repo[:idx]
+				}
+				return utils.Camel2Snake(owner + "_" + repo)
+			}
+		}
+		return ""
+	}
+
+	// 如果是压缩文件
+	fileName := filepath.Base(input)
+	// 移除 .zip 或 .tar.gz 后缀
+	fileName = strings.TrimSuffix(fileName, ".zip")
+	fileName = strings.TrimSuffix(fileName, ".tar.gz")
+	fileName = strings.TrimSuffix(fileName, ".tgz")
+
+	// 移除版本号（如果存在）
+	// 匹配类似 -1.0.0, -v1.0.0, _1.0.0, _v1.0.0 的版本号
+	re := regexp.MustCompile(`[-_](v)?\d+(\.\d+)*$`)
+	fileName = re.ReplaceAllString(fileName, "")
+
+	// 替换特殊字符为下划线
+	re = regexp.MustCompile(`[^a-zA-Z0-9]`)
+	fileName = re.ReplaceAllString(fileName, "_")
+
+	// 确保不以数字开头
+	if len(fileName) > 0 && unicode.IsDigit(rune(fileName[0])) {
+		fileName = "_" + fileName
+	}
+
+	return utils.Camel2Snake(fileName)
 }
