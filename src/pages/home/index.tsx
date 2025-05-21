@@ -12,12 +12,12 @@ import Drawer from '@/components/custom/drawer';
 import type { App } from '@/types/api';
 import AppDetail from './detail';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useNavigate } from 'react-router-dom';
+import { useAppNavigate } from '@/routes';
 
 export function Header({onCategoryChange}: {onCategoryChange: (category: string) => void}) {
-  const navigate = useNavigate();
   const {t} = useTranslation();
-  const {baseUrl, categories} = useAppStore();
+  const {to} = useAppNavigate();
+  const {categories} = useAppStore();
   const [currentLanguage, setCurrentLanguageLocal] = useState(i18n.language);
   const [currentLanguageLabel, setCurrentLanguageLabelLocal] = useState(supportedLanguagesMap[i18n.language] || i18n.language);
   const [currentTheme, setCurrentThemeLocal] = useState(() => {
@@ -105,7 +105,7 @@ export function Header({onCategoryChange}: {onCategoryChange: (category: string)
           <Dropdown
             options={supportOptions}
             onChange={(value) => {
-              navigate(`${baseUrl}${value}`);
+              to(value);
             }}
             className="py-3 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white flex items-center truncate min-w-0 max-w-full cursor-pointer"
           >

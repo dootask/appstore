@@ -5,8 +5,6 @@ import i18n from '@/i18n';
 import { AppApi } from "@/lib";
 
 interface AppStoreState {
-  baseUrl: string;
-
   apps: App[];
   loading: boolean;
   setApps: (apps: App[]) => void;
@@ -19,8 +17,6 @@ interface AppStoreState {
 }
 
 export const useAppStore = create<AppStoreState>((set, get) => ({
-  baseUrl: import.meta.env.BASE_URL || '/',
-  
   apps: [],
   loading: false,
   setApps: (apps) => set({apps}),
