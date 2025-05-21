@@ -8,7 +8,7 @@ COPY server/ .
 
 # 构建 Go 应用
 RUN mkdir -p release && \
-    env CGO_ENABLED=0 go build -trimpath -ldflags "-s -w" -o ./appstore .
+    env CGO_ENABLED=0 go build -trimpath -ldflags "-s -w" -o ./cli .
 
 # =============================================================
 # =============================================================
@@ -50,29 +50,24 @@ FROM docker:cli
 ARG MODE=internal
 
 # 安装必要的工具
-RUN apk add --no-cache bash curl
+RUN apk add --no-cache bash curl rsync
 
 # 创建工作目录
 RUN mkdir -p /usr/share/appstore
 
-# 有条件的复制资源目录
-COPY ./appstore /var/www/docker/appstore/
-RUN if [ "$MODE" = "internal" ]; then \
-      rm -rf /var/www/docker/appstore; \
-    fi
+# 复制资源目录
+COPY ./appstore /usr/share/appstore/
 
 # 复制前端构建产物
 COPY --from=builder /web/dist /usr/share/appstore/web/
 
 # 复制 Go 构建产物
-COPY --from=go-builder /app/appstore /usr/local/bin/
-
-# 设置权限
-RUN chmod +x /usr/local/bin/appstore
+COPY --from=go-builder /app/cli /usr/share/appstore/
+RUN chmod +x /usr/share/appstore/cli
 
 # 复制启动脚本
-COPY ./entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
+COPY ./entrypoint.sh /usr/share/appstore/entrypoint.sh
+RUN chmod +x /usr/share/appstore/entrypoint.sh
 
 # 设置入口点
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+ENTRYPOINT ["/usr/share/appstore/entrypoint.sh"]

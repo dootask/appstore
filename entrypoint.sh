@@ -14,6 +14,18 @@ ENV_FILE=${ENV_FILE:-$DEFAULT_ENV_FILE}
 WEB_DIR=${WEB_DIR:-$DEFAULT_WEB_DIR}
 RUN_MODE=${RUN_MODE:-$DEFAULT_RUN_MODE}
 
+# 确保目标目录存在
+mkdir -p "$WORK_DIR"
+
+# 遍历并复制所有应用目录
+if [ -d "/usr/share/appstore/apps" ]; then
+    for app_dir in /usr/share/appstore/apps/*/; do
+        if [ -d "$app_dir" ]; then
+            rsync -av "$app_dir" "$WORK_DIR/"
+        fi
+    done
+fi
+
 # 显示运行配置
 echo "Starting appstore with:"
 echo "WORK_DIR: $WORK_DIR"
@@ -23,4 +35,4 @@ echo "WEB_DIR: $WEB_DIR"
 echo "RUN_MODE: $RUN_MODE"
 
 # 执行 appstore 命令
-exec appstore --work-dir "$WORK_DIR" --host-work-dir "$HOST_WORK_DIR" --env-file "$ENV_FILE" --web-dir "$WEB_DIR" --mode "$RUN_MODE"
+exec /usr/share/appstore/cli --work-dir "$WORK_DIR" --host-work-dir "$HOST_WORK_DIR" --env-file "$ENV_FILE" --web-dir "$WEB_DIR" --mode "$RUN_MODE"
