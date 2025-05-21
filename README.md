@@ -18,6 +18,7 @@ AppDirectory/
 ```yml
 environment:
   HOST_PWD: "${PWD}" # 宿主机工作目录
+  RUN_MODE: "strict" # 运行模式
 ```
 
 挂载目录及文件：

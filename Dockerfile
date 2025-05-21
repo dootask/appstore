@@ -56,13 +56,13 @@ RUN apk add --no-cache bash curl
 RUN mkdir -p /usr/share/appstore
 
 # 有条件的复制资源目录
-COPY ./resources /var/www/docker/appstore/
+COPY ./appstore /var/www/docker/appstore/
 RUN if [ "$MODE" = "tag" ]; then \
       rm -rf /var/www/docker/appstore; \
     fi
 
 # 复制前端构建产物
-COPY --from=builder /web/dist /usr/share/appstore/dist
+COPY --from=builder /web/dist /usr/share/appstore/dist/
 
 # 复制 Go 构建产物
 COPY --from=go-builder /app/appstore /usr/local/bin/
