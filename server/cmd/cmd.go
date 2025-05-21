@@ -129,32 +129,36 @@ func runServer(*cobra.Command, []string) {
 	// 创建v1路由组
 	v1 := r.Group("/api/" + global.APIVersion)
 	{
-		// 判断严谨模式必须有会员身份
+		// 中间件控制
+		var strictMiddleware gin.HandlerFunc
 		if mode == global.ModeStrict {
-			v1.Use(middlewares.DooTaskTokenMiddleware())
+			strictMiddleware = middlewares.DooTaskTokenMiddleware()
 		}
+		authMiddleware := middlewares.DooTaskTokenMiddleware()
+		adminMiddleware := middlewares.DooTaskTokenMiddleware("admin")
 
-		v1.GET("/list", routeList)                            // 获取应用列表
-		v1.GET("/one/:appId", routeAppOne)                    // 获取单个应用
-		v1.GET("/readme/:appId", routeAppReadme)              // 获取应用自述文件
-		v1.GET("/asset/:appId/*assetPath", routeAppAsset)     // 查看应用资源
-		v1.GET("/download/:appId/*version", routeAppDownload) // 下载应用压缩包
-		v1.GET("/sources/package", routeSourcesPackage)       // 下载应用商店资源包
+		// 严谨模式需要会员
+		v1.GET("/list", routeList, strictMiddleware)                            // 获取应用列表
+		v1.GET("/one/:appId", routeAppOne, strictMiddleware)                    // 获取单个应用
+		v1.GET("/readme/:appId", routeAppReadme, strictMiddleware)              // 获取应用自述文件
+		v1.GET("/download/:appId/*version", routeAppDownload, strictMiddleware) // 下载应用压缩包
+		v1.GET("/sources/package", routeSourcesPackage, strictMiddleware)       // 下载应用商店资源包
 
-		// 内部使用接口（需要管理员）
-		internal := v1.Group("/internal", middlewares.DooTaskTokenMiddleware("admin"))
+		// 始终不需要身份
+		v1.GET("/asset/:appId/*assetPath", routeAppAsset) // 查看应用资源
+
+		// 内部使用接口
+		internal := v1.Group("/internal")
 		{
-			internal.POST("/install", routeInternalInstall)             // 安装应用
-			internal.GET("/uninstall/:appId", routeInternalUninstall)   // 卸载应用
-			internal.GET("/apps/update", routeInternalUpdateList)       // 更新应用列表
-			internal.POST("/apps/download", routeInternalDownloadByURL) // 通过URL下载应用
-		}
+			// 需要管理员
+			internal.POST("/install", routeInternalInstall, adminMiddleware)             // 安装应用
+			internal.GET("/uninstall/:appId", routeInternalUninstall, adminMiddleware)   // 卸载应用
+			internal.GET("/apps/update", routeInternalUpdateList, adminMiddleware)       // 更新应用列表
+			internal.POST("/apps/download", routeInternalDownloadByURL, adminMiddleware) // 通过URL下载应用
 
-		// 内部使用接口（无须管理员）
-		internalBasic := v1.Group("/internal", middlewares.DooTaskTokenMiddleware())
-		{
-			internalBasic.GET("/installed", routeInternalInstalled) // 获取已安装应用列表
-			internalBasic.GET("/log/:appId", routeInternalLog)      // 获取应用日志
+			// 需要会员
+			internal.GET("/installed", routeInternalInstalled, authMiddleware) // 获取已安装应用列表
+			internal.GET("/log/:appId", routeInternalLog, authMiddleware)      // 获取应用日志
 		}
 	}
 
@@ -230,18 +234,6 @@ func routeAppReadme(c *gin.Context) {
 	response.SuccessWithData(c, gin.H{
 		"content": models.GetReadme(appId),
 	})
-}
-
-// routeAppAsset 处理应用资源请求
-func routeAppAsset(c *gin.Context) {
-	appId := c.Param("appId")
-	assetPath := c.Param("assetPath")
-	filePath, err := models.FindAsset(appId, assetPath)
-	if err != nil {
-		c.String(http.StatusBadRequest, err.Error())
-		return
-	}
-	c.File(filePath)
 }
 
 // routeAppDownload 处理应用下载请求
@@ -498,7 +490,10 @@ func routeInternalUninstall(c *gin.Context) {
 // @Router /internal/installed [get]
 func routeInternalInstalled(c *gin.Context) {
 	apps := models.NewApps(nil)
-	var resp models.AppInternalInstalledResponse
+	resp := models.AppInternalInstalledResponse{
+		Names: make([]string, 0),
+		Menus: make([]models.MenuItem, 0),
+	}
 	for _, app := range apps {
 		if app.Config.Status == "installed" {
 			resp.Names = append(resp.Names, app.Name.(string))
@@ -941,4 +936,16 @@ func routeSourcesPackage(c *gin.Context) {
 
 	// 发送文件
 	c.File(tarFile)
+}
+
+// routeAppAsset 处理应用资源请求
+func routeAppAsset(c *gin.Context) {
+	appId := c.Param("appId")
+	assetPath := c.Param("assetPath")
+	filePath, err := models.FindAsset(appId, assetPath)
+	if err != nil {
+		c.String(http.StatusBadRequest, err.Error())
+		return
+	}
+	c.File(filePath)
 }
