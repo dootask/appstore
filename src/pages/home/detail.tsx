@@ -7,7 +7,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import React, { useState, useEffect } from 'react';
 import { AppApi } from '@/lib';
 import ReactMarkdown from "react-markdown"
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
+import { PrismAsyncLight as SyntaxHighlighter } from "react-syntax-highlighter"
 import { darcula as SyntaxStyle } from 'react-syntax-highlighter/dist/esm/styles/prism'
 
 export default function AppDetail({app, onDownload}: { app: App | null, onDownload: () => void }) {

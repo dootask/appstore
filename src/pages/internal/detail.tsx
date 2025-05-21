@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 import { useEffect, useState, useRef } from "react";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 import ReactMarkdown from "react-markdown"
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
+import { PrismAsyncLight as SyntaxHighlighter } from "react-syntax-highlighter"
 import { darcula as SyntaxStyle } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs.tsx";
 import { AppLog } from "@/pages/internal/log";

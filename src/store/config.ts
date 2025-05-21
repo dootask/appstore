@@ -91,6 +91,8 @@ export const initializeTheme = (initialConfig?: { themeName?: 'light' | 'dark' }
 };
 
 export const setTheme = (newTheme: 'light' | 'dark') => {
+  const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  
   if (newTheme === 'dark') {
     document.body.classList.add('dark');
     document.body.classList.remove('light');
@@ -98,5 +100,10 @@ export const setTheme = (newTheme: 'light' | 'dark') => {
     document.body.classList.remove('dark');
     document.body.classList.add('light');
   }
-  localStorage.setItem('theme', newTheme);
+
+  if (newTheme === systemTheme) {
+    localStorage.removeItem('theme');
+  } else {
+    localStorage.setItem('theme', newTheme);
+  }
 };
