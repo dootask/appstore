@@ -15,13 +15,7 @@ WEB_DIR=${WEB_DIR:-$DEFAULT_WEB_DIR}
 RUN_MODE=${RUN_MODE:-$DEFAULT_RUN_MODE}
 
 # 复制所有应用到工作目录
-if [ -d "/usr/share/appstore/apps" ]; then
-    for app_dir in /usr/share/appstore/apps/*/; do
-        if [ -d "$app_dir" ]; then
-            rsync -av --mkpath "$app_dir" "$WORK_DIR/"
-        fi
-    done
-fi
+rsync -av --mkpath /usr/share/appstore/apps/ $WORK_DIR/apps/
 
 # 显示运行配置
 echo "Starting with:"

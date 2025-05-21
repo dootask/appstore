@@ -80,7 +80,9 @@ func runPre(*cobra.Command, []string) {
 			fmt.Printf("加载环境变量失败: %v\n", err)
 			os.Exit(1)
 		}
-		fmt.Printf("环境变量文件: %s\n", global.EnvFile)
+		if mode == global.ModeDebug {
+			fmt.Printf("环境变量文件: %s\n", global.EnvFile)
+		}
 	}
 
 	// 转换工作目录路径
@@ -109,7 +111,9 @@ func runPre(*cobra.Command, []string) {
 
 	// 设置工作目录
 	global.WorkDir = absPath
-	fmt.Printf("工作目录: %s\n", global.WorkDir)
+	if mode == global.ModeDebug {
+		fmt.Printf("工作目录: %s\n", global.WorkDir)
+	}
 }
 
 func runServer(*cobra.Command, []string) {
