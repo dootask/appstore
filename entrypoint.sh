@@ -4,7 +4,7 @@
 DEFAULT_WORK_DIR="/var/www/docker/appstore"
 DEFAULT_HOST_WORK_DIR="${HOST_PWD}/docker/appstore"
 DEFAULT_ENV_FILE="/var/www/.env"
-DEFAULT_WEB_DIR="/usr/share/appstore/dist"
+DEFAULT_WEB_DIR="/usr/share/appstore/web"
 DEFAULT_RUN_MODE="release"
 
 # 使用环境变量（如果存在），否则使用默认值
