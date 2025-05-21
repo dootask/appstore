@@ -744,7 +744,7 @@ func routeInternalDownloadByURL(c *gin.Context) {
 			return
 		}
 	} else {
-		// 下载ZIP文件
+		// 下载文件
 		resp, err := http.Get(req.URL)
 		if err != nil {
 			response.ErrorWithDetail(c, global.CodeError, i18n.T("DownloadFailed"), err)
@@ -752,23 +752,42 @@ func routeInternalDownloadByURL(c *gin.Context) {
 		}
 		defer resp.Body.Close()
 
-		zipFile := filepath.Join(tempDir, "app.zip")
-		zipData, err := io.ReadAll(resp.Body)
+		// 保存下载的文件
+		downloadFile := filepath.Join(tempDir, "app.download")
+		fileData, err := io.ReadAll(resp.Body)
 		if err != nil {
 			response.ErrorWithDetail(c, global.CodeError, i18n.T("ReadDownloadDataFailed"), err)
 			return
 		}
-		if err := os.WriteFile(zipFile, zipData, 0644); err != nil {
-			response.ErrorWithDetail(c, global.CodeError, i18n.T("SaveZipFileFailed"), err)
+		if err := os.WriteFile(downloadFile, fileData, 0644); err != nil {
+			response.ErrorWithDetail(c, global.CodeError, i18n.T("SaveFileFailed"), err)
 			return
 		}
 
-		// 解压ZIP文件
-		if err := utils.Unzip(zipFile, tempDir); err != nil {
-			response.ErrorWithDetail(c, global.CodeError, i18n.T("ExtractFileFailed"), err)
+		// 检测文件类型
+		fileType, err := utils.DetectFileType(downloadFile)
+		if err != nil {
+			response.ErrorWithDetail(c, global.CodeError, i18n.T("DetectFileTypeFailed"), err)
 			return
 		}
-		os.Remove(zipFile)
+
+		// 根据文件类型解压
+		switch fileType {
+		case utils.FileTypeZip:
+			if err := utils.Unzip(downloadFile, tempDir); err != nil {
+				response.ErrorWithDetail(c, global.CodeError, i18n.T("ExtractFileFailed"), err)
+				return
+			}
+		case utils.FileTypeTarGz:
+			if err := utils.UnTarGz(downloadFile, tempDir); err != nil {
+				response.ErrorWithDetail(c, global.CodeError, i18n.T("ExtractFileFailed"), err)
+				return
+			}
+		default:
+			response.ErrorWithDetail(c, global.CodeError, i18n.T("UnsupportedFileType"), nil)
+			return
+		}
+		os.Remove(downloadFile)
 	}
 
 	// 检查config.yml文件

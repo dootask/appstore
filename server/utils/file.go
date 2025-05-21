@@ -10,6 +10,15 @@ import (
 	"path/filepath"
 )
 
+// FileType 文件类型
+type FileType string
+
+const (
+	FileTypeZip     FileType = "zip"
+	FileTypeTarGz   FileType = "tar.gz"
+	FileTypeUnknown FileType = "unknown"
+)
+
 // IsDirExists 检查目录是否存在
 func IsDirExists(path string) bool {
 	info, err := os.Stat(path)
@@ -228,4 +237,31 @@ func CopyFile(src string, dest string, overwrite bool) error {
 
 	// 设置目标文件权限
 	return os.Chmod(dest, srcInfo.Mode())
+}
+
+// DetectFileType 检测文件类型
+func DetectFileType(filePath string) (FileType, error) {
+	file, err := os.Open(filePath)
+	if err != nil {
+		return FileTypeUnknown, err
+	}
+	defer file.Close()
+
+	// 读取文件头部
+	header := make([]byte, 4)
+	_, err = file.Read(header)
+	if err != nil {
+		return FileTypeUnknown, err
+	}
+
+	// 检查文件类型
+	// ZIP文件头: PK\x03\x04
+	// GZIP文件头: \x1f\x8b
+	if header[0] == 0x50 && header[1] == 0x4B && header[2] == 0x03 && header[3] == 0x04 {
+		return FileTypeZip, nil
+	} else if header[0] == 0x1f && header[1] == 0x8b {
+		return FileTypeTarGz, nil
+	}
+
+	return FileTypeUnknown, nil
 }
