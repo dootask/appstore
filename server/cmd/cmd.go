@@ -19,6 +19,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"slices"
+	"strconv"
 	"strings"
 	"time"
 
@@ -509,12 +510,25 @@ func routeInternalInstalled(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param appId path string true "应用ID"
+// @Param n query int false "行数" default(200) minimum(1) maximum(2000)
 // @Success 200 {object} response.Response{data=map[string]string}
 // @Router /internal/log/{appId} [get]
 func routeInternalLog(c *gin.Context) {
 	appId := c.Param("appId")
+	n, err := strconv.Atoi(c.Query("n"))
+	if err != nil || n <= 0 {
+		n = 200
+	}
+	if n > 2000 {
+		n = 2000
+	}
+	log, err := models.GetAppLog(appId, n)
+	if err != nil {
+		response.ErrorWithDetail(c, global.CodeError, i18n.T("OpenLogFileFailed", err.Error()), err)
+		return
+	}
 	response.SuccessWithData(c, gin.H{
-		"log": models.GetLog(appId, 200),
+		"log": strings.Join(log, "\n"),
 	})
 }
 

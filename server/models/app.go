@@ -474,26 +474,6 @@ func GetReadme(appId string) string {
 	return ""
 }
 
-// GetLog 获取应用日志
-func GetLog(appId string, limit int) string {
-	logFile := filepath.Join(global.WorkDir, "log", appId+".log")
-	if _, err := os.Stat(logFile); os.IsNotExist(err) {
-		return ""
-	}
-
-	content, err := os.ReadFile(logFile)
-	if err != nil {
-		return ""
-	}
-
-	lines := strings.Split(string(content), "\n")
-	if len(lines) > limit {
-		lines = lines[len(lines)-limit:]
-	}
-
-	return strings.Join(lines, "\n")
-}
-
 // FindLatestVersion 获取应用的最新版本
 func FindLatestVersion(appId string) (string, error) {
 	versions := findVersions(appId)

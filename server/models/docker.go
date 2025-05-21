@@ -1,9 +1,10 @@
 package models
 
 import (
+	"bufio"
+	"context"
 	"errors"
 	"fmt"
-	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -190,13 +191,6 @@ func RunDockerCompose(appId, action string) error {
 		return errors.New(i18n.T("ChangeDirectoryFailed", err))
 	}
 
-	// 日志文件
-	logPath := filepath.Join(global.WorkDir, "log", appId+".log")
-	logFile, err := os.OpenFile(logPath, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0666)
-	if err != nil {
-		return errors.New(i18n.T("OpenLogFileFailed", err))
-	}
-
 	// 更新状态
 	appConfig := GetAppConfig(appId)
 	if action == "up" {
@@ -211,46 +205,73 @@ func RunDockerCompose(appId, action string) error {
 	}
 
 	// 写入日志
-	_, _ = logFile.WriteString("\n[" + time.Now().Format("2006-01-02 15:04:05") + "]\n")
-	_, _ = logFile.WriteString(action + " starting...\n")
+	AppLogInfo(appId, action+" starting...")
 
 	// 启动协程
 	go func() {
-		defer logFile.Close()
+		// 创建带超时的上下文
+		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Minute)
+		defer cancel()
 
 		// 执行docker-compose命令
 		var cmd *exec.Cmd
 		var status string
 		if action == "up" {
-			cmd = exec.Command("docker", "compose", "up", "-d", "--remove-orphans")
+			cmd = exec.CommandContext(ctx, "docker", "compose", "up", "-d", "--remove-orphans")
 			status = "installed"
 		} else if action == "down" {
-			cmd = exec.Command("docker", "compose", "down", "--remove-orphans")
+			cmd = exec.CommandContext(ctx, "docker", "compose", "down", "--remove-orphans")
 			status = "not_installed"
 		} else {
 			return
 		}
-		multiWriter := io.MultiWriter(os.Stdout, logFile)
-		cmd.Stdout = multiWriter
-		cmd.Stderr = multiWriter
-		if runErr := cmd.Run(); runErr != nil {
+
+		// 创建管道来捕获输出
+		stdout, _ := cmd.StdoutPipe()
+		stderr, _ := cmd.StderrPipe()
+		if err := cmd.Start(); err != nil {
+			AppLogError(appId, "Failed to start command: "+err.Error())
 			status = "error"
+		} else {
+			// 读取并记录输出
+			go func() {
+				scanner := bufio.NewScanner(stdout)
+				for scanner.Scan() {
+					AppLogInfo(appId, scanner.Text())
+				}
+			}()
+			go func() {
+				scanner := bufio.NewScanner(stderr)
+				for scanner.Scan() {
+					AppLogError(appId, scanner.Text())
+				}
+			}()
+
+			if err := cmd.Wait(); err != nil {
+				if errors.Is(ctx.Err(), context.DeadlineExceeded) {
+					AppLogError(appId, "Command execution timeout after 30 minutes")
+				} else {
+					AppLogError(appId, "Command execution failed: "+err.Error())
+				}
+				status = "error"
+			}
 		}
-		_, _ = logFile.WriteString(action + " " + status + "\n")
+
+		AppLogInfo(appId, action+" "+status)
 
 		if status == "installed" {
 			// 重启nginx
 			if hasNginxConfig, _ := HasNginxConfig(appId); hasNginxConfig {
-				_, _ = logFile.WriteString("nginx reload starting...\n")
+				AppLogInfo(appId, "nginx reload starting...")
 				out, err := ReloadNginx(appId, 3)
 				if out != "" {
-					_, _ = logFile.WriteString("nginx reload output: " + out + "\n")
+					AppLogInfo(appId, "nginx reload output: "+out)
 				}
 				if err != nil {
-					_, _ = logFile.WriteString("nginx reload failed: " + err.Error() + "\n")
+					AppLogError(appId, "nginx reload failed: "+err.Error())
 					status = "error"
 				}
-				_, _ = logFile.WriteString("nginx reload end\n")
+				AppLogInfo(appId, "nginx reload end")
 			}
 		}
 
@@ -258,7 +279,7 @@ func RunDockerCompose(appId, action string) error {
 		appConfig := GetAppConfig(appId)
 		appConfig.Status = status
 		if err := SaveAppConfig(appId, appConfig); err != nil {
-			_, _ = logFile.WriteString("Failed to update application status: " + err.Error() + "\n")
+			AppLogError(appId, "Failed to update application status: "+err.Error())
 		}
 	}()
 
@@ -315,27 +336,17 @@ func StartCheckContainerStatusDaemon() {
 				continue
 			}
 
-			// 打开日志文件
-			logPath := filepath.Join(global.WorkDir, "log", appId+".log")
-			logFile, err := os.OpenFile(logPath, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0666)
-			if err != nil {
-				fmt.Printf("[Daemon] Failed to open log file %s: %v\n", appId, err)
-				continue
-			}
-
 			// 如果容器不存在，则执行 up 命令
-			_, _ = logFile.WriteString("\n[" + time.Now().Format("2006-01-02 15:04:05") + "]\n")
-			_, _ = logFile.WriteString("[Daemon] up starting...\n")
+			AppLogInfo(appId, "[Daemon] up starting...")
 			stdout, err = utils.Execf("docker compose -f %s up -d --remove-orphans", composeFile)
 			if stdout != "" {
-				_, _ = logFile.WriteString(stdout + "\n")
+				AppLogInfo(appId, "[Daemon] up output: "+stdout)
 			}
 			if err != nil {
-				_, _ = logFile.WriteString("[Daemon] up failed\n")
+				AppLogError(appId, "[Daemon] up failed")
 			} else {
-				_, _ = logFile.WriteString("[Daemon] up successful\n")
+				AppLogInfo(appId, "[Daemon] up successful")
 			}
-			_ = logFile.Close()
 
 			// 记录每个应用最后一次执行 up 命令的时间
 			lastUpTimes[appId] = time.Now()
