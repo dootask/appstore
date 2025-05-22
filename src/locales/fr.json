@@ -77,6 +77,12 @@
       "themeToggleLight": "Passer au thème clair",
       "title": "DooTask App Store"
     },
+    "user": {
+      "publish": "Publier l'application",
+      "manage": "Gérer l'application",
+      "center": "Centre d'utilisateurs",
+      "settings": "Paramètres"
+    },
     "hero": {
       "searchPlaceholder": "Rechercher des API, applications et plugins",
       "seriesBAnnouncement": "Nous avons levé 2,5 millions de dollars en série B",
@@ -91,7 +97,7 @@
     },
     "support": {
       "development": "Développer une application",
-      "maintenance": "Maintenance des fonctionnalités, bientôt disponible...",
+      "maintenance": "Cette fonctionnalité est en cours de maintenance...",
       "publish": "Publier l'application",
       "warning": "Conseil"
     }

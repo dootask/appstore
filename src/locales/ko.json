@@ -77,6 +77,12 @@
       "themeToggleLight": "라이트 테마로 전환",
       "title": "DooTask 앱 스토어"
     },
+    "user": {
+      "publish": "앱 게시",
+      "manage": "앱 관리",
+      "center": "사용자 센터",
+      "settings": "설정"
+    },
     "hero": {
       "searchPlaceholder": "API, 앱 및 플러그인 검색",
       "seriesBAnnouncement": "시리즈 B에서 250만 달러 투자 유치",
@@ -91,7 +97,7 @@
     },
     "support": {
       "development": "개발 앱",
-      "maintenance": "기능 유지보수, 곧 제공 예정...",
+      "maintenance": "이 기능은 유지 보수 중입니다...",
       "publish": "앱 게시",
       "warning": "알림"
     }

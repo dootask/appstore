@@ -77,6 +77,12 @@
       "themeToggleLight": "Switch to Light Theme",
       "title": "DooTask App Store"
     },
+    "user": {
+      "publish": "Publish App",
+      "manage": "Manage App",
+      "center": "User Center",
+      "settings": "Settings"
+    },
     "hero": {
       "searchPlaceholder": "Search APIs, apps and plugins",
       "seriesBAnnouncement": "We raised $2.5M in Series B funding",
@@ -91,7 +97,7 @@
     },
     "support": {
       "development": "Develop App",
-      "maintenance": "Feature maintenance, coming soon...",
+      "maintenance": "This feature is under maintenance...",
       "publish": "Publish App",
       "warning": "Tips"
     }

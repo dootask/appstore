@@ -77,6 +77,12 @@
       "themeToggleLight": "切換到淺色主題",
       "title": "DooTask 應用商店"
     },
+    "user": {
+      "publish": "發布應用",
+      "manage": "管理應用",
+      "center": "用戶中心",
+      "settings": "設置"
+    },
     "hero": {
       "searchPlaceholder": "搜索 API、應用和插件",
       "seriesBAnnouncement": "我們B輪融資獲得250萬美元",
@@ -91,7 +97,7 @@
     },
     "support": {
       "development": "開發應用",
-      "maintenance": "功能維護，敬請期待...",
+      "maintenance": "此功能维护升级中...",
       "publish": "發布應用",
       "warning": "溫馨提示"
     }

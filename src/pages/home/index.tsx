@@ -40,6 +40,25 @@ export function Header({onCategoryChange}: { onCategoryChange: (category: string
     },
   ];
 
+  const userOptions = [
+    {
+      label: t('home.user.publish'),
+      value: 'development#publish'
+    },
+    {
+      label: t('home.user.manage'),
+      value: 'development#manage'
+    },
+    {
+      label: t('home.user.center'),
+      value: 'development#center'
+    },
+    {
+      label: t('home.user.settings'),
+      value: 'development#settings'
+    }
+  ];
+
   const toggleThemeHandler = () => {
     setTheme(currentTheme === 'light' ? 'dark' : 'light');
   };
@@ -50,7 +69,7 @@ export function Header({onCategoryChange}: { onCategoryChange: (category: string
 
   const handleMaintenance = () => {
     Alert({
-      type: 'info',
+      type: 'warning',
       title: t('home.support.warning'),
       description: t('home.support.maintenance'),
       showCancel: false,
@@ -93,7 +112,7 @@ export function Header({onCategoryChange}: { onCategoryChange: (category: string
         </button>
         <nav className="hidden md:flex items-center space-x-6 flex-1 justify-center min-w-0">
           {useOutlet() && (
-            <button className="py-3 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white flex items-center truncate min-w-0 max-w-full cursor-pointer" onClick={navigate.toHome}>
+            <button className="h-11 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white flex items-center truncate min-w-0 max-w-full cursor-pointer" onClick={navigate.toHome}>
               <span className='whitespace-nowrap overflow-hidden text-ellipsis'>{t('home.header.home')}</span>
               <LayoutGrid className="w-4 h-4 mx-1 scale-90 shrink-0" />
             </button>
@@ -105,7 +124,7 @@ export function Header({onCategoryChange}: { onCategoryChange: (category: string
             onChange={(value) => {
               onCategoryChange(value)
             }}
-            className="py-3 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white flex items-center truncate min-w-0 max-w-full cursor-pointer"
+            className="h-11 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white flex items-center truncate min-w-0 max-w-full cursor-pointer"
           >
             <span className='whitespace-nowrap overflow-hidden text-ellipsis'>{t('home.header.category')}</span>
             <ChevronDown className="w-4 h-4 ml-1 shrink-0" />
@@ -115,7 +134,7 @@ export function Header({onCategoryChange}: { onCategoryChange: (category: string
             onChange={(value) => {
               navigate.to(value);
             }}
-            className="py-3 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white flex items-center truncate min-w-0 max-w-full cursor-pointer"
+            className="h-11 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white flex items-center truncate min-w-0 max-w-full cursor-pointer"
           >
             <span className='whitespace-nowrap overflow-hidden text-ellipsis'>{t('home.header.support')}</span>
             <ChevronDown className="w-4 h-4 ml-1 shrink-0" />
@@ -126,40 +145,42 @@ export function Header({onCategoryChange}: { onCategoryChange: (category: string
             options={languageOptionsForDropdown}
             defaultValue={currentLanguage}
             onChange={handleLanguageChangeHandler}
-            className="flex items-center text-sm p-2 py-3 gap-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white cursor-pointer"
+            className="h-11 px-2 flex items-center text-sm gap-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white cursor-pointer"
           >
             <Globe className="w-5 h-5 flex-shrink-0" />
             <span className="hidden lg:block">{currentLanguageLabel}</span>
           </Dropdown>
           <button
             onClick={toggleThemeHandler}
-            className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white p-2 rounded-md cursor-pointer"
+            className="h-11 px-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white rounded-md cursor-pointer"
             aria-label={t(currentTheme === 'dark' ? 'home.header.themeToggleLight' : 'home.header.themeToggleDark')}
           >
             <div className="relative w-5 h-5">
-              <Sun 
+              <Sun
                 className={cn(
                   "w-5 h-5 absolute transition-all duration-300",
-                  currentTheme === 'dark' 
-                    ? "opacity-100 rotate-0 translate-x-0" 
+                  currentTheme === 'dark'
+                    ? "opacity-100 rotate-0 translate-x-0"
                     : "opacity-0 -rotate-90 -translate-x-4"
                 )}
               />
-              <Moon 
+              <Moon
                 className={cn(
                   "w-5 h-5 absolute transition-all duration-300",
-                  currentTheme === 'dark' 
-                    ? "opacity-0 rotate-90 translate-x-4" 
+                  currentTheme === 'dark'
+                    ? "opacity-0 rotate-90 translate-x-4"
                     : "opacity-100 rotate-0 translate-x-0"
                 )}
               />
             </div>
           </button>
-          <div className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white cursor-pointer" onClick={() => {
-            handleMaintenance()
-          }}>
+          <Dropdown
+            options={userOptions}
+            className="h-11 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white cursor-pointer"
+            onChange={handleMaintenance}
+          >
             <UserCircle className="w-8 h-8" />
-          </div>
+          </Dropdown>
         </div>
       </div>
     </header>
@@ -168,7 +189,7 @@ export function Header({onCategoryChange}: { onCategoryChange: (category: string
 
 const Home: React.FC = () => {
   const navigate = useAppNavigate();
-  
+
   const {t} = useTranslation();
   const {apps, categories, fetchApps} = useAppStore();
   const marketplaceRef = useRef<HTMLElement>(null);
@@ -263,7 +284,7 @@ const Home: React.FC = () => {
 
   useEffect(() => {
     if (!searchInputRef.current) return;
-    
+
     const handleKeyDown = (event: KeyboardEvent) => {
       if (!searchInputRef.current) return;
       if (event.key === '/') {

@@ -77,6 +77,12 @@
       "themeToggleLight": "切换到浅色主题",
       "title": "DooTask 应用商店"
     },
+    "user": {
+      "publish": "发布应用",
+      "manage": "管理应用",
+      "center": "用户中心",
+      "settings": "设置"
+    },
     "hero": {
       "searchPlaceholder": "搜索 API、应用和插件",
       "seriesBAnnouncement": "我们B轮融资获得250万美元",
@@ -91,7 +97,7 @@
     },
     "support": {
       "development": "开发应用",
-      "maintenance": "功能维护，敬请期待...",
+      "maintenance": "此功能维护升级中...",
       "publish": "发布应用",
       "warning": "温馨提示"
     }

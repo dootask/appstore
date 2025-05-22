@@ -77,6 +77,12 @@
       "themeToggleLight": "Beralih ke Tema Terang",
       "title": "DooTask App Store"
     },
+    "user": {
+      "publish": "Publikasikan Aplikasi",
+      "manage": "Mengelola Aplikasi",
+      "center": "Pusat Pengguna",
+      "settings": "Pengaturan"
+    },
     "hero": {
       "searchPlaceholder": "Cari API, aplikasi, dan plugin",
       "seriesBAnnouncement": "Kami mengumpulkan $2,5 juta dalam pendanaan Seri B",
@@ -91,7 +97,7 @@
     },
     "support": {
       "development": "Pengembangan Aplikasi",
-      "maintenance": "Pemeliharaan fitur, segera hadir...",
+      "maintenance": "Fungsi ini dalam pemeliharaan...",
       "publish": "Publikasikan Aplikasi",
       "warning": "Tips"
     }

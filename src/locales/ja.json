@@ -77,6 +77,12 @@
       "themeToggleLight": "ライトテーマに切り替え",
       "title": "DooTaskアプリストア"
     },
+    "user": {
+      "publish": "アプリを公開",
+      "manage": "アプリを管理",
+      "center": "ユーザーセンター",
+      "settings": "設定"
+    },
     "hero": {
       "searchPlaceholder": "API、アプリ、プラグインを検索",
       "seriesBAnnouncement": "シリーズBで250万ドルの資金調達を完了",
@@ -91,7 +97,7 @@
     },
     "support": {
       "development": "開発アプリ",
-      "maintenance": "機能メンテナンス、近日公開...",
+      "maintenance": "この機能は保守中です...",
       "publish": "アプリを公開",
       "warning": "ご注意"
     }
