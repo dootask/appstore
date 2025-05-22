@@ -12,7 +12,7 @@
   "dependencies": {
     "@dootask/tools": "^0.1.5",
     "@floating-ui/react": "^0.27.8",
-    "@headlessui/react": "^2.2.2",
+    "@headlessui/react": "^2.2.4",
     "@heroicons/react": "^2.2.0",
     "@hookform/resolvers": "^5.0.1",
     "@radix-ui/react-label": "^2.1.6",

@@ -13,6 +13,7 @@ import type { App } from '@/types/api';
 import AppDetail from './detail';
 import { useAppNavigate } from '@/routes';
 import { Outlet, useOutlet } from 'react-router-dom';
+import { cn } from '@/lib/utils';
 
 export function Header({onCategoryChange}: { onCategoryChange: (category: string) => void }) {
   const navigate = useAppNavigate();
@@ -135,7 +136,24 @@ export function Header({onCategoryChange}: { onCategoryChange: (category: string
             className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white p-2 rounded-md cursor-pointer"
             aria-label={t(currentTheme === 'dark' ? 'home.header.themeToggleLight' : 'home.header.themeToggleDark')}
           >
-            {currentTheme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            <div className="relative w-5 h-5">
+              <Sun 
+                className={cn(
+                  "w-5 h-5 absolute transition-all duration-300",
+                  currentTheme === 'dark' 
+                    ? "opacity-100 rotate-0 translate-x-0" 
+                    : "opacity-0 -rotate-90 -translate-x-4"
+                )}
+              />
+              <Moon 
+                className={cn(
+                  "w-5 h-5 absolute transition-all duration-300",
+                  currentTheme === 'dark' 
+                    ? "opacity-0 rotate-90 translate-x-4" 
+                    : "opacity-100 rotate-0 translate-x-0"
+                )}
+              />
+            </div>
           </button>
           <div className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white cursor-pointer" onClick={() => {
             handleMaintenance()
