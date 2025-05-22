@@ -256,7 +256,7 @@ func NewApp(appId string) (*App, error) {
 	// 设置应用名称
 	app.Name = getLocalizedValue(app.Name, global.Language)
 	if app.Name == "" {
-		app.Name = app.ID
+		return nil, errors.New(i18n.T("InvalidConfig"))
 	}
 
 	// 设置应用描述
@@ -267,7 +267,7 @@ func NewApp(appId string) (*App, error) {
 	if iconFilename != "" {
 		app.Icon = fmt.Sprintf("%s/api/%s/asset/%s/%s", global.BaseUrl, global.APIVersion, app.ID, iconFilename)
 	} else {
-		app.Icon = ""
+		app.Icon = fmt.Sprintf("%s/api/%s/asset/%s/%s", global.BaseUrl, global.APIVersion, "_", "logo.svg")
 	}
 
 	// 设置应用版本
