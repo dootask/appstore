@@ -18,9 +18,10 @@ export interface DropdownProps {
   children?: ReactNode;
   zIndex?: number
   onChange?: (value: string) => void
+  renderValue?: (option: DropdownItem, isSelected: boolean) => ReactNode
 }
 
-export default function Dropdown({options, defaultValue, className, onChange, children, zIndex, ...props}: DropdownProps) {
+export default function Dropdown({options, defaultValue, className, onChange, children, zIndex, renderValue, ...props}: DropdownProps) {
   const currentZIndex = zIndex || nextZIndex()
   // 状态管理
   const [items, setItems] = useState<DropdownItem[][]>([])
@@ -123,15 +124,15 @@ export default function Dropdown({options, defaultValue, className, onChange, ch
             <div key={index}>
               {group.map((item, itemIndex) => (
                 <MenuItem key={itemIndex}>
-                  {({active}) => (
+                  {({focus}) => (
                     <div 
                       className={cn(
                         "flex items-center px-4 py-2 text-sm cursor-pointer max-w-full overflow-hidden whitespace-nowrap text-ellipsis",
-                        active ? "bg-gray-100 text-gray-900 dark:bg-zinc-700 dark:text-zinc-100" : "text-gray-700 dark:text-zinc-300",
+                        focus ? "bg-gray-100 text-gray-900 dark:bg-zinc-700 dark:text-zinc-100" : "text-gray-700 dark:text-zinc-300",
                       )}
                       onClick={() => handleChange(item.value)}
                     >
-                      {item.label}
+                      {renderValue ? renderValue(item, defaultValue === item.value) : item.label}
                       {(defaultValue && defaultValue === item.value) && (
                         <Check className="w-4 h-4 ml-auto" />
                       )}

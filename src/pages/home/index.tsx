@@ -15,8 +15,8 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { useAppNavigate } from '@/routes';
 
 export function Header({onCategoryChange}: {onCategoryChange: (category: string) => void}) {
+  const navigate = useAppNavigate();
   const {t} = useTranslation();
-  const {to} = useAppNavigate();
   const {categories} = useAppStore();
   const [currentLanguage, setCurrentLanguageLocal] = useState(i18n.language);
   const [currentLanguageLabel, setCurrentLanguageLabelLocal] = useState(supportedLanguagesMap[i18n.language] || i18n.language);
@@ -104,8 +104,12 @@ export function Header({onCategoryChange}: {onCategoryChange: (category: string)
           </Dropdown>
           <Dropdown
             options={supportOptions}
-            onChange={(value) => {
-              to(value);
+            renderValue={(option) => {
+              return (
+                <a href={navigate.fullPath(option.value)} target="_blank" rel="noopener noreferrer" className="flex-1 flex items-center px-4 py-2 -mx-4 -my-2">
+                  {option.label}
+                </a>
+              );
             }}
             className="py-3 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white flex items-center truncate min-w-0 max-w-full cursor-pointer"
           >
