@@ -243,7 +243,7 @@ func RunDockerCompose(appId, action string) error {
 			go func() {
 				scanner := bufio.NewScanner(stderr)
 				for scanner.Scan() {
-					AppLogError(appId, scanner.Text())
+					AppLogWarn(appId, scanner.Text())
 				}
 			}()
 
