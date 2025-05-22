@@ -144,58 +144,88 @@ export default function Development() {
 
   const renderSkeleton = () => {
     return (
-      <div className="space-y-6 text-gray-700 dark:text-gray-300 leading-relaxed prose prose-sm sm:prose dark:prose-invert max-w-none">
-        {/* 标题骨架屏 */}
-        <div className="space-y-2">
-          <Skeleton className="h-8 w-3/4 bg-gray-200 dark:bg-zinc-700 rounded" />
-          <Skeleton className="h-4 w-1/2 bg-gray-200 dark:bg-zinc-700 rounded" />
-        </div>
-
-        {/* 目录结构骨架屏 */}
-        <div className="space-y-3">
-          <Skeleton className="h-6 w-1/3 bg-gray-200 dark:bg-zinc-700 rounded" />
-          <div className="space-y-2 pl-4">
-            <Skeleton className="h-4 w-full bg-gray-200 dark:bg-zinc-700 rounded" />
-            <Skeleton className="h-4 w-[90%] bg-gray-200 dark:bg-zinc-700 rounded" />
-            <Skeleton className="h-4 w-[85%] bg-gray-200 dark:bg-zinc-700 rounded" />
-            <Skeleton className="h-4 w-[95%] bg-gray-200 dark:bg-zinc-700 rounded" />
+      <div className="flex w-full gap-8">
+        {/* 目录骨架屏 */}
+        <div className="hidden lg:block w-64 shrink-0">
+          <div className="sticky top-24">
+            <Skeleton className="h-6 w-16 mb-4 bg-gray-200 dark:bg-zinc-700 rounded" />
+            <div className="space-y-1.5 pl-1">
+              {[
+                { width: '80%', level: 1 },
+                { width: '50%', level: 2 },
+                { width: '30%', level: 2 },
+                { width: '75%', level: 1 },
+                { width: '50%', level: 2 },
+                { width: '65%', level: 2 },
+                { width: '60%', level: 2 },
+              ].map((item, index) => (
+                <Skeleton
+                  key={index}
+                  className="h-4 bg-gray-200 dark:bg-zinc-700 rounded"
+                  style={{
+                    width: item.width,
+                    marginLeft: `${(item.level - 1) * 1.25}rem`,
+                  }}
+                />
+              ))}
+            </div>
           </div>
         </div>
 
-        {/* 配置文件说明骨架屏 */}
-        <div className="space-y-3">
-          <Skeleton className="h-6 w-1/4 bg-gray-200 dark:bg-zinc-700 rounded" />
+        {/* 内容骨架屏 */}
+        <div className="flex-1 w-0 space-y-6 text-gray-700 dark:text-gray-300 leading-relaxed prose prose-sm sm:prose dark:prose-invert max-w-none">
+          {/* 标题骨架屏 */}
           <div className="space-y-2">
-            <Skeleton className="h-4 w-full bg-gray-200 dark:bg-zinc-700 rounded" />
-            <Skeleton className="h-4 w-[95%] bg-gray-200 dark:bg-zinc-700 rounded" />
-            <Skeleton className="h-4 w-[90%] bg-gray-200 dark:bg-zinc-700 rounded" />
+            <Skeleton className="h-8 w-3/4 bg-gray-200 dark:bg-zinc-700 rounded" />
+            <Skeleton className="h-4 w-1/2 bg-gray-200 dark:bg-zinc-700 rounded" />
           </div>
-          {/* 代码块骨架屏 */}
-          <div className="bg-gray-100 dark:bg-zinc-800 rounded-lg p-4 space-y-2">
-            <Skeleton className="h-4 w-3/4 bg-gray-200 dark:bg-zinc-700 rounded" />
-            <Skeleton className="h-4 w-2/3 bg-gray-200 dark:bg-zinc-700 rounded" />
-            <Skeleton className="h-4 w-4/5 bg-gray-200 dark:bg-zinc-700 rounded" />
-          </div>
-        </div>
 
-        {/* 开发建议骨架屏 */}
-        <div className="space-y-3">
-          <Skeleton className="h-6 w-1/3 bg-gray-200 dark:bg-zinc-700 rounded" />
-          <div className="space-y-2">
-            <Skeleton className="h-4 w-full bg-gray-200 dark:bg-zinc-700 rounded" />
-            <Skeleton className="h-4 w-[95%] bg-gray-200 dark:bg-zinc-700 rounded" />
-            <Skeleton className="h-4 w-[90%] bg-gray-200 dark:bg-zinc-700 rounded" />
-            <Skeleton className="h-4 w-[85%] bg-gray-200 dark:bg-zinc-700 rounded" />
+          {/* 目录结构骨架屏 */}
+          <div className="space-y-3">
+            <Skeleton className="h-6 w-1/3 bg-gray-200 dark:bg-zinc-700 rounded" />
+            <div className="space-y-2 pl-4">
+              <Skeleton className="h-4 w-full bg-gray-200 dark:bg-zinc-700 rounded" />
+              <Skeleton className="h-4 w-[90%] bg-gray-200 dark:bg-zinc-700 rounded" />
+              <Skeleton className="h-4 w-[85%] bg-gray-200 dark:bg-zinc-700 rounded" />
+              <Skeleton className="h-4 w-[95%] bg-gray-200 dark:bg-zinc-700 rounded" />
+            </div>
           </div>
-        </div>
 
-        {/* 底部链接骨架屏 */}
-        <div className="space-y-3">
-          <Skeleton className="h-6 w-1/4 bg-gray-200 dark:bg-zinc-700 rounded" />
-          <div className="flex gap-4">
-            <Skeleton className="h-8 w-32 bg-gray-200 dark:bg-zinc-700 rounded" />
-            <Skeleton className="h-8 w-32 bg-gray-200 dark:bg-zinc-700 rounded" />
-            <Skeleton className="h-8 w-32 bg-gray-200 dark:bg-zinc-700 rounded" />
+          {/* 配置文件说明骨架屏 */}
+          <div className="space-y-3">
+            <Skeleton className="h-6 w-1/4 bg-gray-200 dark:bg-zinc-700 rounded" />
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-full bg-gray-200 dark:bg-zinc-700 rounded" />
+              <Skeleton className="h-4 w-[95%] bg-gray-200 dark:bg-zinc-700 rounded" />
+              <Skeleton className="h-4 w-[90%] bg-gray-200 dark:bg-zinc-700 rounded" />
+            </div>
+            {/* 代码块骨架屏 */}
+            <div className="bg-gray-100 dark:bg-zinc-800 rounded-lg p-4 space-y-2">
+              <Skeleton className="h-4 w-3/4 bg-gray-200 dark:bg-zinc-700 rounded" />
+              <Skeleton className="h-4 w-2/3 bg-gray-200 dark:bg-zinc-700 rounded" />
+              <Skeleton className="h-4 w-4/5 bg-gray-200 dark:bg-zinc-700 rounded" />
+            </div>
+          </div>
+
+          {/* 开发建议骨架屏 */}
+          <div className="space-y-3">
+            <Skeleton className="h-6 w-1/3 bg-gray-200 dark:bg-zinc-700 rounded" />
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-full bg-gray-200 dark:bg-zinc-700 rounded" />
+              <Skeleton className="h-4 w-[95%] bg-gray-200 dark:bg-zinc-700 rounded" />
+              <Skeleton className="h-4 w-[90%] bg-gray-200 dark:bg-zinc-700 rounded" />
+              <Skeleton className="h-4 w-[85%] bg-gray-200 dark:bg-zinc-700 rounded" />
+            </div>
+          </div>
+
+          {/* 底部链接骨架屏 */}
+          <div className="space-y-3">
+            <Skeleton className="h-6 w-1/4 bg-gray-200 dark:bg-zinc-700 rounded" />
+            <div className="flex gap-4">
+              <Skeleton className="h-8 w-32 bg-gray-200 dark:bg-zinc-700 rounded" />
+              <Skeleton className="h-8 w-32 bg-gray-200 dark:bg-zinc-700 rounded" />
+              <Skeleton className="h-8 w-32 bg-gray-200 dark:bg-zinc-700 rounded" />
+            </div>
           </div>
         </div>
       </div>
