@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState, useEffect, useRef } from 'react';
 import ReactMarkdown from "react-markdown";
 import { PrismAsyncLight as SyntaxHighlighter } from "react-syntax-highlighter";
@@ -29,16 +30,15 @@ export default function Development() {
     }`;
   };
 
-  const getHeadingText = (children: any): string => {
+  const getHeadingText = (children: React.ReactNode | string): string => {
     if (typeof children === 'string') return children;
     if (Array.isArray(children)) {
-      return children.map(child => {
-        if (typeof child === 'string') return child;
-        if (child?.props?.children) return getHeadingText(child.props.children);
-        return '';
-      }).join('');
+      return children.map(child => getHeadingText(child)).join('');
     }
-    if (children?.props?.children) return getHeadingText(children.props.children);
+    if (React.isValidElement(children)) {
+      const props = children.props as { children?: React.ReactNode };
+      return getHeadingText(props.children);
+    }
     return '';
   };
 
@@ -99,7 +99,6 @@ export default function Development() {
       setLoading(false);
     });
   };
-  
 
   useEffect(() => {
     if (toc.length === 0) return;
@@ -237,12 +236,12 @@ export default function Development() {
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
                 components={{
-                  h1: ({node, ...props}) => <h1 id={generateHeadingId(getHeadingText(props.children))} {...props} />,
-                  h2: ({node, ...props}) => <h2 id={generateHeadingId(getHeadingText(props.children))} {...props} />,
-                  h3: ({node, ...props}) => <h3 id={generateHeadingId(getHeadingText(props.children))} {...props} />,
-                  h4: ({node, ...props}) => <h4 id={generateHeadingId(getHeadingText(props.children))} {...props} />,
-                  h5: ({node, ...props}) => <h5 id={generateHeadingId(getHeadingText(props.children))} {...props} />,
-                  h6: ({node, ...props}) => <h6 id={generateHeadingId(getHeadingText(props.children))} {...props} />,
+                  h1: ({...props}) => <h1 id={generateHeadingId(getHeadingText(props.children))} {...props} />,
+                  h2: ({...props}) => <h2 id={generateHeadingId(getHeadingText(props.children))} {...props} />,
+                  h3: ({...props}) => <h3 id={generateHeadingId(getHeadingText(props.children))} {...props} />,
+                  h4: ({...props}) => <h4 id={generateHeadingId(getHeadingText(props.children))} {...props} />,
+                  h5: ({...props}) => <h5 id={generateHeadingId(getHeadingText(props.children))} {...props} />,
+                  h6: ({...props}) => <h6 id={generateHeadingId(getHeadingText(props.children))} {...props} />,
                   code(props) {
                     const {children, className, ...rest} = props;
                     const match = /language-(\w+)/.exec(className || '');
