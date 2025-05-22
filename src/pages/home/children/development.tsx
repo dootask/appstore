@@ -92,12 +92,6 @@ export default function Development() {
     AppApi.getAppReadme('_').then(({data}) => {
       if (data) {
         setContent(data.content);
-        setTimeout(() => {
-          const hash = decodeURIComponent(window.location.hash.slice(1));
-          if (hash) {
-            scrollToElement(document.getElementById(hash));
-          }
-        }, 0);
       }
     }).catch((err) => {
       console.error('Failed to load development guide:', err);
@@ -105,6 +99,21 @@ export default function Development() {
       setLoading(false);
     });
   };
+  
+
+  useEffect(() => {
+    if (toc.length === 0) return;
+    const hash = decodeURIComponent(window.location.hash.slice(1));
+    if (hash === 'publish') {
+      const h2Elements = contentRef.current?.querySelectorAll('h2');
+      const targetElement = h2Elements?.[2];
+      if (targetElement) {
+        scrollToElement(targetElement as HTMLElement);
+      }
+    } else if (hash) {
+      scrollToElement(contentRef.current?.querySelector(`#${hash}`) as HTMLElement);
+    }
+  }, [toc])
 
   useEffect(() => {
     fetchContent();
@@ -126,9 +135,12 @@ export default function Development() {
   }, [loading, content]);
 
   const handleTocClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
-    e.preventDefault();
-    window.history.replaceState(null, '', `#${id}`);
-    scrollToElement(document.getElementById(id));
+    const element = contentRef.current?.querySelector(`#${id}`) as HTMLElement;
+    if (element) {
+      e.preventDefault();
+      window.history.replaceState(null, '', `#${id}`);
+      scrollToElement(element);
+    }
   };
 
   const renderSkeleton = () => {
@@ -209,7 +221,7 @@ export default function Development() {
                       className={`block text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors overflow-hidden text-ellipsis whitespace-nowrap py-1 px-2 ${
                         item.level === 1 ? 'font-medium' : ''
                       }`}
-                      style={{ 
+                      style={{
                         paddingLeft: `${(item.level - 1) * 1.25}rem`,
                       }}
                     >

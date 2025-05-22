@@ -18,8 +18,6 @@ export const useAppNavigate = () => {
     toInternal: () => navigate(fullPath('internal')),
     // 跳转到开发页面
     toDevelopment: () => navigate(fullPath('development')),
-    // 跳转到发布页面
-    toPublish: () => navigate(fullPath('publish')),
     // 通用跳转方法
     to: (path: string) => navigate(fullPath(path)),
 
@@ -34,7 +32,6 @@ export const useAppNavigate = () => {
 const Home = lazy(() => import('@/pages/home'));
 const Internal = lazy(() => import('@/pages/internal'));
 const Development = lazy(() => import('@/pages/home/children/development'));
-const Publish = lazy(() => import('@/pages/home/children/publish'));
 const NotFound = lazy(() => import('@/pages/404'));
 
 // 路由配置
@@ -46,10 +43,6 @@ const routes: RouteObject[] = [
       {
         path: 'development',
         element: <Development />
-      },
-      {
-        path: 'publish',
-        element: <Publish />
       }
     ]
   },

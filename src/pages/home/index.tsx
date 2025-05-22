@@ -35,7 +35,7 @@ export function Header({onCategoryChange}: { onCategoryChange: (category: string
     },
     {
       label: t('home.support.publish'),
-      value: 'publish'
+      value: 'development#publish'
     },
   ];
 
