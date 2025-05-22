@@ -13,9 +13,11 @@ import type { App } from '@/types/api';
 import AppDetail from './detail';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useAppNavigate } from '@/routes';
+import { Outlet, useOutlet } from 'react-router-dom';
 
-export function Header({onCategoryChange}: {onCategoryChange: (category: string) => void}) {
+export function Header({onCategoryChange}: { onCategoryChange: (category: string) => void }) {
   const navigate = useAppNavigate();
+
   const {t} = useTranslation();
   const {categories} = useAppStore();
   const [currentLanguage, setCurrentLanguageLocal] = useState(i18n.language);
@@ -85,11 +87,16 @@ export function Header({onCategoryChange}: {onCategoryChange: (category: string)
   return (
     <header className="px-8 md:px-16 h-17 flex items-center">
       <div className="container mx-auto flex items-center">
-        <a href="https://www.dootask.com" target="_blank" rel="noopener noreferrer" className="flex items-center space-x-2 flex-1 justify-start">
+        <button className="flex items-center space-x-2 flex-1 justify-start" onClick={navigate.toHome}>
           <img src={LogoIcon} alt="Logo" className="w-7 h-7" />
           <span className="text-lg font-semibold text-gray-500 dark:text-gray-400">{t('home.header.title')}</span>
-        </a>
+        </button>
         <nav className="hidden md:flex items-center space-x-6 flex-1 justify-center min-w-0">
+          {useOutlet() && (
+            <button className="py-3 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white flex items-center truncate min-w-0 max-w-full cursor-pointer" onClick={navigate.toHome}>
+              <span className='whitespace-nowrap overflow-hidden text-ellipsis'>{t('home.header.home')}</span>
+            </button>
+          )}
           <Dropdown
             options={
               categories.slice(0, 10).map(cat => ({label: cat === 'all' ? t('app.all') : cat, value: cat}))
@@ -104,12 +111,8 @@ export function Header({onCategoryChange}: {onCategoryChange: (category: string)
           </Dropdown>
           <Dropdown
             options={supportOptions}
-            renderValue={(option) => {
-              return (
-                <a href={navigate.fullPath(option.value)} target="_blank" rel="noopener noreferrer" className="flex-1 flex items-center px-4 py-2 -mx-4 -my-2">
-                  {option.label}
-                </a>
-              );
+            onChange={(value) => {
+              navigate.to(value);
             }}
             className="py-3 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white flex items-center truncate min-w-0 max-w-full cursor-pointer"
           >
@@ -238,139 +241,148 @@ const Home: React.FC = () => {
 
   return (
     <ScrollArea className="bg-white dark:bg-black text-gray-900 dark:text-white h-screen">
-      {/* Header */}
+      {/* 头部内容 */}
       <Header onCategoryChange={(category) => {
         handleCategoryChange(category)
         marketplaceRef.current?.scrollIntoView({behavior: 'smooth', block: 'start'});
-      }}/>
+      }} />
 
-      {/* Hero Section */}
-      <section className="py-16 md:py-24 px-8 text-center">
-        <div
-          className="inline-flex items-center bg-gray-200 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/70 rounded-full py-2 px-4 mb-6 text-sm text-gray-700 dark:text-gray-300 cursor-pointer"
-          onClick={() => {
-            Toast({
-              type: 'info',
-              direction: 'middle',
-              content: t('home.hero.seriesBAnnouncement'),
-            })
-          }}
-        >
-          <Zap className="w-5 h-5 text-yellow-500 dark:text-yellow-400 mr-2" />
-          {t('home.hero.seriesBAnnouncement')}
-          <ArrowRight className="w-4 h-4 ml-2 text-gray-500 dark:text-gray-400" />
-        </div>
-        <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight text-gray-900 dark:text-white">
-          {t('home.hero.titlePart1')} <Sparkles className="w-10 h-10 md:w-14 md:h-14 inline-block text-green-500 dark:text-green-400 mx-1" /> {t('home.hero.titlePart2')}<br />
-          {t('home.hero.titlePart3')}
-        </h1>
-        <div className="max-w-xl mx-auto mb-12">
-          <div className="relative">
-            <input
-              type="text"
-              placeholder={t('home.hero.searchPlaceholder')}
-              value={searchKeyword}
-              onChange={(e) => handleSearch(e.target.value)}
-              className="w-full py-4 px-6 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-white"
-            />
-            <div className="absolute right-3 top-1/2 transform -translate-y-1/2 bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 text-xs rounded px-2.5 h-7 font-mono flex items-center gap-1.5">
-              <span className="text-base">⌘</span>
-              <span>F</span>
+      {/* 主要内容 */}
+      {useOutlet() ? (
+        // 如果有子路由，则渲染子路由
+        <Outlet />
+      ) : (
+        // 否则渲染主页内容
+        <>
+          {/* Hero Section */}
+          <section className="py-16 md:py-24 px-8 text-center">
+            <div
+              className="inline-flex items-center bg-gray-200 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/70 rounded-full py-2 px-4 mb-6 text-sm text-gray-700 dark:text-gray-300 cursor-pointer"
+              onClick={() => {
+                Toast({
+                  type: 'info',
+                  direction: 'middle',
+                  content: t('home.hero.seriesBAnnouncement'),
+                })
+              }}
+            >
+              <Zap className="w-5 h-5 text-yellow-500 dark:text-yellow-400 mr-2" />
+              {t('home.hero.seriesBAnnouncement')}
+              <ArrowRight className="w-4 h-4 ml-2 text-gray-500 dark:text-gray-400" />
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Explore Marketplace Section */}
-      <section ref={marketplaceRef} className="py-12 px-8 md:px-16 bg-white dark:bg-black">
-        <div className="container mx-auto">
-          <div className="flex justify-between items-center mb-8">
-            <h2 className="text-3xl font-semibold text-gray-900 dark:text-white">{t('home.marketplace.title')}</h2>
-            <div className="flex items-center space-x-3">
-              <button
-                onClick={() => setFilterType('featured')}
-                className={`py-2 px-4 rounded-lg text-sm border transition-colors duration-150 ${
-                  filterType === 'featured'
-                    ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 font-semibold'
-                    : 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-700'
-                }`}
-              >
-                {t('home.marketplace.featuredButton')}
-              </button>
-              <button
-                onClick={() => setFilterType('popular')}
-                className={`py-2 px-4 rounded-lg text-sm border transition-colors duration-150 ${
-                  filterType === 'popular'
-                    ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 font-semibold'
-                    : 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-700'
-                }`}
-              >
-                {t('home.marketplace.popularButton')}
-              </button>
-              <Dropdown
-                options={
-                  categories.slice(0, 10).map(cat => ({label: cat === 'all' ? t('app.all') : cat, value: cat}))
-                }
-                onChange={(value) => handleCategoryChange(value)}
-                className={`p-2 rounded-lg border transition-colors duration-150 ${
-                  filterType === 'category' && selectedCategory !== 'all'
-                    ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600'
-                    : 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-700'
-                }`}
-              >
-                <Filter className="w-5 h-5" />
-              </Dropdown>
-            </div>
-          </div>
-
-          {/* App Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredApps.map((app, index) => {
-              const colorConfigs = [
-                {
-                  bgColorClass: "bg-green-100 dark:bg-green-600/20",
-                  iconColorClass: "text-green-600 dark:text-green-400",
-                  buttonBgClass: "bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700",
-                  textColorClass: "text-green-600 dark:text-green-400 font-bold"
-                },
-                {
-                  bgColorClass: "bg-yellow-100 dark:bg-yellow-500/20",
-                  iconColorClass: "text-yellow-600 dark:text-yellow-400",
-                  buttonBgClass: "bg-yellow-500 hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700",
-                  textColorClass: "text-yellow-600 dark:text-yellow-400 font-bold"
-                },
-                {
-                  bgColorClass: "bg-blue-100 dark:bg-blue-600/20",
-                  iconColorClass: "text-blue-600 dark:text-blue-400",
-                  buttonBgClass: "bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700",
-                  textColorClass: "text-blue-600 dark:text-blue-400 font-bold"
-                }
-              ]
-
-              const colorConfig = colorConfigs[index % colorConfigs.length]
-
-              return (
-                <HomeCard
-                  key={app.id}
-                  bgColorClass={colorConfig.bgColorClass}
-                  iconColorClass={colorConfig.iconColorClass}
-                  buttonBgClass={colorConfig.buttonBgClass}
-                  textColorClass={colorConfig.textColorClass}
-                  cardBgClass="bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-shadow duration-300"
-                  app={app}
-                  onSelect={() => {
-                    setSelectedApp(app);
-                    setShowAppDetail(true);
-                  }}
-                  onDownload={() => {
-                    showAppDownloadUrl(app);
-                  }}
+            <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight text-gray-900 dark:text-white">
+              {t('home.hero.titlePart1')} <Sparkles className="w-10 h-10 md:w-14 md:h-14 inline-block text-green-500 dark:text-green-400 mx-1" /> {t('home.hero.titlePart2')}<br />
+              {t('home.hero.titlePart3')}
+            </h1>
+            <div className="max-w-xl mx-auto mb-12">
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder={t('home.hero.searchPlaceholder')}
+                  value={searchKeyword}
+                  onChange={(e) => handleSearch(e.target.value)}
+                  className="w-full py-4 px-6 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-white"
                 />
-              )
-            })}
-          </div>
-        </div>
-      </section>
+                <div className="absolute right-3 top-1/2 transform -translate-y-1/2 bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 text-xs rounded px-2.5 h-7 font-mono flex items-center gap-1.5">
+                  <span className="text-base">⌘</span>
+                  <span>F</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Explore Marketplace Section */}
+          <section ref={marketplaceRef} className="py-12 px-8 md:px-16 bg-white dark:bg-black">
+            <div className="container mx-auto">
+              <div className="flex justify-between items-center mb-8">
+                <h2 className="text-3xl font-semibold text-gray-900 dark:text-white">{t('home.marketplace.title')}</h2>
+                <div className="flex items-center space-x-3">
+                  <button
+                    onClick={() => setFilterType('featured')}
+                    className={`py-2 px-4 rounded-lg text-sm border transition-colors duration-150 ${
+                      filterType === 'featured'
+                        ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 font-semibold'
+                        : 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-700'
+                    }`}
+                  >
+                    {t('home.marketplace.featuredButton')}
+                  </button>
+                  <button
+                    onClick={() => setFilterType('popular')}
+                    className={`py-2 px-4 rounded-lg text-sm border transition-colors duration-150 ${
+                      filterType === 'popular'
+                        ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 font-semibold'
+                        : 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-700'
+                    }`}
+                  >
+                    {t('home.marketplace.popularButton')}
+                  </button>
+                  <Dropdown
+                    options={
+                      categories.slice(0, 10).map(cat => ({label: cat === 'all' ? t('app.all') : cat, value: cat}))
+                    }
+                    onChange={(value) => handleCategoryChange(value)}
+                    className={`p-2 rounded-lg border transition-colors duration-150 ${
+                      filterType === 'category' && selectedCategory !== 'all'
+                        ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600'
+                        : 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-700'
+                    }`}
+                  >
+                    <Filter className="w-5 h-5" />
+                  </Dropdown>
+                </div>
+              </div>
+
+              {/* App Cards Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {filteredApps.map((app, index) => {
+                  const colorConfigs = [
+                    {
+                      bgColorClass: "bg-green-100 dark:bg-green-600/20",
+                      iconColorClass: "text-green-600 dark:text-green-400",
+                      buttonBgClass: "bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700",
+                      textColorClass: "text-green-600 dark:text-green-400 font-bold"
+                    },
+                    {
+                      bgColorClass: "bg-yellow-100 dark:bg-yellow-500/20",
+                      iconColorClass: "text-yellow-600 dark:text-yellow-400",
+                      buttonBgClass: "bg-yellow-500 hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700",
+                      textColorClass: "text-yellow-600 dark:text-yellow-400 font-bold"
+                    },
+                    {
+                      bgColorClass: "bg-blue-100 dark:bg-blue-600/20",
+                      iconColorClass: "text-blue-600 dark:text-blue-400",
+                      buttonBgClass: "bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700",
+                      textColorClass: "text-blue-600 dark:text-blue-400 font-bold"
+                    }
+                  ]
+
+                  const colorConfig = colorConfigs[index % colorConfigs.length]
+
+                  return (
+                    <HomeCard
+                      key={app.id}
+                      bgColorClass={colorConfig.bgColorClass}
+                      iconColorClass={colorConfig.iconColorClass}
+                      buttonBgClass={colorConfig.buttonBgClass}
+                      textColorClass={colorConfig.textColorClass}
+                      cardBgClass="bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-shadow duration-300"
+                      app={app}
+                      onSelect={() => {
+                        setSelectedApp(app);
+                        setShowAppDetail(true);
+                      }}
+                      onDownload={() => {
+                        showAppDownloadUrl(app);
+                      }}
+                    />
+                  )
+                })}
+              </div>
+            </div>
+          </section>
+        </>
+      )}
 
       {/* 底部 */}
       <footer className="py-10 mt-16 border-t border-gray-200/80 dark:border-gray-800/80">

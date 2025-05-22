@@ -10,22 +10,28 @@ const Loading = () => (
   </div>
 );
 
-function App() {
-  const routes = getRoutes();
-  
+// 递归渲染路由
+const renderRoutes = (routes: any[]) => {
+  return routes.map(({ path, element, children }) => (
+    <Route
+      key={path}
+      path={path}
+      element={
+        <Suspense fallback={<Loading />}>
+          {element}
+        </Suspense>
+      }
+    >
+      {children && renderRoutes(children)}
+    </Route>
+  ));
+};
+
+// 主组件
+const App = () => {
   return (
     <Routes>
-      {routes.map(({ path, element }) => (
-        <Route
-          key={path}
-          path={path}
-          element={
-            <Suspense fallback={<Loading />}>
-              {element}
-            </Suspense>
-          }
-        />
-      ))}
+      {renderRoutes(getRoutes())}
     </Routes>
   );
 }

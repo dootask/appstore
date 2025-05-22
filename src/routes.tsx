@@ -1,6 +1,6 @@
 import { lazy } from 'react';
 import type { RouteObject } from 'react-router-dom';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 // baseUrl 配置
 const BASE_URL = import.meta.env.BASE_URL || '/';
@@ -33,31 +33,29 @@ export const useAppNavigate = () => {
 // 异步加载所有页面组件
 const Home = lazy(() => import('@/pages/home'));
 const Internal = lazy(() => import('@/pages/internal'));
-const Development = lazy(() => import('@/pages/development'));
-const Publish = lazy(() => import('@/pages/publish'));
-
-// 404 重定向组件
-const NotFound = () => {
-  return <Navigate to={BASE_URL} replace />;
-};
+const Development = lazy(() => import('@/pages/home/children/development'));
+const Publish = lazy(() => import('@/pages/home/children/publish'));
+const NotFound = lazy(() => import('@/pages/404'));
 
 // 路由配置
 const routes: RouteObject[] = [
   {
     path: '',
-    element: <Home />
+    element: <Home />,
+    children: [
+      {
+        path: 'development',
+        element: <Development />
+      },
+      {
+        path: 'publish',
+        element: <Publish />
+      }
+    ]
   },
   {
     path: 'internal',
     element: <Internal />
-  },
-  {
-    path: 'development',
-    element: <Development />
-  },
-  {
-    path: 'publish',
-    element: <Publish />
   },
   {
     path: '*',
@@ -71,4 +69,4 @@ export const getRoutes = () => {
     ...route,
     path: `${BASE_URL}${route.path}`
   }));
-}; 
+};
