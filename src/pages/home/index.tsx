@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { ChevronDown, Globe, UserCircle, Zap, Sparkles, ArrowRight, Filter, Sun, Moon } from 'lucide-react';
+import { ChevronDown, Globe, UserCircle, Zap, Sparkles, ArrowRight, Filter, Sun, Moon, LayoutGrid } from 'lucide-react';
 import i18n from '@/i18n';
 import LogoIcon from '@/assets/logo.svg'
 import Dropdown from '@/components/custom/dropdown';
@@ -85,7 +85,7 @@ export function Header({onCategoryChange}: { onCategoryChange: (category: string
   }, [currentTheme]);
 
   return (
-    <header className="px-8 md:px-16 h-17 flex items-center">
+    <header className="px-8 md:px-16 h-17 flex items-center sticky top-0 bg-white dark:bg-black z-10">
       <div className="container mx-auto flex items-center">
         <button className="flex items-center space-x-2 flex-1 justify-start" onClick={navigate.toHome}>
           <img src={LogoIcon} alt="Logo" className="w-7 h-7" />
@@ -95,6 +95,7 @@ export function Header({onCategoryChange}: { onCategoryChange: (category: string
           {useOutlet() && (
             <button className="py-3 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white flex items-center truncate min-w-0 max-w-full cursor-pointer" onClick={navigate.toHome}>
               <span className='whitespace-nowrap overflow-hidden text-ellipsis'>{t('home.header.home')}</span>
+              <LayoutGrid className="w-4 h-4 mx-1 scale-90 shrink-0" />
             </button>
           )}
           <Dropdown
