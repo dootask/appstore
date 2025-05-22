@@ -157,6 +157,7 @@ func runServer(*cobra.Command, []string) {
 			internal.GET("/uninstall/:appId", routeInternalUninstall, adminMiddleware)   // 卸载应用
 			internal.GET("/apps/update", routeInternalUpdateList, adminMiddleware)       // 更新应用列表
 			internal.POST("/apps/download", routeInternalDownloadByURL, adminMiddleware) // 通过URL下载应用
+			internal.POST("/apps/upload", routeInternalUpload, adminMiddleware)          // 上传本地应用
 
 			// 需要会员
 			internal.GET("/installed", routeInternalInstalled, authMiddleware) // 获取已安装应用列表
@@ -775,73 +776,91 @@ func routeInternalDownloadByURL(c *gin.Context) {
 			return
 		}
 
-		// 检测文件类型
-		fileType, err := utils.DetectFileType(downloadFile)
+		// 检测文件类型并解压
+		output, err := checkFileTypeAndUnzip(downloadFile, tempDir)
 		if err != nil {
-			response.ErrorWithDetail(c, global.CodeError, i18n.T("DetectFileTypeFailed"), err)
+			response.ErrorWithDetail(c, global.CodeError, output, err)
 			return
 		}
-
-		// 根据文件类型解压
-		switch fileType {
-		case utils.FileTypeZip:
-			if err := utils.Unzip(downloadFile, tempDir); err != nil {
-				response.ErrorWithDetail(c, global.CodeError, i18n.T("ExtractFileFailed"), err)
-				return
-			}
-		case utils.FileTypeTarGz:
-			if err := utils.UnTarGz(downloadFile, tempDir); err != nil {
-				response.ErrorWithDetail(c, global.CodeError, i18n.T("ExtractFileFailed"), err)
-				return
-			}
-		default:
-			response.ErrorWithDetail(c, global.CodeError, i18n.T("UnsupportedFileType"), nil)
-			return
-		}
-		os.Remove(downloadFile)
 	}
 
-	// 检查config.yml文件
-	configFile := filepath.Join(tempDir, "config.yml")
-	if !utils.IsFileExists(configFile) {
-		response.ErrorWithDetail(c, global.CodeError, i18n.T("ConfigYmlNotFound"), nil)
-		return
-	}
-
-	// 解析配置文件
-	configData, err := os.ReadFile(configFile)
+	// 检查应用是否符合要求
+	output, err := checkAppCompliance(appId, tempDir)
 	if err != nil {
-		response.ErrorWithDetail(c, global.CodeError, i18n.T("ReadConfigFileFailed"), err)
+		response.ErrorWithDetail(c, global.CodeError, output, err)
 		return
 	}
 
-	var config map[string]interface{}
-	if err := yaml.Unmarshal(configData, &config); err != nil {
-		response.ErrorWithDetail(c, global.CodeError, i18n.T("YamlParseFailed", err.Error()), nil)
+	// 输出结果
+	response.SuccessWithData(c, gin.H{
+		"id": appId,
+	})
+}
+
+// @Summary 上传本地应用
+// @Description 上传本地应用
+// @Tags 内部接口
+// @Accept multipart/form-data
+// @Produce json
+// @Param file formData file true "应用文件"
+// @Param appId formData string false "应用ID，留空则从文件名自动提取"
+// @Success 200 {object} response.Response{data=map[string]string}
+// @Router /internal/apps/upload [post]
+func routeInternalUpload(c *gin.Context) {
+	// 获取上传的文件
+	file, err := c.FormFile("file")
+	if err != nil {
+		response.ErrorWithDetail(c, global.CodeError, i18n.T("UploadFileFailed"), err)
 		return
 	}
 
-	// 检查name字段
-	name, ok := config["name"].(string)
-	if !ok || name == "" {
-		response.ErrorWithDetail(c, global.CodeError, i18n.T("InvalidConfig"), nil)
+	// 从文件名提取appId
+	appId := c.PostForm("appId")
+	if appId == "" {
+		appId = extractAppId(file.Filename)
+	}
+	if appId == "" {
+		response.ErrorWithDetail(c, global.CodeError, i18n.T("InvalidAppId"), nil)
 		return
 	}
 
-	// 使用目录名作为应用名称
-	targetDir := filepath.Join(global.WorkDir, "apps", appId)
+	// 临时目录
+	tempDir := filepath.Join(global.WorkDir, "temp", utils.MD5(file.Filename))
 
-	// 检查目标是否存在
-	if utils.IsDirExists(targetDir) {
-		os.RemoveAll(targetDir)
+	// 清空临时目录
+	if utils.IsDirExists(tempDir) {
+		if err := os.RemoveAll(tempDir); err != nil {
+			response.ErrorWithDetail(c, global.CodeError, i18n.T("CleanTempDirFailed"), err)
+			return
+		}
 	}
-
-	// 移动文件到目标目录
-	if err := os.Rename(tempDir, targetDir); err != nil {
-		response.ErrorWithDetail(c, global.CodeError, i18n.T("MoveFileFailed"), err)
+	if err := os.MkdirAll(tempDir, 0755); err != nil {
+		response.ErrorWithDetail(c, global.CodeError, i18n.T("CreateTempDirFailed"), err)
 		return
 	}
 
+	// 保存文件
+	filePath := filepath.Join(tempDir, file.Filename)
+	if err := c.SaveUploadedFile(file, filePath); err != nil {
+		response.ErrorWithDetail(c, global.CodeError, i18n.T("SaveFileFailed"), err)
+		return
+	}
+
+	// 检查文件类型并解压
+	output, err := checkFileTypeAndUnzip(filePath, tempDir)
+	if err != nil {
+		response.ErrorWithDetail(c, global.CodeError, output, err)
+		return
+	}
+
+	// 检查应用是否符合要求
+	output, err = checkAppCompliance(appId, tempDir)
+	if err != nil {
+		response.ErrorWithDetail(c, global.CodeError, output, err)
+		return
+	}
+
+	// 输出结果
 	response.SuccessWithData(c, gin.H{
 		"id": appId,
 	})
@@ -980,6 +999,10 @@ func routeAppAsset(c *gin.Context) {
 	c.File(filePath)
 }
 
+// ****************************************************************************
+// ****************************************************************************
+// ****************************************************************************
+
 // extractAppId 从 URL 或文件名提取 appId
 func extractAppId(input string) string {
 	// 如果是 URL
@@ -1029,4 +1052,74 @@ func extractAppId(input string) string {
 	}
 
 	return utils.Camel2Snake(fileName)
+}
+
+// 检查文件类型并解压
+func checkFileTypeAndUnzip(filePath, tempDir string) (string, error) {
+	// 检测文件类型
+	fileType, err := utils.DetectFileType(filePath)
+	if err != nil {
+		return i18n.T("DetectFileTypeFailed"), err
+	}
+
+	// 根据文件类型解压
+	switch fileType {
+	case utils.FileTypeZip:
+		if err := utils.Unzip(filePath, tempDir); err != nil {
+			return i18n.T("ExtractFileFailed"), err
+		}
+	case utils.FileTypeTarGz:
+		if err := utils.UnTarGz(filePath, tempDir); err != nil {
+			return i18n.T("ExtractFileFailed"), err
+		}
+	default:
+		return i18n.T("UnsupportedFileType"), nil
+	}
+
+	// 删除临时文件
+	os.Remove(filePath)
+
+	// 返回解压后的文件路径
+	return "", nil
+}
+
+// 检查应用是否符合要求
+func checkAppCompliance(appId, tempDir string) (string, error) {
+	// 检查config.yml文件
+	configFile := filepath.Join(tempDir, "config.yml")
+	if !utils.IsFileExists(configFile) {
+		return i18n.T("ConfigYmlNotFound"), nil
+	}
+
+	// 解析配置文件
+	configData, err := os.ReadFile(configFile)
+	if err != nil {
+		return i18n.T("ReadConfigFileFailed"), err
+	}
+
+	var config map[string]interface{}
+	if err := yaml.Unmarshal(configData, &config); err != nil {
+		return i18n.T("YamlParseFailed", err.Error()), nil
+	}
+
+	// 检查name字段
+	name, ok := config["name"].(string)
+	if !ok || name == "" {
+		return i18n.T("InvalidConfig"), nil
+	}
+
+	// 使用目录名作为应用名称
+	targetDir := filepath.Join(global.WorkDir, "apps", appId)
+
+	// 检查目标是否存在
+	if utils.IsDirExists(targetDir) {
+		os.RemoveAll(targetDir)
+	}
+
+	// 移动文件到目标目录
+	if err := os.Rename(tempDir, targetDir); err != nil {
+		return i18n.T("MoveFileFailed"), err
+	}
+
+	return "", nil
 }
