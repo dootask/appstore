@@ -230,20 +230,22 @@ func NewApp(appId string) (*App, error) {
 
 	// 检查配置文件是否存在
 	if _, err := os.Stat(configFile); err != nil {
-		if !os.IsNotExist(err) {
+		if os.IsNotExist(err) {
+			return nil, errors.New(i18n.T("CheckConfigNotFound"))
+		} else {
 			return nil, errors.New(i18n.T("CheckConfigFailed", err))
 		}
-	} else {
-		// 读取配置文件
-		data, err := os.ReadFile(configFile)
-		if err != nil {
-			return nil, errors.New(i18n.T("ReadConfigError", err))
-		}
+	}
 
-		// 解析YAML
-		if err := yaml.Unmarshal(data, &app); err != nil {
-			return nil, errors.New(i18n.T("ParseConfigFailed", err))
-		}
+	// 读取配置文件
+	data, err := os.ReadFile(configFile)
+	if err != nil {
+		return nil, errors.New(i18n.T("ReadConfigError", err))
+	}
+
+	// 解析YAML
+	if err := yaml.Unmarshal(data, &app); err != nil {
+		return nil, errors.New(i18n.T("ParseConfigFailed", err))
 	}
 
 	// 设置应用ID
