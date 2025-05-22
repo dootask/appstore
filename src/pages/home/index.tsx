@@ -149,6 +149,8 @@ export function Header({onCategoryChange}: { onCategoryChange: (category: string
 }
 
 const Home: React.FC = () => {
+  const navigate = useAppNavigate();
+  
   const {t} = useTranslation();
   const {apps, categories, fetchApps} = useAppStore();
   const marketplaceRef = useRef<HTMLElement>(null);
@@ -157,6 +159,8 @@ const Home: React.FC = () => {
   const [searchKeyword, setSearchKeyword] = useState<string>('');
   const [selectedApp, setSelectedApp] = useState<App | null>(null);
   const [showAppDetail, setShowAppDetail] = useState<boolean>(false);
+  const [isSearchInputFocused, setIsSearchInputFocused] = useState<boolean>(false);
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   const showAppDownloadUrl = (app: App) => {
     Alert({
@@ -239,12 +243,39 @@ const Home: React.FC = () => {
     fetchApps()
   }, []);
 
+  useEffect(() => {
+    if (!searchInputRef.current) return;
+    
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (!searchInputRef.current) return;
+      if (event.key === '/') {
+        if (!isSearchInputFocused) {
+          event.preventDefault();
+          searchInputRef.current.focus();
+        }
+      } else if (event.key === 'Escape') {
+        if (isSearchInputFocused) {
+          event.preventDefault();
+          searchInputRef.current.blur();
+        }
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [searchInputRef, isSearchInputFocused]);
+
   return (
     <div className="bg-white dark:bg-black text-gray-900 dark:text-white">
       {/* 头部内容 */}
       <Header onCategoryChange={(category) => {
+        !marketplaceRef.current && navigate.toHome()
         handleCategoryChange(category)
-        marketplaceRef.current?.scrollIntoView({behavior: 'smooth', block: 'start'});
+        requestAnimationFrame(() => {
+          marketplaceRef.current?.scrollIntoView({behavior: 'smooth', block: 'start'});
+        })
       }} />
 
       {/* 主要内容 */}
@@ -277,16 +308,20 @@ const Home: React.FC = () => {
             <div className="max-w-xl mx-auto mb-12">
               <div className="relative">
                 <input
+                  ref={searchInputRef}
                   type="text"
                   placeholder={t('home.hero.searchPlaceholder')}
                   value={searchKeyword}
+                  onFocus={() => setIsSearchInputFocused(true)}
+                  onBlur={() => setIsSearchInputFocused(false)}
                   onChange={(e) => handleSearch(e.target.value)}
                   className="w-full py-4 px-6 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-white"
                 />
-                <div className="absolute right-3 top-1/2 transform -translate-y-1/2 bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 text-xs rounded px-2.5 h-7 font-mono flex items-center gap-1.5">
-                  <span className="text-base">⌘</span>
-                  <span>F</span>
-                </div>
+                {!isSearchInputFocused && (
+                  <div className="absolute right-3 top-1/2 transform -translate-y-1/2 bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 text-xs rounded px-2.5 h-7 font-mono flex items-center gap-1.5">
+                    <span>/</span>
+                  </div>
+                )}
               </div>
             </div>
           </section>
