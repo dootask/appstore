@@ -71,6 +71,7 @@
     },
     "header": {
       "category": "Categories",
+      "home": "Home",
       "support": "Support",
       "themeToggleDark": "Switch to Dark Theme",
       "themeToggleLight": "Switch to Light Theme",
@@ -148,5 +149,10 @@
     "success_description": "The app «{{app}}» has been uninstalled successfully",
     "title": "Uninstall App",
     "uninstall_starting": "Starting to uninstall app «{{app}}»..."
+  },
+  "notFound": {
+    "backHome": "Back to Home",
+    "description": "Don't worry, this is just a 404 error. Let's take you back to the home page to continue exploring.",
+    "title": "Page Not Found"
   }
 }

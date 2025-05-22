@@ -71,6 +71,7 @@
     },
     "header": {
       "category": "應用分類",
+      "home": "首頁",
       "support": "支持",
       "themeToggleDark": "切換到深色主題",
       "themeToggleLight": "切換到淺色主題",
@@ -148,5 +149,10 @@
     "success_description": "應用「{{app}}」已成功卸載",
     "title": "卸載應用",
     "uninstall_starting": "應用「{{app}}」開始卸載..."
+  },
+  "notFound": {
+    "backHome": "返回首頁",
+    "description": "別擔心，這只是一個 404 錯誤。讓我們帶你回到首頁繼續探索。",
+    "title": "頁面走丟了"
   }
 }

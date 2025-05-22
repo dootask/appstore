@@ -71,6 +71,7 @@
     },
     "header": {
       "category": "Catégories d'applications",
+      "home": "Accueil",
       "support": "Support",
       "themeToggleDark": "Passer au thème sombre",
       "themeToggleLight": "Passer au thème clair",
@@ -148,5 +149,10 @@
     "success_description": "L'application « {{app}} » a été désinstallée avec succès",
     "title": "Désinstaller l'application",
     "uninstall_starting": "Démarrage de la désinstallation de l'application « {{app}} »..."
+  },
+  "notFound": {
+    "backHome": "Retour à la page d'accueil",
+    "description": "Ne vous inquiétez pas, c'est juste une erreur 404. Retournons à la page d'accueil pour continuer à explorer.",
+    "title": "Page introuvable"
   }
 }

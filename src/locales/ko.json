@@ -71,6 +71,7 @@
     },
     "header": {
       "category": "앱 카테고리",
+      "home": "홈",
       "support": "지원",
       "themeToggleDark": "다크 테마로 전환",
       "themeToggleLight": "라이트 테마로 전환",
@@ -148,5 +149,10 @@
     "success_description": "「{{app}}」 앱이 제거되었습니다",
     "title": "앱 제거",
     "uninstall_starting": "「{{app}}」 앱 제거를 시작합니다..."
+  },
+  "notFound": {
+    "backHome": "홈으로 돌아가기",
+    "description": "걱정하지 마세요, 이것은 단순한 404 오류입니다. 처음부터 시작하세요.",
+    "title": "페이지를 잃어버렸어요"
   }
 }

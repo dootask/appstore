@@ -71,6 +71,7 @@
     },
     "header": {
       "category": "App-Kategorien",
+      "home": "Startseite",
       "support": "Support",
       "themeToggleDark": "Zu dunklem Design wechseln",
       "themeToggleLight": "Zu hellem Design wechseln",
@@ -148,5 +149,10 @@
     "success_description": "Die App «{{app}}» wurde erfolgreich deinstalliert",
     "title": "App deinstallieren",
     "uninstall_starting": "Deinstallation wird gestartet für die App «{{app}}»..."
+  },
+  "notFound": {
+    "backHome": "Zurück zur Startseite",
+    "description": "Keine Sorge, dies ist nur eine 404-Fehler. Lassen Sie uns Sie zur Startseite zurückbringen, um weiter zu erkunden.",
+    "title": "Seite nicht gefunden"
   }
 }

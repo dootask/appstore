@@ -71,6 +71,7 @@
     },
     "header": {
       "category": "アプリカテゴリー",
+      "home": "ホーム",
       "support": "サポート",
       "themeToggleDark": "ダークテーマに切り替え",
       "themeToggleLight": "ライトテーマに切り替え",
@@ -148,5 +149,10 @@
     "success_description": "「{{app}}」 アプリがアンインストールされました",
     "title": "アプリをアンインストール",
     "uninstall_starting": "「{{app}}」 アプリのアンインストールを開始しています..."
+  },
+  "notFound": {
+    "backHome": "ホームに戻る",
+    "description": "心配しないでください、これは単なる404エラーです。最初から始めましょう。",
+    "title": "ページを失ってしまいました"
   }
 }

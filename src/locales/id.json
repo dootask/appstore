@@ -71,6 +71,7 @@
     },
     "header": {
       "category": "Kategori Aplikasi",
+      "home": "Beranda",
       "support": "Dukungan",
       "themeToggleDark": "Beralih ke Tema Gelap",
       "themeToggleLight": "Beralih ke Tema Terang",
@@ -148,5 +149,10 @@
     "success_description": "Aplikasi «{{app}}» telah berhasil dihapus",
     "title": "Hapus Aplikasi",
     "uninstall_starting": "Memulai penghapusan aplikasi «{{app}}»..."
+  },
+  "notFound": {
+    "backHome": "Kembali ke halaman utama",
+    "description": "Jangan khawatir, ini hanya 404 error. Ayo kembali ke halaman utama untuk melanjutkan penjelajahan.",
+    "title": "Halaman tidak ditemukan"
   }
 }

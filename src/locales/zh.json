@@ -71,6 +71,7 @@
     },
     "header": {
       "category": "应用分类",
+      "home": "首页",
       "support": "支持",
       "themeToggleDark": "切换到深色主题",
       "themeToggleLight": "切换到浅色主题",
@@ -148,5 +149,10 @@
     "success_description": "应用「{{app}}」已卸载成功",
     "title": "卸载应用",
     "uninstall_starting": "应用「{{app}}」开始卸载..."
+  },
+  "notFound": {
+    "title": "页面走丢了",
+    "description": "别担心，这只是一个 404 错误。让我们带你回到首页继续探索。",
+    "backHome": "返回首页"
   }
 }
