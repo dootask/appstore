@@ -249,6 +249,35 @@ const Internal = () => {
     })
   }
 
+  // URL安装应用 或 上传应用
+  const downloadOrUploadApp = async (value: string, file?: File) => {
+    let promise = null
+    if (file) {
+      promise = InternalApi.uploadApp(file)
+    } else {
+      promise = InternalApi.downloadApp(value)
+    }
+    await promise.then(async ({data}) => {
+      if (data) {
+        const app = apps.find(item => item.id === data.id);
+        if (app) {
+          setSelectedApp(app);
+          setOpenInstall(true);
+        }
+      }
+    }).catch((error) => {
+      Alert({
+        type: "warning",
+        title: t('install.failure'),
+        description: t('install.failure_description', {app: value, error: error.message || t('common.unknown_error')}),
+        showCancel: false,
+      })
+      throw error;
+    }).finally(() => {
+      fetchApps();
+    })
+  }
+
   // 菜单项点击事件
   const handleMenuChange = (value: string) => {
     if (value === 'update_app_list') {
@@ -282,26 +311,21 @@ const Internal = () => {
           if (!value) {
             return;
           }
-          await InternalApi.downloadApp(value).then(async ({data}) => {
-            await fetchApps();
-            if (data) {
-              const app = apps.find(item => item.id === data.id);
-              if (app) {
-                setSelectedApp(app);
-                setOpenInstall(true);
-              }
-            }
-          }).catch((error) => {
-            Alert({
-              type: "warning",
-              title: t('install.failure'),
-              description: t('install.failure_description', {app: value, error: error.message || t('common.unknown_error')}),
-              showCancel: false,
-            })
-            throw error;
-          }).finally(() => {
-            fetchApps();
-          })
+          await downloadOrUploadApp(value)
+        }
+      })
+    } else if (value === 'install_from_local_file') {
+      // 从本地安装应用
+      Alert({
+        type: "file",
+        title: t('install.install_title'),
+        description: t('install.install_from_local_file_description'),
+        placeholder: t('install.install_from_local_file_placeholder'),
+        onConfirm: async (value, file) => {
+          if (!value || !file) {
+            return;
+          }
+          await downloadOrUploadApp(value, file)
         }
       })
     }
@@ -327,6 +351,7 @@ const Internal = () => {
             <Dropdown className="h-10" options={[
               {value: 'update_app_list', label: t('install.update_app_list')},
               {value: 'install_from_url', label: t('install.install_from_url')},
+              {value: 'install_from_local_file', label: t('install.install_from_local_file')},
             ]} onChange={handleMenuChange} />
           </div>
         </div>

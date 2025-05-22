@@ -3,6 +3,7 @@ import type {
   App,
   AppInternalInstallRequest, 
   AppInternalDownloadRequest,
+  AppInternalUploadRequest,
   AppInternalInstalledResponse
 } from '@/types/api';
 
@@ -48,6 +49,15 @@ export const InternalApi = {
   downloadApp(url: string) {
     const params: AppInternalDownloadRequest = { url };
     return post<Record<string, string>, AppInternalDownloadRequest>('/internal/apps/download', params);
+  },
+
+  /**
+   * 通过文件上传应用
+   * @param file 文件
+   */
+  uploadApp(file: File) {
+    const params: AppInternalUploadRequest = { file };
+    return post<Record<string, string>, AppInternalUploadRequest>('/internal/apps/upload', params);
   },
 
   /**

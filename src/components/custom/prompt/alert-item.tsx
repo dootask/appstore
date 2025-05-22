@@ -13,12 +13,13 @@ export default function AlertItem({type, title, description, placeholder, defaul
   const [open, setOpen] = useState(false)
   const [confirmLoading, setConfirmLoading] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
+  const fileRef = useRef<HTMLInputElement>(null)
   const divRef = useRef<HTMLDivElement>(null)
 
   const handleConfirm = () => {
     if (typeof onConfirm === 'function') {
       setConfirmLoading(true)
-      Promise.resolve(onConfirm(inputRef.current?.value ?? '')).then(() => {
+      Promise.resolve(onConfirm(inputRef.current?.value ?? '', fileRef.current?.files?.[0] ?? undefined)).then(() => {
         setOpen(false)
       }).finally(() => {
         setConfirmLoading(false)
@@ -71,7 +72,7 @@ export default function AlertItem({type, title, description, placeholder, defaul
 
       <div ref={divRef} className="fixed inset-0 z-10 w-screen overflow-y-auto">
         <div className="flex min-h-full justify-center p-4 text-center items-center sm:p-0">
-          {type === 'prompt' ? (
+          {(type === 'prompt' || type === 'file') ? (
             <DialogPanel
               transition
               className="relative transform overflow-hidden rounded-lg bg-white dark:bg-zinc-800 px-4 pt-5 pb-4 text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 w-4/5 sm:w-full sm:max-w-lg sm:p-6 data-closed:sm:translate-y-0 data-closed:sm:scale-95"
@@ -94,7 +95,7 @@ export default function AlertItem({type, title, description, placeholder, defaul
                 </div>
               )}
               <div className="mt-5 mb-0.5 sm:flex sm:items-center">
-                <div className="w-full">
+                <div className="w-full relative">
                   <input
                     ref={inputRef}
                     type="text"
@@ -102,6 +103,22 @@ export default function AlertItem({type, title, description, placeholder, defaul
                     defaultValue={defaultValue}
                     className="block w-full rounded-md bg-transparent px-3 py-1.5 text-base text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 transition-[color,box-shadow] outline-none border-input border focus:border-ring focus:ring-ring/50 focus:ring-[3px] sm:text-sm/6"
                   />
+                  {type === 'file' && (
+                    <div className="absolute inset-0 z-10"  onClick={() => {
+                      fileRef.current?.click()
+                    }}>
+                      <input
+                        ref={fileRef}
+                        type="file"
+                        className="hidden"
+                        onChange={(e) => {
+                          if (e.target.files && inputRef.current) {
+                            inputRef.current.value = e.target.files[0]?.name ?? ''
+                          }
+                        }}
+                      />
+                    </div>
+                  )}
                 </div>
                 <button
                   type="submit"

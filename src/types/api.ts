@@ -86,6 +86,11 @@ export interface AppInternalDownloadRequest {
   url: string;
 }
 
+// 内部上传应用请求
+export interface AppInternalUploadRequest {
+  file: File;
+}
+
 // 内部安装应用请求
 export interface AppInternalInstallRequest {
   appid: string;

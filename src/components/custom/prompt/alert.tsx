@@ -6,7 +6,7 @@ import { nextZIndex } from "@dootask/tools";
 import { uuidv4 } from "@/lib/utils";
 import AlertItem from "./alert-item";
 
-export type AlertType = "success" | "warning" | "error" | "info" | "prompt"
+export type AlertType = "success" | "warning" | "error" | "info" | "prompt" | "file"
 
 export interface AlertProps {
   /** 提示类型 */
@@ -33,8 +33,12 @@ export interface AlertProps {
   /** 自定义层级 */
   zIndex?: number
 
-  /** 确认回调函数 */
-  onConfirm?: (value?: string) => void | Promise<void>
+  /** 
+   * 确认回调函数
+   * @param value 输入框的值（仅 prompt、file 类型有效，file 类型时 value 为文件名）
+   * @param file 上传的文件（仅 file 类型有效）
+   */
+  onConfirm?: (value?: string, file?: File) => void | Promise<void>
   /** 取消回调函数 */
   onCancel?: () => void
 

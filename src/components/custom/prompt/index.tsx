@@ -27,6 +27,28 @@ import {eventEmit} from "@/lib/events.ts";
  *   showClose: true
  * })
  * 
+ * // 输入框
+ * Alert({
+ *   type: 'prompt',
+ *   title: '请输入',
+ *   description: '请输入内容',
+ *   placeholder: '请输入内容',
+ *   onConfirm: (value) => {
+ *     console.log(value)
+ *   }
+ * })
+ * 
+ * // 上传文件
+ * Alert({
+ *   type: 'file',
+ *   title: '请上传文件',
+ *   description: '请上传文件',
+ *   placeholder: '请上传文件',
+ *   onConfirm: (fileName, file) => {
+ *     console.log(fileName, file)
+ *   }
+ * })
+ * 
  * // 手动关闭
  * const close = Alert({
  *   type: 'info',
