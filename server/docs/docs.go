@@ -96,6 +96,59 @@ const docTemplate = `{
                 }
             }
         },
+        "/internal/apps/upload": {
+            "post": {
+                "description": "上传本地应用",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "内部接口"
+                ],
+                "summary": "上传本地应用",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "应用文件",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "应用ID，留空则从文件名自动提取",
+                        "name": "appId",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "additionalProperties": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/internal/install": {
             "post": {
                 "description": "安装或更新应用",
@@ -185,6 +238,15 @@ const docTemplate = `{
                         "name": "appId",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "maximum": 2000,
+                        "minimum": 1,
+                        "type": "integer",
+                        "default": 200,
+                        "description": "行数",
+                        "name": "n",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -521,6 +583,9 @@ const docTemplate = `{
                 "url"
             ],
             "properties": {
+                "appid": {
+                    "type": "string"
+                },
                 "url": {
                     "type": "string"
                 }

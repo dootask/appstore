@@ -8,12 +8,14 @@ import (
 	"fmt"
 	"math"
 	"math/rand"
+	"net/url"
 	"os"
 	"path/filepath"
 	"regexp"
 	"slices"
 	"sort"
 	"strings"
+	"unicode"
 
 	"gopkg.in/yaml.v3"
 )
@@ -510,4 +512,207 @@ func FindAsset(appId, assetPath string) (string, error) {
 	}
 
 	return assetFullPath, nil
+}
+
+// 生成临时应用目录
+// 1、检查appId是否被保护
+// 2、检查目标是否存在
+// 3、生成临时目录
+// 4、返回临时目录
+func GenerateTempAppDir(appId, urlOrFileName string) (string, string, error) {
+	// 检查appId是否被保护
+	if slices.Contains(ProtectedNames, appId) {
+		return "", i18n.T("ProtectedServiceName", appId), nil
+	}
+
+	// 检查目标是否存在
+	appConfig := GetAppConfig(appId)
+	if appConfig != nil {
+		errorMessages := map[string]string{
+			"installed":    i18n.T("AppAlreadyExists"),
+			"installing":   i18n.T("AppInstallingWait"),
+			"uninstalling": i18n.T("AppUninstallingWait"),
+		}
+		if msg, ok := errorMessages[appConfig.Status]; ok {
+			return "", msg, nil
+		}
+	}
+
+	// 临时目录
+	tempDir := filepath.Join(global.WorkDir, "temp", utils.MD5(urlOrFileName))
+
+	// 清空临时目录
+	if utils.IsDirExists(tempDir) {
+		if err := os.RemoveAll(tempDir); err != nil {
+			return "", i18n.T("CleanTempDirFailed"), err
+		}
+	}
+
+	// 创建临时目录
+	if err := os.MkdirAll(tempDir, 0755); err != nil {
+		return "", i18n.T("CreateTempDirFailed"), err
+	}
+
+	// 返回临时目录
+	return tempDir, "", nil
+}
+
+// ExtractAppId 从 URL 或文件名提取 appId
+// 1、如果是 URL，提取appId
+// 2、如果是文件名，提取appId
+// 3、如果提取失败，返回空字符串
+func ExtractAppId(input string) string {
+	// 如果是 URL
+	if strings.HasPrefix(input, "http://") || strings.HasPrefix(input, "https://") {
+		u, err := url.Parse(input)
+		if err != nil {
+			return ""
+		}
+
+		// 处理 GitHub 或其他 Git 仓库 URL
+		if strings.Contains(u.Host, "github.com") || strings.Contains(u.Host, "gitlab.com") || strings.Contains(u.Host, "gitee.com") {
+			pathParts := strings.Split(strings.Trim(u.Path, "/"), "/")
+			if len(pathParts) >= 2 {
+				owner := pathParts[0]
+				repo := pathParts[1]
+				// 移除 .git 后缀
+				repo = strings.TrimSuffix(repo, ".git")
+				// 移除可能的 tree/branch 部分
+				if idx := strings.Index(repo, "/"); idx != -1 {
+					repo = repo[:idx]
+				}
+				return utils.Camel2Snake(owner + "_" + repo)
+			}
+		}
+		return ""
+	}
+
+	// 如果是压缩文件
+	fileName := filepath.Base(input)
+	// 移除 .zip 或 .tar.gz 后缀
+	fileName = strings.TrimSuffix(fileName, ".zip")
+	fileName = strings.TrimSuffix(fileName, ".tar.gz")
+	fileName = strings.TrimSuffix(fileName, ".tgz")
+
+	// 移除版本号（如果存在）
+	// 匹配类似 -1.0.0, -v1.0.0, _1.0.0, _v1.0.0 的版本号
+	re := regexp.MustCompile(`[-_](v)?\d+(\.\d+)*$`)
+	fileName = re.ReplaceAllString(fileName, "")
+
+	// 替换特殊字符为下划线
+	re = regexp.MustCompile(`[^a-zA-Z0-9]`)
+	fileName = re.ReplaceAllString(fileName, "_")
+
+	// 确保不以数字开头
+	if len(fileName) > 0 && unicode.IsDigit(rune(fileName[0])) {
+		fileName = "_" + fileName
+	}
+
+	return utils.Camel2Snake(fileName)
+}
+
+// CheckFileTypeAndUnzip 检查文件类型并解压
+// 1、检测文件类型
+// 2、根据文件类型解压
+// 3、删除临时文件
+func CheckFileTypeAndUnzip(filePath, tempDir string) (string, error) {
+	// 检测文件类型
+	fileType, err := utils.DetectFileType(filePath)
+	if err != nil {
+		return i18n.T("DetectFileTypeFailed"), err
+	}
+
+	// 根据文件类型解压
+	switch fileType {
+	case utils.FileTypeZip:
+		if err := utils.Unzip(filePath, tempDir); err != nil {
+			return i18n.T("ExtractFileFailed"), err
+		}
+	case utils.FileTypeTarGz:
+		if err := utils.UnTarGz(filePath, tempDir); err != nil {
+			return i18n.T("ExtractFileFailed"), err
+		}
+	default:
+		return i18n.T("UnsupportedFileType"), nil
+	}
+
+	// 删除临时文件
+	os.Remove(filePath)
+
+	// 返回解压后的文件路径
+	return "", nil
+}
+
+// CheckAppCompliance 检查应用是否符合要求
+// 1、检查config.yml文件
+// 2、如果根目录没有config.yml，检查第一个子目录
+// 3、如果子目录也没有config.yml，返回错误
+// 4、检查name字段
+// 5、检查删除apps目录下同名的应用
+// 6、移动文件到apps目录
+func CheckAppCompliance(appId, tempDir string) (string, error) {
+	// 检查config.yml文件
+	configFile := filepath.Join(tempDir, "config.yml")
+	if !utils.IsFileExists(configFile) {
+		// 如果根目录没有config.yml，检查第一个子目录
+		entries, err := os.ReadDir(tempDir)
+		if err != nil {
+			return i18n.T("ConfigYmlNotFound"), nil
+		}
+
+		// 查找第一个目录
+		var firstDir string
+		for _, entry := range entries {
+			if entry.IsDir() {
+				firstDir = entry.Name()
+				break
+			}
+		}
+
+		if firstDir == "" {
+			return i18n.T("ConfigYmlNotFound"), nil
+		}
+
+		// 检查子目录中的config.yml
+		subDir := filepath.Join(tempDir, firstDir)
+		configFile = filepath.Join(subDir, "config.yml")
+		if !utils.IsFileExists(configFile) {
+			return i18n.T("ConfigYmlNotFound"), nil
+		}
+
+		// 更新tempDir为子目录
+		tempDir = subDir
+	}
+
+	// 解析配置文件
+	configData, err := os.ReadFile(configFile)
+	if err != nil {
+		return i18n.T("ReadConfigFileFailed"), err
+	}
+
+	var config map[string]interface{}
+	if err := yaml.Unmarshal(configData, &config); err != nil {
+		return i18n.T("YamlParseFailed", err.Error()), nil
+	}
+
+	// 检查name字段
+	name, ok := config["name"].(string)
+	if !ok || name == "" {
+		return i18n.T("InvalidConfig"), nil
+	}
+
+	// 应用目录
+	appDir := filepath.Join(global.WorkDir, "apps", appId)
+
+	// 检查目标是否存在
+	if utils.IsDirExists(appDir) {
+		os.RemoveAll(appDir)
+	}
+
+	// 移动文件到目标目录
+	if err := os.Rename(tempDir, appDir); err != nil {
+		return i18n.T("MoveFileFailed"), err
+	}
+
+	return "", nil
 }

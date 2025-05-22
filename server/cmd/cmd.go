@@ -13,7 +13,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/url"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -22,7 +21,6 @@ import (
 	"strconv"
 	"strings"
 	"time"
-	"unicode"
 
 	_ "appstore/server/docs"
 
@@ -702,45 +700,17 @@ func routeInternalDownloadByURL(c *gin.Context) {
 	// 从URL提取appId
 	appId := req.AppID
 	if appId == "" {
-		appId = extractAppId(req.URL)
+		appId = models.ExtractAppId(req.URL)
 	}
 	if appId == "" {
 		response.ErrorWithDetail(c, global.CodeError, i18n.T("InvalidUrlFormat"), nil)
 		return
 	}
 
-	// 检查appId是否被保护
-	if slices.Contains(models.ProtectedNames, appId) {
-		response.ErrorWithDetail(c, global.CodeError, i18n.T("ProtectedServiceName", appId), nil)
-		return
-	}
-
-	// 检查目标是否存在
-	appConfig := models.GetAppConfig(appId)
-	if appConfig != nil {
-		errorMessages := map[string]string{
-			"installed":    i18n.T("AppAlreadyExists"),
-			"installing":   i18n.T("AppInstallingWait"),
-			"uninstalling": i18n.T("AppUninstallingWait"),
-		}
-		if msg, ok := errorMessages[appConfig.Status]; ok {
-			response.ErrorWithDetail(c, global.CodeError, msg, nil)
-			return
-		}
-	}
-
-	// 临时目录
-	tempDir := filepath.Join(global.WorkDir, "temp", utils.MD5(req.URL))
-
-	// 清空临时目录
-	if utils.IsDirExists(tempDir) {
-		if err := os.RemoveAll(tempDir); err != nil {
-			response.ErrorWithDetail(c, global.CodeError, i18n.T("CleanTempDirFailed"), err)
-			return
-		}
-	}
-	if err := os.MkdirAll(tempDir, 0755); err != nil {
-		response.ErrorWithDetail(c, global.CodeError, i18n.T("CreateTempDirFailed"), err)
+	// 创建临时目录
+	tempDir, output, err := models.GenerateTempAppDir(appId, req.URL)
+	if tempDir == "" {
+		response.ErrorWithDetail(c, global.CodeError, output, err)
 		return
 	}
 
@@ -777,7 +747,7 @@ func routeInternalDownloadByURL(c *gin.Context) {
 		}
 
 		// 检测文件类型并解压
-		output, err := checkFileTypeAndUnzip(downloadFile, tempDir)
+		output, err := models.CheckFileTypeAndUnzip(downloadFile, tempDir)
 		if err != nil {
 			response.ErrorWithDetail(c, global.CodeError, output, err)
 			return
@@ -785,7 +755,7 @@ func routeInternalDownloadByURL(c *gin.Context) {
 	}
 
 	// 检查应用是否符合要求
-	output, err := checkAppCompliance(appId, tempDir)
+	output, err = models.CheckAppCompliance(appId, tempDir)
 	if err != nil {
 		response.ErrorWithDetail(c, global.CodeError, output, err)
 		return
@@ -817,25 +787,17 @@ func routeInternalUpload(c *gin.Context) {
 	// 从文件名提取appId
 	appId := c.PostForm("appId")
 	if appId == "" {
-		appId = extractAppId(file.Filename)
+		appId = models.ExtractAppId(file.Filename)
 	}
 	if appId == "" {
-		response.ErrorWithDetail(c, global.CodeError, i18n.T("InvalidAppId"), nil)
+		response.ErrorWithDetail(c, global.CodeError, i18n.T("InvalidUrlFormat"), nil)
 		return
 	}
 
-	// 临时目录
-	tempDir := filepath.Join(global.WorkDir, "temp", utils.MD5(file.Filename))
-
-	// 清空临时目录
-	if utils.IsDirExists(tempDir) {
-		if err := os.RemoveAll(tempDir); err != nil {
-			response.ErrorWithDetail(c, global.CodeError, i18n.T("CleanTempDirFailed"), err)
-			return
-		}
-	}
-	if err := os.MkdirAll(tempDir, 0755); err != nil {
-		response.ErrorWithDetail(c, global.CodeError, i18n.T("CreateTempDirFailed"), err)
+	// 创建临时目录
+	tempDir, output, err := models.GenerateTempAppDir(appId, file.Filename)
+	if tempDir == "" {
+		response.ErrorWithDetail(c, global.CodeError, output, err)
 		return
 	}
 
@@ -847,14 +809,14 @@ func routeInternalUpload(c *gin.Context) {
 	}
 
 	// 检查文件类型并解压
-	output, err := checkFileTypeAndUnzip(filePath, tempDir)
+	output, err = models.CheckFileTypeAndUnzip(filePath, tempDir)
 	if err != nil {
 		response.ErrorWithDetail(c, global.CodeError, output, err)
 		return
 	}
 
 	// 检查应用是否符合要求
-	output, err = checkAppCompliance(appId, tempDir)
+	output, err = models.CheckAppCompliance(appId, tempDir)
 	if err != nil {
 		response.ErrorWithDetail(c, global.CodeError, output, err)
 		return
@@ -997,129 +959,4 @@ func routeAppAsset(c *gin.Context) {
 		return
 	}
 	c.File(filePath)
-}
-
-// ****************************************************************************
-// ****************************************************************************
-// ****************************************************************************
-
-// extractAppId 从 URL 或文件名提取 appId
-func extractAppId(input string) string {
-	// 如果是 URL
-	if strings.HasPrefix(input, "http://") || strings.HasPrefix(input, "https://") {
-		u, err := url.Parse(input)
-		if err != nil {
-			return ""
-		}
-
-		// 处理 GitHub 或其他 Git 仓库 URL
-		if strings.Contains(u.Host, "github.com") || strings.Contains(u.Host, "gitlab.com") || strings.Contains(u.Host, "gitee.com") {
-			pathParts := strings.Split(strings.Trim(u.Path, "/"), "/")
-			if len(pathParts) >= 2 {
-				owner := pathParts[0]
-				repo := pathParts[1]
-				// 移除 .git 后缀
-				repo = strings.TrimSuffix(repo, ".git")
-				// 移除可能的 tree/branch 部分
-				if idx := strings.Index(repo, "/"); idx != -1 {
-					repo = repo[:idx]
-				}
-				return utils.Camel2Snake(owner + "_" + repo)
-			}
-		}
-		return ""
-	}
-
-	// 如果是压缩文件
-	fileName := filepath.Base(input)
-	// 移除 .zip 或 .tar.gz 后缀
-	fileName = strings.TrimSuffix(fileName, ".zip")
-	fileName = strings.TrimSuffix(fileName, ".tar.gz")
-	fileName = strings.TrimSuffix(fileName, ".tgz")
-
-	// 移除版本号（如果存在）
-	// 匹配类似 -1.0.0, -v1.0.0, _1.0.0, _v1.0.0 的版本号
-	re := regexp.MustCompile(`[-_](v)?\d+(\.\d+)*$`)
-	fileName = re.ReplaceAllString(fileName, "")
-
-	// 替换特殊字符为下划线
-	re = regexp.MustCompile(`[^a-zA-Z0-9]`)
-	fileName = re.ReplaceAllString(fileName, "_")
-
-	// 确保不以数字开头
-	if len(fileName) > 0 && unicode.IsDigit(rune(fileName[0])) {
-		fileName = "_" + fileName
-	}
-
-	return utils.Camel2Snake(fileName)
-}
-
-// 检查文件类型并解压
-func checkFileTypeAndUnzip(filePath, tempDir string) (string, error) {
-	// 检测文件类型
-	fileType, err := utils.DetectFileType(filePath)
-	if err != nil {
-		return i18n.T("DetectFileTypeFailed"), err
-	}
-
-	// 根据文件类型解压
-	switch fileType {
-	case utils.FileTypeZip:
-		if err := utils.Unzip(filePath, tempDir); err != nil {
-			return i18n.T("ExtractFileFailed"), err
-		}
-	case utils.FileTypeTarGz:
-		if err := utils.UnTarGz(filePath, tempDir); err != nil {
-			return i18n.T("ExtractFileFailed"), err
-		}
-	default:
-		return i18n.T("UnsupportedFileType"), nil
-	}
-
-	// 删除临时文件
-	os.Remove(filePath)
-
-	// 返回解压后的文件路径
-	return "", nil
-}
-
-// 检查应用是否符合要求
-func checkAppCompliance(appId, tempDir string) (string, error) {
-	// 检查config.yml文件
-	configFile := filepath.Join(tempDir, "config.yml")
-	if !utils.IsFileExists(configFile) {
-		return i18n.T("ConfigYmlNotFound"), nil
-	}
-
-	// 解析配置文件
-	configData, err := os.ReadFile(configFile)
-	if err != nil {
-		return i18n.T("ReadConfigFileFailed"), err
-	}
-
-	var config map[string]interface{}
-	if err := yaml.Unmarshal(configData, &config); err != nil {
-		return i18n.T("YamlParseFailed", err.Error()), nil
-	}
-
-	// 检查name字段
-	name, ok := config["name"].(string)
-	if !ok || name == "" {
-		return i18n.T("InvalidConfig"), nil
-	}
-
-	// 使用目录名作为应用名称
-	targetDir := filepath.Join(global.WorkDir, "apps", appId)
-
-	// 检查目标是否存在
-	if utils.IsDirExists(targetDir) {
-		os.RemoveAll(targetDir)
-	}
-
-	// 移动文件到目标目录
-	if err := os.Rename(tempDir, targetDir); err != nil {
-		return i18n.T("MoveFileFailed"), err
-	}
-
-	return "", nil
 }

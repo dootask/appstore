@@ -75,6 +75,8 @@ definitions:
     type: object
   models.AppInternalDownloadRequest:
     properties:
+      appid:
+        type: string
       url:
         type: string
     required:
@@ -219,6 +221,38 @@ paths:
       summary: 更新应用列表
       tags:
       - 内部接口
+  /internal/apps/upload:
+    post:
+      consumes:
+      - multipart/form-data
+      description: 上传本地应用
+      parameters:
+      - description: 应用文件
+        in: formData
+        name: file
+        required: true
+        type: file
+      - description: 应用ID，留空则从文件名自动提取
+        in: formData
+        name: appId
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  additionalProperties:
+                    type: string
+                  type: object
+              type: object
+      summary: 上传本地应用
+      tags:
+      - 内部接口
   /internal/install:
     post:
       consumes:
@@ -272,6 +306,13 @@ paths:
         name: appId
         required: true
         type: string
+      - default: 200
+        description: 行数
+        in: query
+        maximum: 2000
+        minimum: 1
+        name: "n"
+        type: integer
       produces:
       - application/json
       responses:
