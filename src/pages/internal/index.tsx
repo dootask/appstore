@@ -317,7 +317,7 @@ const Internal = () => {
             {!props.isSubElectron && (
               <ChevronLeft className="min-md:hidden mr-4" onClick={backApp} />
             )}
-            <h1 className="text-2xl font-bold mr-2 text-gray-900 dark:text-zinc-100">{t('common.title')}</h1>
+            <h1 className="text-2xl font-bold mr-2 text-gray-700 dark:text-gray-300">{t('common.title')}</h1>
             <Button variant="ghost" size="icon" className="rounded-full" onClick={() => fetchApps()}>
               {loading ? <LoaderCircle className="animate-spin" /> : <RefreshCw />}
             </Button>

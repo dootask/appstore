@@ -11,7 +11,6 @@ import { Alert, Toast } from '@/components/custom/prompt';
 import Drawer from '@/components/custom/drawer';
 import type { App } from '@/types/api';
 import AppDetail from './detail';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { useAppNavigate } from '@/routes';
 import { Outlet, useOutlet } from 'react-router-dom';
 
@@ -85,11 +84,11 @@ export function Header({onCategoryChange}: { onCategoryChange: (category: string
   }, [currentTheme]);
 
   return (
-    <header className="px-8 md:px-16 h-17 flex items-center sticky top-0 bg-white dark:bg-black z-10">
+    <header className="px-8 md:px-16 h-17 flex items-center sticky top-0 z-10 bg-white dark:bg-black">
       <div className="container mx-auto flex items-center">
         <button className="flex items-center space-x-2 flex-1 justify-start" onClick={navigate.toHome}>
           <img src={LogoIcon} alt="Logo" className="w-7 h-7" />
-          <span className="text-lg font-semibold text-gray-500 dark:text-gray-400">{t('home.header.title')}</span>
+          <span className="text-lg font-semibold text-gray-700 dark:text-gray-300">{t('home.header.title')}</span>
         </button>
         <nav className="hidden md:flex items-center space-x-6 flex-1 justify-center min-w-0">
           {useOutlet() && (
@@ -241,7 +240,7 @@ const Home: React.FC = () => {
   }, []);
 
   return (
-    <ScrollArea className="bg-white dark:bg-black text-gray-900 dark:text-white h-screen">
+    <div className="bg-white dark:bg-black text-gray-900 dark:text-white">
       {/* 头部内容 */}
       <Header onCategoryChange={(category) => {
         handleCategoryChange(category)
@@ -409,7 +408,7 @@ const Home: React.FC = () => {
           }
         }} />
       </Drawer>
-    </ScrollArea>
+    </div>
   );
 }
 
