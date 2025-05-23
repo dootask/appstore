@@ -27,7 +27,6 @@ OpenLogFileFailed: "打開日誌文件失敗: %v"
 UpdateAppStatusFailed: "更新應用狀態失敗: %v"
 ReadNginxTemplateFailed: "讀取nginx配置模板失敗: %v"
 SaveNginxConfigFailed: "保存nginx配置失敗: %v"
-UploadFileFailed: "上傳文件失敗: %v"
 
 #無參數
 GetAppDetailFailed: "獲取應用詳情失敗"
@@ -87,3 +86,4 @@ DetectFileTypeFailed: "檢測文件類型失敗"
 UnsupportedFileType: "不支持的文件類型"
 CheckConfigNotFound: "配置文件不存在"
 InvalidUrlScheme: "不支持的URL協議，僅支持http、https和git協議"
+UploadFileFailed: "上傳文件失敗"

@@ -27,7 +27,6 @@ OpenLogFileFailed: "Gagal membuka file log: %v"
 UpdateAppStatusFailed: "Gagal memperbarui status aplikasi: %v"
 ReadNginxTemplateFailed: "Gagal membaca template konfigurasi nginx: %v"
 SaveNginxConfigFailed: "Gagal menyimpan konfigurasi nginx: %v"
-UploadFileFailed: "Gagal mengunggah file: %v"
 
 #Tanpa parameter
 GetAppDetailFailed: "Gagal mendapatkan detail aplikasi"
@@ -87,3 +86,4 @@ DetectFileTypeFailed: "Gagal mendeteksi tipe file"
 UnsupportedFileType: "Tipe file tidak didukung"
 CheckConfigNotFound: "File konfigurasi tidak ditemukan"
 InvalidUrlScheme: "URL scheme tidak didukung, hanya http, https, dan git yang didukung"
+UploadFileFailed: "Gagal mengunggah file"

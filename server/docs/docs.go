@@ -120,7 +120,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "应用ID，留空则从文件名自动提取",
-                        "name": "appId",
+                        "name": "appid",
                         "in": "formData"
                     }
                 ],

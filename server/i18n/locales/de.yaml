@@ -27,7 +27,6 @@ OpenLogFileFailed: "Protokolldatei konnte nicht geöffnet werden: %v"
 UpdateAppStatusFailed: "Anwendungsstatus konnte nicht aktualisiert werden: %v"
 ReadNginxTemplateFailed: "Nginx-Konfigurationsvorlage konnte nicht gelesen werden: %v"
 SaveNginxConfigFailed: "Nginx-Konfiguration konnte nicht gespeichert werden: %v"
-UploadFileFailed: "Datei konnte nicht hochgeladen werden: %v"
 
 #Keine Parameter
 GetAppDetailFailed: "Anwendungsdetails konnten nicht abgerufen werden"
@@ -87,3 +86,4 @@ DetectFileTypeFailed: "Dateityp konnte nicht erkannt werden"
 UnsupportedFileType: "Nicht unterstützter Dateityp"
 CheckConfigNotFound: "Konfigurationsdatei nicht gefunden"
 InvalidUrlScheme: "Nicht unterstützter URL-Schema, nur http, https und git werden unterstützt"
+UploadFileFailed: "Datei konnte nicht hochgeladen werden"

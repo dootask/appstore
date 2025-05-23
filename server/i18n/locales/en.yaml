@@ -27,7 +27,6 @@ OpenLogFileFailed: "Failed to open log file: %v"
 UpdateAppStatusFailed: "Failed to update application status: %v"
 ReadNginxTemplateFailed: "Failed to read nginx configuration template: %v"
 SaveNginxConfigFailed: "Failed to save nginx configuration: %v"
-UploadFileFailed: "Failed to upload file: %v"
 
 #No parameters
 GetAppDetailFailed: "Failed to get application details"
@@ -87,3 +86,4 @@ DetectFileTypeFailed: "Failed to detect file type"
 UnsupportedFileType: "Unsupported file type"
 CheckConfigNotFound: "Configuration file not found"
 InvalidUrlScheme: "Unsupported URL scheme, only http, https and git are supported"
+UploadFileFailed: "Failed to upload file"

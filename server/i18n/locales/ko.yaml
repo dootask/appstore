@@ -27,7 +27,6 @@ OpenLogFileFailed: "로그 파일을 여는 데 실패했습니다: %v"
 UpdateAppStatusFailed: "애플리케이션 상태 업데이트에 실패했습니다: %v"
 ReadNginxTemplateFailed: "nginx 구성 템플릿을 읽는 데 실패했습니다: %v"
 SaveNginxConfigFailed: "nginx 구성 저장에 실패했습니다: %v"
-UploadFileFailed: "파일 업로드에 실패했습니다: %v"
 
 #매개변수 없음
 GetAppDetailFailed: "애플리케이션 세부 정보를 가져오는 데 실패했습니다"
@@ -87,3 +86,4 @@ DetectFileTypeFailed: "파일 유형 감지에 실패했습니다"
 UnsupportedFileType: "지원되지 않는 파일 유형"
 AppVersionNotFound: "앱 %s의 버전을 찾을 수 없습니다"
 InvalidUrlScheme: "지원되지 않는 URL 프로토콜, http, https 및 git만 지원"
+UploadFileFailed: "파일 업로드에 실패했습니다"

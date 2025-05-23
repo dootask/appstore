@@ -234,7 +234,7 @@ paths:
         type: file
       - description: 应用ID，留空则从文件名自动提取
         in: formData
-        name: appId
+        name: appid
         type: string
       produces:
       - application/json

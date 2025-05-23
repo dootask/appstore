@@ -697,7 +697,7 @@ func routeInternalDownloadByURL(c *gin.Context) {
 		return
 	}
 
-	// 从URL提取appId
+	// 从表单提取appid，留空则从URL自动提取
 	appId := req.AppID
 	if appId == "" {
 		appId = models.ExtractAppId(req.URL)
@@ -773,7 +773,7 @@ func routeInternalDownloadByURL(c *gin.Context) {
 // @Accept multipart/form-data
 // @Produce json
 // @Param file formData file true "应用文件"
-// @Param appId formData string false "应用ID，留空则从文件名自动提取"
+// @Param appid formData string false "应用ID，留空则从文件名自动提取"
 // @Success 200 {object} response.Response{data=map[string]string}
 // @Router /internal/apps/upload [post]
 func routeInternalUpload(c *gin.Context) {
@@ -784,8 +784,8 @@ func routeInternalUpload(c *gin.Context) {
 		return
 	}
 
-	// 从文件名提取appId
-	appId := c.PostForm("appId")
+	// 从表单提取appid，留空则从文件名自动提取
+	appId := c.PostForm("appid")
 	if appId == "" {
 		appId = models.ExtractAppId(file.Filename)
 	}

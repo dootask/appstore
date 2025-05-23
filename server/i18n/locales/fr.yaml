@@ -27,7 +27,6 @@ OpenLogFileFailed: "Échec de l'ouverture du fichier journal: %v"
 UpdateAppStatusFailed: "Échec de la mise à jour du statut de l'application: %v"
 ReadNginxTemplateFailed: "Échec de la lecture du modèle de configuration nginx: %v"
 SaveNginxConfigFailed: "Échec de la sauvegarde de la configuration nginx: %v"
-UploadFileFailed: "Échec de l'upload du fichier: %v"
 
 #Sans paramètre
 GetAppDetailFailed: "Échec de l'obtention des détails de l'application"
@@ -87,3 +86,4 @@ DetectFileTypeFailed: "Échec de la détection du type de fichier"
 UnsupportedFileType: "Type de fichier non pris en charge"
 CheckConfigNotFound: "Fichier de configuration non trouvé"
 InvalidUrlScheme: "URL scheme non pris en charge, seulement http, https et git sont pris en charge"
+UploadFileFailed: "Échec de l'upload du fichier"
