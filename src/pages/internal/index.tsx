@@ -259,6 +259,7 @@ const Internal = () => {
     }
     await promise.then(async ({data}) => {
       if (data) {
+        await fetchApps();
         const app = apps.find(item => item.id === data.id);
         if (app) {
           setSelectedApp(app);
@@ -273,8 +274,6 @@ const Internal = () => {
         showCancel: false,
       })
       throw error;
-    }).finally(() => {
-      fetchApps();
     })
   }
 
