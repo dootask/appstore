@@ -120,8 +120,8 @@ func runServer(*cobra.Command, []string) {
 	// 创建默认的gin路由引擎
 	r := gin.Default()
 
-	// 注册语言中间件
-	r.Use(middlewares.Middleware())
+	// 注册基础中间件
+	r.Use(middlewares.BaseMiddleware())
 
 	// 注册静态文件中间件
 	r.Use(middlewares.WebStaticMiddleware())
@@ -130,7 +130,7 @@ func runServer(*cobra.Command, []string) {
 	v1 := r.Group("/api/" + global.APIVersion)
 	{
 		// 中间件控制
-		var strictMiddleware gin.HandlerFunc
+		strictMiddleware := middlewares.EmptyMiddleware()
 		if mode == global.ModeStrict {
 			strictMiddleware = middlewares.DooTaskTokenMiddleware()
 		}
@@ -138,11 +138,11 @@ func runServer(*cobra.Command, []string) {
 		adminMiddleware := middlewares.DooTaskTokenMiddleware("admin")
 
 		// 严谨模式需要会员
-		v1.GET("/list", strictMiddleware, routeList)                            // 获取应用列表
-		v1.GET("/one/:appId", strictMiddleware, routeAppOne)                    // 获取单个应用
-		v1.GET("/readme/:appId", strictMiddleware, routeAppReadme)              // 获取应用自述文件
-		v1.GET("/download/:appId/*version", strictMiddleware, routeAppDownload) // 下载应用压缩包
-		v1.GET("/sources/package", strictMiddleware, routeSourcesPackage)       // 下载应用商店资源包
+		v1.GET("/list", strictMiddleware, routeList)                                                       // 获取应用列表
+		v1.GET("/one/:appId", strictMiddleware, routeAppOne)                                               // 获取单个应用
+		v1.GET("/readme/:appId", strictMiddleware, routeAppReadme)                                         // 获取应用自述文件
+		v1.Match([]string{"GET", "HEAD"}, "/download/:appId/*version", strictMiddleware, routeAppDownload) // 下载应用压缩包
+		v1.Match([]string{"GET", "HEAD"}, "/sources/package", strictMiddleware, routeSourcesPackage)       // 下载应用商店资源包
 
 		// 始终不需要身份
 		v1.GET("/asset/:appId/*assetPath", routeAppAsset) // 查看应用资源
@@ -295,6 +295,11 @@ func routeAppDownload(c *gin.Context) {
 	c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", downloadFilename))
 	c.Header("Content-Type", "application/gzip")
 	c.Header("Transfer-Encoding", "chunked")
+
+	if c.Request.Method == "HEAD" {
+		c.Status(http.StatusOK)
+		return
+	}
 
 	gw := gzip.NewWriter(c.Writer)
 	defer gw.Close()
@@ -840,11 +845,17 @@ func routeSourcesPackage(c *gin.Context) {
 	sourcesDir := filepath.Join(global.WorkDir, "temp", "sources_package")
 	tarFile := filepath.Join(sourcesDir, currentDate+".tar.gz")
 
+	// 设置响应头
+	c.Header("Content-Description", "File Transfer")
+	c.Header("Content-Disposition", "attachment; filename=sources.tar.gz")
+	c.Header("Content-Type", "application/gzip")
+	if c.Request.Method == "HEAD" {
+		c.Status(http.StatusOK)
+		return
+	}
+
 	// 如果文件已存在，直接下载
 	if utils.IsFileExists(tarFile) {
-		c.Header("Content-Description", "File Transfer")
-		c.Header("Content-Disposition", "attachment; filename=sources.tar.gz")
-		c.Header("Content-Type", "application/gzip")
 		c.File(tarFile)
 		return
 	}
@@ -938,11 +949,6 @@ func routeSourcesPackage(c *gin.Context) {
 			return
 		}
 	}
-
-	// 设置响应头
-	c.Header("Content-Description", "File Transfer")
-	c.Header("Content-Disposition", "attachment; filename=sources.tar.gz")
-	c.Header("Content-Type", "application/gzip")
 
 	// 发送文件
 	c.File(tarFile)

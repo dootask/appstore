@@ -14,8 +14,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// Middleware 是一个处理请求的中间件
-func Middleware() gin.HandlerFunc {
+// EmptyMiddleware 空的中间件
+func EmptyMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Next()
+	}
+}
+
+// BaseMiddleware 基础中间件（基础地址、语言偏好）
+func BaseMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// 基础地址
 		scheme := "http"
