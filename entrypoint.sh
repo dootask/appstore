@@ -15,7 +15,11 @@ WEB_DIR=${WEB_DIR:-$DEFAULT_WEB_DIR}
 RUN_MODE=${RUN_MODE:-$DEFAULT_RUN_MODE}
 
 # 复制所有应用到工作目录
-rsync -a --mkpath --exclude='_' /usr/share/appstore/apps/ $WORK_DIR/apps/
+if [ "$RUN_MODE" == "strict" ]; then
+    rsync -a --mkpath --exclude='_' /usr/share/appstore/apps/ $WORK_DIR/apps/
+else
+    rsync -a --mkpath /usr/share/appstore/apps/ $WORK_DIR/apps/
+fi
 
 # 显示运行配置
 echo "Starting with:"

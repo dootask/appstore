@@ -5,7 +5,7 @@ import { getRoutes } from './routes';
 
 // 加载中组件
 const Loading = () => (
-  <div className="h-screen w-screen flex items-center justify-center">
+  <div className="absolute top-0 left-0 w-full h-full z-50 flex items-center justify-center">
     <Loader2 className="animate-spin" size={32} />
   </div>
 );
