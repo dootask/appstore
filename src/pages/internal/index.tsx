@@ -253,9 +253,9 @@ const Internal = () => {
   const downloadOrUploadApp = async (value: string, file?: File) => {
     let promise = null
     if (file) {
-      promise = InternalApi.uploadApp(file)
+      promise = InternalApi.uploadApp({file})
     } else {
-      promise = InternalApi.downloadApp(value)
+      promise = InternalApi.downloadApp({url: value})
     }
     await promise.then(async ({data}) => {
       if (data) {

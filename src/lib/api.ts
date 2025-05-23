@@ -46,8 +46,7 @@ export const InternalApi = {
    * 通过URL下载应用
    * @param url 下载URL
    */
-  downloadApp(url: string) {
-    const params: AppInternalDownloadRequest = { url };
+  downloadApp(params: AppInternalDownloadRequest) {
     return post<Record<string, string>, AppInternalDownloadRequest>('/internal/apps/download', params);
   },
 
@@ -55,9 +54,17 @@ export const InternalApi = {
    * 通过文件上传应用
    * @param file 文件
    */
-  uploadApp(file: File) {
-    const params: AppInternalUploadRequest = { file };
-    return post<Record<string, string>, AppInternalUploadRequest>('/internal/apps/upload', params);
+  uploadApp(params: AppInternalUploadRequest) {
+    const formData = new FormData();
+    formData.append('file', params.file);
+    if (params.appid) {
+      formData.append('appid', params.appid);
+    }
+    return post<Record<string, string>, FormData>('/internal/apps/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
   },
 
   /**

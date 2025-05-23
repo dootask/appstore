@@ -84,11 +84,13 @@ export interface App {
 // 内部下载应用请求
 export interface AppInternalDownloadRequest {
   url: string;
+  appid?: string;
 }
 
 // 内部上传应用请求
 export interface AppInternalUploadRequest {
   file: File;
+  appid?: string;
 }
 
 // 内部安装应用请求
