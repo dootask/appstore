@@ -98,16 +98,12 @@ definitions:
     type: object
   models.AppInternalInstalledResponse:
     properties:
-      menus:
+      id:
+        type: string
+      menu_items:
         items:
           $ref: '#/definitions/models.MenuItem'
         type: array
-      names:
-        items:
-          type: string
-        type: array
-    required:
-    - names
     type: object
   models.FieldConfig:
     properties:
@@ -290,7 +286,9 @@ paths:
             - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/models.AppInternalInstalledResponse'
+                  items:
+                    $ref: '#/definitions/models.AppInternalInstalledResponse'
+                  type: array
               type: object
       summary: 获取已安装应用列表
       tags:

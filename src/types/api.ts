@@ -103,6 +103,6 @@ export interface AppInternalInstallRequest {
 
 // 内部已安装应用响应
 export interface AppInternalInstalledResponse {
-  names: string[];
-  menus?: MenuItem[];
+  id: string;
+  menu_items?: MenuItem[];
 }

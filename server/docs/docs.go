@@ -208,7 +208,10 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.AppInternalInstalledResponse"
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/models.AppInternalInstalledResponse"
+                                            }
                                         }
                                     }
                                 }
@@ -614,20 +617,14 @@ const docTemplate = `{
         },
         "models.AppInternalInstalledResponse": {
             "type": "object",
-            "required": [
-                "names"
-            ],
             "properties": {
-                "menus": {
+                "id": {
+                    "type": "string"
+                },
+                "menu_items": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.MenuItem"
-                    }
-                },
-                "names": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
                     }
                 }
             }

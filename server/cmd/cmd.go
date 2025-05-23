@@ -487,18 +487,17 @@ func routeInternalUninstall(c *gin.Context) {
 // @Tags 内部接口
 // @Accept json
 // @Produce json
-// @Success 200 {object} response.Response{data=models.AppInternalInstalledResponse}
+// @Success 200 {object} response.Response{data=[]models.AppInternalInstalledResponse}
 // @Router /internal/installed [get]
 func routeInternalInstalled(c *gin.Context) {
 	apps := models.NewApps(nil)
-	resp := models.AppInternalInstalledResponse{
-		Names: make([]string, 0),
-		Menus: make([]models.MenuItem, 0),
-	}
+	resp := []models.AppInternalInstalledResponse{}
 	for _, app := range apps {
 		if app.Config.Status == "installed" {
-			resp.Names = append(resp.Names, app.Name.(string))
-			resp.Menus = append(resp.Menus, app.MenuItems...)
+			resp = append(resp, models.AppInternalInstalledResponse{
+				ID:        app.ID,
+				MenuItems: app.MenuItems,
+			})
 		}
 	}
 	response.SuccessWithData(c, resp)

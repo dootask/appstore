@@ -86,7 +86,7 @@ export const InternalApi = {
    * 获取已安装应用列表
    */
   getInstalledApps() {
-    return get<AppInternalInstalledResponse>('/internal/installed');
+    return get<AppInternalInstalledResponse[]>('/internal/installed');
   },
 
   /**

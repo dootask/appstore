@@ -105,8 +105,8 @@ type AppInternalInstallRequest struct {
 
 // AppInternalInstalledResponse 内部安装响应结构
 type AppInternalInstalledResponse struct {
-	Names []string   `json:"names" validate:"required"`
-	Menus []MenuItem `json:"menus" validate:"omitempty"`
+	ID        string     `yaml:"id" json:"id"`
+	MenuItems []MenuItem `yaml:"menu_items" json:"menu_items"`
 }
 
 // AppInternalDownloadRequest 通过URL下载应用的请求结构
