@@ -693,7 +693,7 @@ func routeInternalDownloadByURL(c *gin.Context) {
 	// 验证URL协议
 	scheme := utils.GetURLScheme(req.URL)
 	if !slices.Contains([]string{"http", "https", "git"}, scheme) {
-		response.ErrorWithDetail(c, global.CodeError, "不支持的URL协议，仅支持http、https和git协议", nil)
+		response.ErrorWithDetail(c, global.CodeError, i18n.T("InvalidUrlScheme"), nil)
 		return
 	}
 

@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"math"
 	"math/rand"
+	"net/http"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -562,6 +563,8 @@ func GenerateTempAppDir(appId, urlOrFileName string) (string, string, error) {
 // 2、如果是文件名，提取appId
 // 3、如果提取失败，返回空字符串
 func ExtractAppId(input string) string {
+	var appId string
+
 	// 如果是 URL
 	if strings.HasPrefix(input, "http://") || strings.HasPrefix(input, "https://") {
 		u, err := url.Parse(input)
@@ -581,34 +584,77 @@ func ExtractAppId(input string) string {
 				if idx := strings.Index(repo, "/"); idx != -1 {
 					repo = repo[:idx]
 				}
-				return utils.Camel2Snake(owner + "_" + repo)
+				appId = utils.Camel2Snake(owner + "_" + repo)
 			}
 		}
-		return ""
+
+		// 处理其他 URL，尝试从响应头获取文件名
+		if appId == "" {
+			if resp, err := http.Head(input); err == nil {
+				defer resp.Body.Close()
+				// 从 Content-Disposition 获取文件名
+				if cd := resp.Header.Get("Content-Disposition"); cd != "" {
+					if strings.HasPrefix(cd, "attachment; filename=") {
+						filename := strings.TrimPrefix(cd, "attachment; filename=")
+						filename = strings.Trim(filename, "\"")
+						// 如果获取到文件名，递归调用自身处理文件名
+						if filename != "" {
+							appId = filename
+						}
+					}
+				}
+			}
+		}
+
+		// 从 URL 中提取应用ID
+		if appId == "" {
+			versionRegex := regexp.MustCompile(`(?:/|_)(v?\d+(?:\.\d+){1,2}|latest)(?:/|$)`)
+			matches := versionRegex.FindStringSubmatch(u.Path)
+			if len(matches) > 1 {
+				// 获取版本号在路径中的位置
+				versionIndex := strings.Index(u.Path, matches[0])
+				if versionIndex > 0 {
+					// 获取版本号前的部分
+					prefix := u.Path[:versionIndex]
+					// 分割并获取最后一部分作为应用ID
+					parts := strings.Split(strings.Trim(prefix, "/"), "/")
+					if len(parts) > 0 {
+						appId = parts[len(parts)-1] + "_" + matches[1]
+					}
+				}
+			}
+		}
+
+		// 如果上述方法都失败，取最后两个目录作为appId
+		if appId == "" {
+			pathParts := strings.Split(strings.Trim(u.Path, "/"), "/")
+			if len(pathParts) >= 2 {
+				appId = pathParts[len(pathParts)-2] + "_" + pathParts[len(pathParts)-1]
+			}
+		}
 	}
 
-	// 如果是压缩文件
-	fileName := filepath.Base(input)
-	// 移除 .zip 或 .tar.gz 后缀
-	fileName = strings.TrimSuffix(fileName, ".zip")
-	fileName = strings.TrimSuffix(fileName, ".tar.gz")
-	fileName = strings.TrimSuffix(fileName, ".tgz")
+	// 如果提取失败，取文件名
+	if appId == "" {
+		appId = filepath.Base(input)
+	}
 
-	// 移除版本号（如果存在）
-	// 匹配类似 -1.0.0, -v1.0.0, _1.0.0, _v1.0.0 的版本号
-	re := regexp.MustCompile(`[-_](v)?\d+(\.\d+)*$`)
-	fileName = re.ReplaceAllString(fileName, "")
+	// 移除压缩文件后缀
+	appId = regexp.MustCompile(`\.(?:zip|tar\.gz|tgz)$`).ReplaceAllString(appId, "")
+
+	// 匹配类似 -1.0.0, -v1.0.0, _1.0.0, _v1.0.0, -latest, _latest 的版本号
+	appId = regexp.MustCompile(`[-_](?:v?\d+(?:\.\d+){1,2}|latest)$`).ReplaceAllString(appId, "")
 
 	// 替换特殊字符为下划线
-	re = regexp.MustCompile(`[^a-zA-Z0-9]`)
-	fileName = re.ReplaceAllString(fileName, "_")
+	appId = regexp.MustCompile(`[^a-zA-Z0-9]`).ReplaceAllString(appId, "_")
 
 	// 确保不以数字开头
-	if len(fileName) > 0 && unicode.IsDigit(rune(fileName[0])) {
-		fileName = "_" + fileName
+	if len(appId) > 0 && unicode.IsDigit(rune(appId[0])) {
+		appId = "_" + appId
 	}
 
-	return utils.Camel2Snake(fileName)
+	// 返回转换为驼峰命名
+	return utils.Camel2Snake(appId)
 }
 
 // CheckFileTypeAndUnzip 检查文件类型并解压
