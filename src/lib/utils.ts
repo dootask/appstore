@@ -93,3 +93,39 @@ export function compareVersions(v1: string, v2: string): number {
 
   return 0;
 }
+
+/**
+ * 复制文本
+ * @param content - 要复制的文本
+ * @returns {Promise<void>} - 返回 Promise 对象
+ */
+export async function copyText(content: string): Promise<void> {
+  const unsecuredCopyToClipboard = (text: string): void => {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.position = "fixed";
+    textArea.style.left = "-999999px";
+    textArea.style.top = "-999999px";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    
+    try {
+      document.execCommand('copy');
+    } catch (err) {
+      throw err;
+    } finally {
+      document.body.removeChild(textArea);
+    }
+  };
+
+  try {
+    if (navigator.clipboard) {
+      await navigator.clipboard.writeText(content);
+    } else {
+      unsecuredCopyToClipboard(content);
+    }
+  } catch (err) {
+    throw err;
+  }
+}

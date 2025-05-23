@@ -25,7 +25,6 @@ var ProtectedNames = []string{
 	"nginx",
 	"redis",
 	"mariadb",
-	"search",
 	"appstore",
 }
 

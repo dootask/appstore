@@ -13,7 +13,7 @@ import type { App } from '@/types/api';
 import AppDetail from './detail';
 import { useAppNavigate } from '@/routes';
 import { Outlet, useOutlet } from 'react-router-dom';
-import { cn } from '@/lib/utils';
+import { cn, copyText } from '@/lib/utils';
 
 export function Header({onCategoryChange}: { onCategoryChange: (category: string) => void }) {
   const navigate = useAppNavigate();
@@ -211,19 +211,18 @@ const Home: React.FC = () => {
       showCancel: true,
       showConfirm: true,
       onConfirm: () => {
-        navigator.clipboard.writeText(app.download_url).then(() => {
+        copyText(app.download_url).then(() => {
           Toast({
             type: 'success',
             content: t('common.copySuccess'),
             duration: 2000
           });
-        }).catch((error) => {
+        }).catch(() => {
           Toast({
             type: 'error',
             content: t('common.copyFailed'),
             duration: 2000
           });
-          console.error(error);
         });
       }
     });
@@ -356,7 +355,11 @@ const Home: React.FC = () => {
                   className="w-full py-4 px-6 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-white"
                 />
                 {!isSearchInputFocused && (
-                  <div className="absolute right-3 top-1/2 transform -translate-y-1/2 bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 text-xs rounded px-2.5 h-7 font-mono flex items-center gap-1.5">
+                  <div 
+                    onClick={() => {
+                      searchInputRef.current?.focus();
+                    }}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 text-xs rounded px-2.5 h-7 font-mono flex items-center gap-1.5">
                     <span>/</span>
                   </div>
                 )}

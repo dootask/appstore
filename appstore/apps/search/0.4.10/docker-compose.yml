@@ -7,11 +7,6 @@ services:
       ZINC_DATA_PATH: "/data"
       ZINC_FIRST_ADMIN_USER: "${DB_USERNAME}"
       ZINC_FIRST_ADMIN_PASSWORD: "${DB_PASSWORD}"
-    deploy:
-      resources:
-        limits:
-          cpus: '${SEARCH_CPU}'
-          memory: ${SEARCH_MEMORY}
     restart: unless-stopped
 
 volumes:
