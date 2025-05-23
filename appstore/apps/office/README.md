@@ -1,27 +1,26 @@
-# OnlyOffice Document Editor Plugin
+# OnlyOffice Document Editing Plugin
 
-## Plugin Description
-This is a DooTask plugin for integrating OnlyOffice online document editing functionality. With this plugin, you can directly edit and preview Word, Excel, PowerPoint, and other documents online in DooTask, enabling real-time collaborative document editing.
+## Plugin Overview
 
-## Features
-- Support for online editing of Word, Excel, and PowerPoint documents
-- Support for online document preview
-- Support for real-time collaborative editing
-- Support for document version history
-- Support for document permission management
+This plugin integrates the OnlyOffice online document editing feature into DooTask. With this plugin, you can directly edit and preview Word, Excel, and PowerPoint documents online within DooTask, enabling seamless collaborative editing.
+
+## Key Features
+
+* Online editing support for Word, Excel, and PowerPoint documents
+* Online document preview
+* Real-time collaborative editing with multiple users
+* Document version history
+* Document permission management
 
 ## Installation Instructions
-1. Install this plugin from the DooTask App Store
-2. Ready to use immediately after installation
-3. No additional configuration required
-4. Note: Due to the large container size, the installation process may take some time. Please check the logs for installation progress
 
-## Usage
-1. After installation, simply upload documents in tasks or projects
-2. Click on the document to start online editing
-3. Supports multiple users editing the same document simultaneously
+1. Find and install this plugin from the DooTask App Store
+2. Once installed, the plugin is automatically activated with no additional steps
+3. Default configuration supports most use cases; advanced settings are available if needed
+4. ⚠️ This plugin has a relatively large image size and may take some time to install—please refer to the installation log for progress updates
 
-## Notes
-- The plugin container is large, please ensure sufficient disk space
-- Installation may take several minutes, please be patient
-- Check the logs for installation progress and potential issues
+## How to Use
+
+1. After installation, upload documents directly within a task or project
+2. Click on a document to start online editing
+3. Supports simultaneous editing by multiple users
