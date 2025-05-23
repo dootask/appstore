@@ -108,7 +108,7 @@ export default function AppDetail({app, onDownload}: { app: App | null, onDownlo
             className="ml-2 px-4 py-2.5 bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700 text-white font-semibold rounded-lg flex items-center justify-center transition-colors text-sm sm:text-base"
           >
             <Download className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
-            {t('home.appDetail.downloadButton')}
+            {t('home.appDetail.installButton')}
           </button>
         </div>
       </header>

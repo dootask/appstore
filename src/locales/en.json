@@ -40,9 +40,9 @@
       "by": "By",
       "contentTitle": "Content Details",
       "documentation": "View Documentation",
-      "downloadButton": "Download App",
       "downloads": "Downloads",
       "favoriteButtonLabel": "Favorite",
+      "installButton": "Install App",
       "links": "Related Links",
       "noAppSelected": "Please select an app",
       "rating": "Rating",
@@ -57,7 +57,6 @@
       "downloadAppButton": "Download Plugin",
       "downloads": "Downloads",
       "getButton": "Get",
-      "getButtonApp": "Get App",
       "totalUsers": "Total Users"
     },
     "appTitles": {
@@ -77,12 +76,6 @@
       "themeToggleLight": "Switch to Light Theme",
       "title": "DooTask App Store"
     },
-    "user": {
-      "publish": "Publish App",
-      "manage": "Manage App",
-      "center": "User Center",
-      "settings": "Settings"
-    },
     "hero": {
       "searchPlaceholder": "Search APIs, apps and plugins",
       "seriesBAnnouncement": "We raised $2.5M in Series B funding",
@@ -100,6 +93,12 @@
       "maintenance": "This feature is under maintenance...",
       "publish": "Publish App",
       "warning": "Tips"
+    },
+    "user": {
+      "center": "User Center",
+      "manage": "Manage App",
+      "publish": "Publish App",
+      "settings": "Settings"
     }
   },
   "install": {
@@ -150,6 +149,11 @@
     "detail": "Details",
     "log": "Logs"
   },
+  "notFound": {
+    "backHome": "Back to Home",
+    "description": "Don't worry, this is just a 404 error. Let's take you back to the home page to continue exploring.",
+    "title": "Page Not Found"
+  },
   "uninstall": {
     "description": "Are you sure you want to uninstall the app «{{app}}»?",
     "error": "Uninstall Failed",
@@ -158,10 +162,5 @@
     "success_description": "The app «{{app}}» has been uninstalled successfully",
     "title": "Uninstall App",
     "uninstall_starting": "Starting to uninstall app «{{app}}»..."
-  },
-  "notFound": {
-    "backHome": "Back to Home",
-    "description": "Don't worry, this is just a 404 error. Let's take you back to the home page to continue exploring.",
-    "title": "Page Not Found"
   }
 }

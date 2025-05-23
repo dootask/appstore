@@ -40,9 +40,9 @@
       "by": "作者：",
       "contentTitle": "詳細內容",
       "documentation": "查看文檔",
-      "downloadButton": "下載應用",
       "downloads": "下載量",
       "favoriteButtonLabel": "收藏",
+      "installButton": "安裝應用",
       "links": "相關鏈接",
       "noAppSelected": "請選擇一個應用",
       "rating": "評分",
@@ -57,7 +57,6 @@
       "downloadAppButton": "下載插件",
       "downloads": "下載量",
       "getButton": "獲取",
-      "getButtonApp": "獲取應用",
       "totalUsers": "總用戶數"
     },
     "appTitles": {
@@ -77,12 +76,6 @@
       "themeToggleLight": "切換到淺色主題",
       "title": "DooTask 應用商店"
     },
-    "user": {
-      "publish": "發布應用",
-      "manage": "管理應用",
-      "center": "用戶中心",
-      "settings": "設置"
-    },
     "hero": {
       "searchPlaceholder": "搜索 API、應用和插件",
       "seriesBAnnouncement": "我們B輪融資獲得250萬美元",
@@ -100,6 +93,12 @@
       "maintenance": "此功能维护升级中...",
       "publish": "發布應用",
       "warning": "溫馨提示"
+    },
+    "user": {
+      "center": "用戶中心",
+      "manage": "管理應用",
+      "publish": "發布應用",
+      "settings": "設置"
     }
   },
   "install": {
@@ -150,6 +149,11 @@
     "detail": "詳情",
     "log": "日誌"
   },
+  "notFound": {
+    "backHome": "返回首頁",
+    "description": "別擔心，這只是一個 404 錯誤。讓我們帶你回到首頁繼續探索。",
+    "title": "頁面走丟了"
+  },
   "uninstall": {
     "description": "確定要卸載應用「{{app}}」嗎？",
     "error": "卸載失敗",
@@ -158,10 +162,5 @@
     "success_description": "應用「{{app}}」已成功卸載",
     "title": "卸載應用",
     "uninstall_starting": "應用「{{app}}」開始卸載..."
-  },
-  "notFound": {
-    "backHome": "返回首頁",
-    "description": "別擔心，這只是一個 404 錯誤。讓我們帶你回到首頁繼續探索。",
-    "title": "頁面走丟了"
   }
 }

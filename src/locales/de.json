@@ -40,9 +40,9 @@
       "by": "Von",
       "contentTitle": "Inhaltsdetails",
       "documentation": "Dokumentation anzeigen",
-      "downloadButton": "App herunterladen",
       "downloads": "Downloads",
       "favoriteButtonLabel": "Favorit",
+      "installButton": "App installieren",
       "links": "Verwandte Links",
       "noAppSelected": "Bitte wählen Sie eine App aus",
       "rating": "Bewertung",
@@ -57,7 +57,6 @@
       "downloadAppButton": "Plugin herunterladen",
       "downloads": "Downloads",
       "getButton": "Holen",
-      "getButtonApp": "App holen",
       "totalUsers": "Gesamtbenutzer"
     },
     "appTitles": {
@@ -77,12 +76,6 @@
       "themeToggleLight": "Zu hellem Design wechseln",
       "title": "DooTask App Store"
     },
-    "user": {
-      "publish": "App veröffentlichen",
-      "manage": "App verwalten",
-      "center": "Benutzerzentrum",
-      "settings": "Einstellungen"
-    },
     "hero": {
       "searchPlaceholder": "Suche nach APIs, Apps und Plugins",
       "seriesBAnnouncement": "Wir haben 2,5 Millionen Dollar in der Serie B aufgebracht",
@@ -100,6 +93,12 @@
       "maintenance": "Diese Funktion wird in Arbeit sein...",
       "publish": "App veröffentlichen",
       "warning": "Hinweis"
+    },
+    "user": {
+      "center": "Benutzerzentrum",
+      "manage": "App verwalten",
+      "publish": "App veröffentlichen",
+      "settings": "Einstellungen"
     }
   },
   "install": {
@@ -150,6 +149,11 @@
     "detail": "Details",
     "log": "Logs"
   },
+  "notFound": {
+    "backHome": "Zurück zur Startseite",
+    "description": "Keine Sorge, dies ist nur eine 404-Fehler. Lassen Sie uns Sie zur Startseite zurückbringen, um weiter zu erkunden.",
+    "title": "Seite nicht gefunden"
+  },
   "uninstall": {
     "description": "Sind Sie sicher, dass Sie die App «{{app}}» deinstallieren möchten?",
     "error": "Deinstallation fehlgeschlagen",
@@ -158,10 +162,5 @@
     "success_description": "Die App «{{app}}» wurde erfolgreich deinstalliert",
     "title": "App deinstallieren",
     "uninstall_starting": "Deinstallation wird gestartet für die App «{{app}}»..."
-  },
-  "notFound": {
-    "backHome": "Zurück zur Startseite",
-    "description": "Keine Sorge, dies ist nur eine 404-Fehler. Lassen Sie uns Sie zur Startseite zurückbringen, um weiter zu erkunden.",
-    "title": "Seite nicht gefunden"
   }
 }

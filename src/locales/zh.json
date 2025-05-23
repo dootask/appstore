@@ -40,9 +40,9 @@
       "by": "作者：",
       "contentTitle": "详细内容",
       "documentation": "查看文档",
-      "downloadButton": "下载应用",
       "downloads": "下载量",
       "favoriteButtonLabel": "收藏",
+      "installButton": "安装应用",
       "links": "相关链接",
       "noAppSelected": "请选择一个应用",
       "rating": "评分",
@@ -57,7 +57,6 @@
       "downloadAppButton": "下载插件",
       "downloads": "下载量",
       "getButton": "获取",
-      "getButtonApp": "获取应用",
       "totalUsers": "总用户数"
     },
     "appTitles": {
@@ -77,12 +76,6 @@
       "themeToggleLight": "切换到浅色主题",
       "title": "DooTask 应用商店"
     },
-    "user": {
-      "publish": "发布应用",
-      "manage": "管理应用",
-      "center": "用户中心",
-      "settings": "设置"
-    },
     "hero": {
       "searchPlaceholder": "搜索 API、应用和插件",
       "seriesBAnnouncement": "我们B轮融资获得250万美元",
@@ -100,6 +93,12 @@
       "maintenance": "此功能维护升级中...",
       "publish": "发布应用",
       "warning": "温馨提示"
+    },
+    "user": {
+      "center": "用户中心",
+      "manage": "管理应用",
+      "publish": "发布应用",
+      "settings": "设置"
     }
   },
   "install": {
@@ -150,6 +149,11 @@
     "detail": "详情",
     "log": "日志"
   },
+  "notFound": {
+    "backHome": "返回首页",
+    "description": "别担心，这只是一个 404 错误。让我们带你回到首页继续探索。",
+    "title": "页面走丢了"
+  },
   "uninstall": {
     "description": "确定卸载应用「{{app}}」吗？",
     "error": "卸载失败",
@@ -158,10 +162,5 @@
     "success_description": "应用「{{app}}」已卸载成功",
     "title": "卸载应用",
     "uninstall_starting": "应用「{{app}}」开始卸载..."
-  },
-  "notFound": {
-    "title": "页面走丢了",
-    "description": "别担心，这只是一个 404 错误。让我们带你回到首页继续探索。",
-    "backHome": "返回首页"
   }
 }

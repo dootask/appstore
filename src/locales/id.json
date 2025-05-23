@@ -40,9 +40,9 @@
       "by": "Oleh",
       "contentTitle": "Detail Konten",
       "documentation": "Lihat Dokumentasi",
-      "downloadButton": "Unduh Aplikasi",
       "downloads": "Unduhan",
       "favoriteButtonLabel": "Favorit",
+      "installButton": "Instal Aplikasi",
       "links": "Tautan Terkait",
       "noAppSelected": "Silakan pilih aplikasi",
       "rating": "Peringkat",
@@ -57,7 +57,6 @@
       "downloadAppButton": "Unduh Plugin",
       "downloads": "Unduhan",
       "getButton": "Dapatkan",
-      "getButtonApp": "Dapatkan Aplikasi",
       "totalUsers": "Total Pengguna"
     },
     "appTitles": {
@@ -77,12 +76,6 @@
       "themeToggleLight": "Beralih ke Tema Terang",
       "title": "DooTask App Store"
     },
-    "user": {
-      "publish": "Publikasikan Aplikasi",
-      "manage": "Mengelola Aplikasi",
-      "center": "Pusat Pengguna",
-      "settings": "Pengaturan"
-    },
     "hero": {
       "searchPlaceholder": "Cari API, aplikasi, dan plugin",
       "seriesBAnnouncement": "Kami mengumpulkan $2,5 juta dalam pendanaan Seri B",
@@ -100,6 +93,12 @@
       "maintenance": "Fungsi ini dalam pemeliharaan...",
       "publish": "Publikasikan Aplikasi",
       "warning": "Tips"
+    },
+    "user": {
+      "center": "Pusat Pengguna",
+      "manage": "Mengelola Aplikasi",
+      "publish": "Publikasikan Aplikasi",
+      "settings": "Pengaturan"
     }
   },
   "install": {
@@ -150,6 +149,11 @@
     "detail": "Detail",
     "log": "Log"
   },
+  "notFound": {
+    "backHome": "Kembali ke halaman utama",
+    "description": "Jangan khawatir, ini hanya 404 error. Ayo kembali ke halaman utama untuk melanjutkan penjelajahan.",
+    "title": "Halaman tidak ditemukan"
+  },
   "uninstall": {
     "description": "Apakah Anda yakin ingin menghapus aplikasi «{{app}}»?",
     "error": "Penghapusan Gagal",
@@ -158,10 +162,5 @@
     "success_description": "Aplikasi «{{app}}» telah berhasil dihapus",
     "title": "Hapus Aplikasi",
     "uninstall_starting": "Memulai penghapusan aplikasi «{{app}}»..."
-  },
-  "notFound": {
-    "backHome": "Kembali ke halaman utama",
-    "description": "Jangan khawatir, ini hanya 404 error. Ayo kembali ke halaman utama untuk melanjutkan penjelajahan.",
-    "title": "Halaman tidak ditemukan"
   }
 }

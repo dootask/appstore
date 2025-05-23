@@ -40,9 +40,9 @@
       "by": "作者：",
       "contentTitle": "詳細内容",
       "documentation": "ドキュメントを見る",
-      "downloadButton": "アプリをダウンロード",
       "downloads": "ダウンロード数",
       "favoriteButtonLabel": "お気に入り",
+      "installButton": "アプリをインストール",
       "links": "関連リンク",
       "noAppSelected": "アプリを選択してください",
       "rating": "評価",
@@ -57,7 +57,6 @@
       "downloadAppButton": "プラグインをダウンロード",
       "downloads": "ダウンロード数",
       "getButton": "入手",
-      "getButtonApp": "アプリを入手",
       "totalUsers": "総ユーザー数"
     },
     "appTitles": {
@@ -77,12 +76,6 @@
       "themeToggleLight": "ライトテーマに切り替え",
       "title": "DooTaskアプリストア"
     },
-    "user": {
-      "publish": "アプリを公開",
-      "manage": "アプリを管理",
-      "center": "ユーザーセンター",
-      "settings": "設定"
-    },
     "hero": {
       "searchPlaceholder": "API、アプリ、プラグインを検索",
       "seriesBAnnouncement": "シリーズBで250万ドルの資金調達を完了",
@@ -100,6 +93,12 @@
       "maintenance": "この機能は保守中です...",
       "publish": "アプリを公開",
       "warning": "ご注意"
+    },
+    "user": {
+      "center": "ユーザーセンター",
+      "manage": "アプリを管理",
+      "publish": "アプリを公開",
+      "settings": "設定"
     }
   },
   "install": {
@@ -150,6 +149,11 @@
     "detail": "詳細",
     "log": "ログ"
   },
+  "notFound": {
+    "backHome": "ホームに戻る",
+    "description": "心配しないでください、これは単なる404エラーです。最初から始めましょう。",
+    "title": "ページを失ってしまいました"
+  },
   "uninstall": {
     "description": "「{{app}}」 アプリをアンインストールしますか？",
     "error": "アンインストール失敗",
@@ -158,10 +162,5 @@
     "success_description": "「{{app}}」 アプリがアンインストールされました",
     "title": "アプリをアンインストール",
     "uninstall_starting": "「{{app}}」 アプリのアンインストールを開始しています..."
-  },
-  "notFound": {
-    "backHome": "ホームに戻る",
-    "description": "心配しないでください、これは単なる404エラーです。最初から始めましょう。",
-    "title": "ページを失ってしまいました"
   }
 }

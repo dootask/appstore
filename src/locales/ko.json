@@ -40,9 +40,9 @@
       "by": "작성자:",
       "contentTitle": "상세 내용",
       "documentation": "문서 보기",
-      "downloadButton": "앱 다운로드",
       "downloads": "다운로드 수",
       "favoriteButtonLabel": "즐겨찾기",
+      "installButton": "앱 설치",
       "links": "관련 링크",
       "noAppSelected": "앱을 선택해주세요",
       "rating": "평점",
@@ -57,7 +57,6 @@
       "downloadAppButton": "플러그인 다운로드",
       "downloads": "다운로드 수",
       "getButton": "받기",
-      "getButtonApp": "앱 받기",
       "totalUsers": "총 사용자 수"
     },
     "appTitles": {
@@ -77,12 +76,6 @@
       "themeToggleLight": "라이트 테마로 전환",
       "title": "DooTask 앱 스토어"
     },
-    "user": {
-      "publish": "앱 게시",
-      "manage": "앱 관리",
-      "center": "사용자 센터",
-      "settings": "설정"
-    },
     "hero": {
       "searchPlaceholder": "API, 앱 및 플러그인 검색",
       "seriesBAnnouncement": "시리즈 B에서 250만 달러 투자 유치",
@@ -100,6 +93,12 @@
       "maintenance": "이 기능은 유지 보수 중입니다...",
       "publish": "앱 게시",
       "warning": "알림"
+    },
+    "user": {
+      "center": "사용자 센터",
+      "manage": "앱 관리",
+      "publish": "앱 게시",
+      "settings": "설정"
     }
   },
   "install": {
@@ -150,6 +149,11 @@
     "detail": "상세",
     "log": "로그"
   },
+  "notFound": {
+    "backHome": "홈으로 돌아가기",
+    "description": "걱정하지 마세요, 이것은 단순한 404 오류입니다. 처음부터 시작하세요.",
+    "title": "페이지를 잃어버렸어요"
+  },
   "uninstall": {
     "description": "「{{app}}」 앱을 제거하시겠습니까？",
     "error": "제거 실패",
@@ -158,10 +162,5 @@
     "success_description": "「{{app}}」 앱이 제거되었습니다",
     "title": "앱 제거",
     "uninstall_starting": "「{{app}}」 앱 제거를 시작합니다..."
-  },
-  "notFound": {
-    "backHome": "홈으로 돌아가기",
-    "description": "걱정하지 마세요, 이것은 단순한 404 오류입니다. 처음부터 시작하세요.",
-    "title": "페이지를 잃어버렸어요"
   }
 }

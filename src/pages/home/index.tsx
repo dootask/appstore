@@ -204,28 +204,27 @@ const Home: React.FC = () => {
   const showAppDownloadUrl = (app: App) => {
     Alert({
       type: "prompt",
-      title: t('home.appDisplayCard.getButtonApp'),
+      title: t('home.appDetail.installButton'),
       description: t('home.appDisplayCard.copyButtonAppDescription'),
       defaultValue: app.download_url,
       buttonText: t('home.appDisplayCard.copyButton'),
       showCancel: true,
       showConfirm: true,
-      onConfirm: async () => {
-        try {
-          await navigator.clipboard.writeText(app.download_url);
+      onConfirm: () => {
+        navigator.clipboard.writeText(app.download_url).then(() => {
           Toast({
             type: 'success',
             content: t('common.copySuccess'),
             duration: 2000
           });
-        } catch (error) {
+        }).catch((error) => {
           Toast({
             type: 'error',
             content: t('common.copyFailed'),
             duration: 2000
           });
           console.error(error);
-        }
+        });
       }
     });
   }

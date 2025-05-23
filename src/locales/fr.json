@@ -40,9 +40,9 @@
       "by": "Par",
       "contentTitle": "Détails du contenu",
       "documentation": "Voir la documentation",
-      "downloadButton": "Télécharger l'application",
       "downloads": "Téléchargements",
       "favoriteButtonLabel": "Favori",
+      "installButton": "Installer l'application",
       "links": "Liens connexes",
       "noAppSelected": "Veuillez sélectionner une application",
       "rating": "Évaluation",
@@ -57,7 +57,6 @@
       "downloadAppButton": "Télécharger le plugin",
       "downloads": "Téléchargements",
       "getButton": "Obtenir",
-      "getButtonApp": "Obtenir l'application",
       "totalUsers": "Total des utilisateurs"
     },
     "appTitles": {
@@ -77,12 +76,6 @@
       "themeToggleLight": "Passer au thème clair",
       "title": "DooTask App Store"
     },
-    "user": {
-      "publish": "Publier l'application",
-      "manage": "Gérer l'application",
-      "center": "Centre d'utilisateurs",
-      "settings": "Paramètres"
-    },
     "hero": {
       "searchPlaceholder": "Rechercher des API, applications et plugins",
       "seriesBAnnouncement": "Nous avons levé 2,5 millions de dollars en série B",
@@ -100,6 +93,12 @@
       "maintenance": "Cette fonctionnalité est en cours de maintenance...",
       "publish": "Publier l'application",
       "warning": "Conseil"
+    },
+    "user": {
+      "center": "Centre d'utilisateurs",
+      "manage": "Gérer l'application",
+      "publish": "Publier l'application",
+      "settings": "Paramètres"
     }
   },
   "install": {
@@ -150,6 +149,11 @@
     "detail": "Détails",
     "log": "Logs"
   },
+  "notFound": {
+    "backHome": "Retour à la page d'accueil",
+    "description": "Ne vous inquiétez pas, c'est juste une erreur 404. Retournons à la page d'accueil pour continuer à explorer.",
+    "title": "Page introuvable"
+  },
   "uninstall": {
     "description": "Êtes-vous sûr de vouloir désinstaller l'application « {{app}} » ?",
     "error": "Échec de la désinstallation",
@@ -158,10 +162,5 @@
     "success_description": "L'application « {{app}} » a été désinstallée avec succès",
     "title": "Désinstaller l'application",
     "uninstall_starting": "Démarrage de la désinstallation de l'application « {{app}} »..."
-  },
-  "notFound": {
-    "backHome": "Retour à la page d'accueil",
-    "description": "Ne vous inquiétez pas, c'est juste une erreur 404. Retournons à la page d'accueil pour continuer à explorer.",
-    "title": "Page introuvable"
   }
 }
