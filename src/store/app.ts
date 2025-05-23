@@ -9,7 +9,7 @@ interface AppStoreState {
   loading: boolean;
   setApps: (apps: App[]) => void;
 
-  fetchApps: (silence?: boolean, appIds?: string[]) => Promise<void>;
+  fetchApps: (silence?: boolean, appIds?: string[]) => Promise<App[]>;
   fetchApp: (appId: string) => Promise<void>;
 
   categories: string[];
@@ -44,6 +44,7 @@ export const useAppStore = create<AppStoreState>((set, get) => ({
           get().updateCategories();
         }
       }
+      return data || [];
     } catch (e) {
       if (!silence) {
         Alert({
@@ -54,6 +55,7 @@ export const useAppStore = create<AppStoreState>((set, get) => ({
         });
       }
       console.error(e);
+      return [];
     } finally {
       if (!silence) set({loading: false});
     }

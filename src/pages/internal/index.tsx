@@ -251,7 +251,7 @@ const Internal = () => {
 
   // URL安装应用 或 上传应用
   const downloadOrUploadApp = async (value: string, file?: File) => {
-    let promise = null
+    let promise
     if (file) {
       promise = InternalApi.uploadApp({file})
     } else {
@@ -259,11 +259,10 @@ const Internal = () => {
     }
     await promise.then(async ({data}) => {
       if (data) {
-        await fetchApps();
-        const app = apps.find(item => item.id === data.id);
+        const newApps = await fetchApps();
+        const app = newApps.find(item => item.id === data.id);
         if (app) {
-          setSelectedApp(app);
-          setOpenInstall(true);
+          handleOpenApp(app);
         }
       }
     }).catch((error) => {
