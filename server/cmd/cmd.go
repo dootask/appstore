@@ -708,9 +708,9 @@ func routeInternalDownloadByURL(c *gin.Context) {
 	}
 
 	// 创建临时目录
-	tempDir, output, err := models.GenerateTempAppDir(appId, req.URL)
+	tempDir, stderr, err := models.GenerateTempAppDir(appId, req.URL)
 	if tempDir == "" {
-		response.ErrorWithDetail(c, global.CodeError, output, err)
+		response.ErrorWithDetail(c, global.CodeError, stderr, err)
 		return
 	}
 
@@ -747,17 +747,17 @@ func routeInternalDownloadByURL(c *gin.Context) {
 		}
 
 		// 检测文件类型并解压
-		output, err := models.CheckFileTypeAndUnzip(downloadFile, tempDir)
-		if err != nil {
-			response.ErrorWithDetail(c, global.CodeError, output, err)
+		output, stderr, err := models.CheckFileTypeAndUnzip(downloadFile, tempDir)
+		if output == "" {
+			response.ErrorWithDetail(c, global.CodeError, stderr, err)
 			return
 		}
 	}
 
 	// 检查应用是否符合要求
-	output, err = models.CheckAppCompliance(appId, tempDir)
-	if err != nil {
-		response.ErrorWithDetail(c, global.CodeError, output, err)
+	output, stderr, err := models.CheckAppCompliance(appId, tempDir)
+	if output == "" {
+		response.ErrorWithDetail(c, global.CodeError, stderr, err)
 		return
 	}
 
@@ -795,9 +795,9 @@ func routeInternalUpload(c *gin.Context) {
 	}
 
 	// 创建临时目录
-	tempDir, output, err := models.GenerateTempAppDir(appId, file.Filename)
+	tempDir, stderr, err := models.GenerateTempAppDir(appId, file.Filename)
 	if tempDir == "" {
-		response.ErrorWithDetail(c, global.CodeError, output, err)
+		response.ErrorWithDetail(c, global.CodeError, stderr, err)
 		return
 	}
 
@@ -809,16 +809,16 @@ func routeInternalUpload(c *gin.Context) {
 	}
 
 	// 检查文件类型并解压
-	output, err = models.CheckFileTypeAndUnzip(filePath, tempDir)
-	if err != nil {
-		response.ErrorWithDetail(c, global.CodeError, output, err)
+	output, stderr, err := models.CheckFileTypeAndUnzip(filePath, tempDir)
+	if output == "" {
+		response.ErrorWithDetail(c, global.CodeError, stderr, err)
 		return
 	}
 
 	// 检查应用是否符合要求
-	output, err = models.CheckAppCompliance(appId, tempDir)
-	if err != nil {
-		response.ErrorWithDetail(c, global.CodeError, output, err)
+	output, stderr, err = models.CheckAppCompliance(appId, tempDir)
+	if output == "" {
+		response.ErrorWithDetail(c, global.CodeError, stderr, err)
 		return
 	}
 
