@@ -440,14 +440,11 @@ const Home: React.FC = () => {
                       iconColorClass={colorConfig.iconColorClass}
                       buttonBgClass={colorConfig.buttonBgClass}
                       textColorClass={colorConfig.textColorClass}
-                      cardBgClass="bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-shadow duration-300"
+                      cardBgClass="bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl dark:hover:shadow-gray-900 transition-shadow duration-300 cursor-pointer"
                       app={app}
                       onSelect={() => {
                         setSelectedApp(app);
                         setShowAppDetail(true);
-                      }}
-                      onDownload={() => {
-                        showAppDownloadUrl(app);
                       }}
                     />
                   )
