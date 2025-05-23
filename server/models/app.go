@@ -663,6 +663,13 @@ func GenerateTempAppDir(appId, urlOrFileName string) (string, string, error) {
 // 3、删除临时文件
 // 4、返回解压后的文件路径（第一个参数不为空表示成功）
 func CheckFileTypeAndUnzip(filePath, tempDir string) (string, string, error) {
+	// 闭包 删除临时文件
+	defer func() {
+		if utils.IsFileExists(filePath) {
+			os.Remove(filePath)
+		}
+	}()
+
 	// 检测文件类型
 	fileType, err := utils.DetectFileType(filePath)
 	if err != nil {
@@ -683,9 +690,6 @@ func CheckFileTypeAndUnzip(filePath, tempDir string) (string, string, error) {
 		return "", i18n.T("UnsupportedFileType"), nil
 	}
 
-	// 删除临时文件
-	os.Remove(filePath)
-
 	// 返回解压后的文件路径
 	return tempDir, "", nil
 }
@@ -697,13 +701,24 @@ func CheckFileTypeAndUnzip(filePath, tempDir string) (string, string, error) {
 // 4、检查name字段
 // 5、检查删除apps目录下同名的应用
 // 6、移动文件到apps目录
-// 7、返回应用目录（第一个参数不为空表示成功）
+// 7、删除临时目录
+// 8、返回应用目录（第一个参数不为空表示成功）
 func CheckAppCompliance(appId, tempDir string) (string, string, error) {
+	// 闭包 删除临时目录
+	defer func() {
+		if utils.IsDirExists(tempDir) {
+			os.RemoveAll(tempDir)
+		}
+	}()
+
+	// 源目录
+	sourceDir := tempDir
+
 	// 检查config.yml文件
-	configFile := filepath.Join(tempDir, "config.yml")
+	configFile := filepath.Join(sourceDir, "config.yml")
 	if !utils.IsFileExists(configFile) {
 		// 如果根目录没有config.yml，检查第一个子目录
-		entries, err := os.ReadDir(tempDir)
+		entries, err := os.ReadDir(sourceDir)
 		if err != nil {
 			return "", i18n.T("ConfigYmlNotFound"), nil
 		}
@@ -712,7 +727,7 @@ func CheckAppCompliance(appId, tempDir string) (string, string, error) {
 		var firstDir string
 		for _, entry := range entries {
 			if entry.IsDir() {
-				configFile = filepath.Join(tempDir, entry.Name(), "config.yml")
+				configFile = filepath.Join(sourceDir, entry.Name(), "config.yml")
 				if utils.IsFileExists(configFile) {
 					firstDir = entry.Name()
 					break
@@ -725,14 +740,14 @@ func CheckAppCompliance(appId, tempDir string) (string, string, error) {
 		}
 
 		// 检查子目录中的config.yml
-		subDir := filepath.Join(tempDir, firstDir)
+		subDir := filepath.Join(sourceDir, firstDir)
 		configFile = filepath.Join(subDir, "config.yml")
 		if !utils.IsFileExists(configFile) {
 			return "", i18n.T("ConfigYmlNotFound"), nil
 		}
 
-		// 更新tempDir为子目录
-		tempDir = subDir
+		// 更新sourceDir为子目录
+		sourceDir = subDir
 	}
 
 	// 解析配置文件
@@ -761,7 +776,7 @@ func CheckAppCompliance(appId, tempDir string) (string, string, error) {
 	}
 
 	// 移动文件到目标目录
-	if err := os.Rename(tempDir, appDir); err != nil {
+	if err := os.Rename(sourceDir, appDir); err != nil {
 		return "", i18n.T("MoveFileFailed"), err
 	}
 
