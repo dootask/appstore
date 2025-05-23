@@ -138,11 +138,11 @@ func runServer(*cobra.Command, []string) {
 		adminMiddleware := middlewares.DooTaskTokenMiddleware("admin")
 
 		// 严谨模式需要会员
-		v1.GET("/list", routeList, strictMiddleware)                            // 获取应用列表
-		v1.GET("/one/:appId", routeAppOne, strictMiddleware)                    // 获取单个应用
-		v1.GET("/readme/:appId", routeAppReadme, strictMiddleware)              // 获取应用自述文件
-		v1.GET("/download/:appId/*version", routeAppDownload, strictMiddleware) // 下载应用压缩包
-		v1.GET("/sources/package", routeSourcesPackage, strictMiddleware)       // 下载应用商店资源包
+		v1.GET("/list", strictMiddleware, routeList)                            // 获取应用列表
+		v1.GET("/one/:appId", strictMiddleware, routeAppOne)                    // 获取单个应用
+		v1.GET("/readme/:appId", strictMiddleware, routeAppReadme)              // 获取应用自述文件
+		v1.GET("/download/:appId/*version", strictMiddleware, routeAppDownload) // 下载应用压缩包
+		v1.GET("/sources/package", strictMiddleware, routeSourcesPackage)       // 下载应用商店资源包
 
 		// 始终不需要身份
 		v1.GET("/asset/:appId/*assetPath", routeAppAsset) // 查看应用资源
@@ -151,15 +151,15 @@ func runServer(*cobra.Command, []string) {
 		internal := v1.Group("/internal")
 		{
 			// 需要管理员
-			internal.POST("/install", routeInternalInstall, adminMiddleware)             // 安装应用
-			internal.GET("/uninstall/:appId", routeInternalUninstall, adminMiddleware)   // 卸载应用
-			internal.GET("/apps/update", routeInternalUpdateList, adminMiddleware)       // 更新应用列表
-			internal.POST("/apps/download", routeInternalDownloadByURL, adminMiddleware) // 通过URL下载应用
-			internal.POST("/apps/upload", routeInternalUpload, adminMiddleware)          // 上传本地应用
+			internal.POST("/install", adminMiddleware, routeInternalInstall)             // 安装应用
+			internal.GET("/uninstall/:appId", adminMiddleware, routeInternalUninstall)   // 卸载应用
+			internal.GET("/apps/update", adminMiddleware, routeInternalUpdateList)       // 更新应用列表
+			internal.POST("/apps/download", adminMiddleware, routeInternalDownloadByURL) // 通过URL下载应用
+			internal.POST("/apps/upload", adminMiddleware, routeInternalUpload)          // 上传本地应用
 
 			// 需要会员
-			internal.GET("/installed", routeInternalInstalled, authMiddleware) // 获取已安装应用列表
-			internal.GET("/log/:appId", routeInternalLog, authMiddleware)      // 获取应用日志
+			internal.GET("/installed", authMiddleware, routeInternalInstalled) // 获取已安装应用列表
+			internal.GET("/log/:appId", authMiddleware, routeInternalLog)      // 获取应用日志
 		}
 	}
 
