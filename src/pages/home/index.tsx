@@ -111,12 +111,6 @@ export function Header({onCategoryChange}: { onCategoryChange: (category: string
           <span className="text-lg font-semibold text-gray-700 dark:text-gray-300">{t('home.header.title')}</span>
         </button>
         <nav className="hidden md:flex items-center space-x-6 flex-1 justify-center min-w-0">
-          {useOutlet() && (
-            <button className="h-11 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white flex items-center truncate min-w-0 max-w-full cursor-pointer" onClick={navigate.toHome}>
-              <span className='whitespace-nowrap overflow-hidden text-ellipsis'>{t('home.header.home')}</span>
-              <LayoutGrid className="w-4 h-4 mx-1 scale-90 shrink-0" />
-            </button>
-          )}
           <Dropdown
             options={
               categories.slice(0, 10).map(cat => ({label: cat === 'all' ? t('app.all') : cat, value: cat}))

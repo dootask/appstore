@@ -239,9 +239,9 @@ export default function Development() {
           <div className="flex w-full gap-8">
             {/* 目录 */}
             <div className="hidden lg:block w-64 shrink-0">
-              <div className="sticky top-24">
-                <h4 className="text-sm font-semibold mb-4 text-gray-900 dark:text-gray-100 border-b border-gray-200 dark:border-gray-700 pb-4">目录</h4>
-                <nav className="space-y-1 pl-1">
+              <div className="sticky top-24 overflow-y-auto max-h-[calc(100vh-6rem)]">
+                <h4 className="text-sm font-semibold mb-4 text-gray-900 dark:text-gray-100 border-b border-gray-200 dark:border-gray-700 pb-4 sticky top-0 bg-white dark:bg-black">目录</h4>
+                <nav className="space-y-1 pl-1 pb-8">
                   {toc.map((item) => (
                     <a
                       key={item.id}
