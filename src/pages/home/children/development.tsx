@@ -241,7 +241,7 @@ export default function Development() {
             <div className="hidden lg:block w-64 shrink-0">
               <div className="sticky top-24">
                 <h4 className="text-sm font-semibold mb-4 text-gray-900 dark:text-gray-100 border-b border-gray-200 dark:border-gray-700 pb-4">目录</h4>
-                <nav className="space-y-1.5 pl-1">
+                <nav className="space-y-1 pl-1">
                   {toc.map((item) => (
                     <a
                       key={item.id}

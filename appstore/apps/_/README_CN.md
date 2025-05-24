@@ -2,7 +2,9 @@
 
 本文档将指导你如何为 [DooTask](https://www.dootask.com) 开发应用。通过遵循这些指南，你可以创建符合 DooTask 应用商店标准的应用。
 
-## 目录结构
+## 创建应用
+
+### 目录结构
 
 应用的标准目录结构如下：
 
@@ -14,13 +16,13 @@
         └── nginx.conf
     ├── ...
     ├── config.yml
-    ├── logo.png    # 支持 logo.svg
-    └── README.md
+    ├── logo.png    # 也可以使用 logo.svg
+    └── README.md   # 支持多语言（比如: README.md、README_CN.md，默认使用: README.md）
 ```
 
 ### `config.yml` 配置说明
 
-`config.yml` 是应用的配置文件，定义了应用的基本信息和配置选项：
+`config.yml` 是应用 **必需** 的配置文件，用于定义应用的基本信息和配置选项：
 
 ```yaml
 # 基本信息
@@ -73,20 +75,27 @@ require_uninstalls:                   # 指定需要先卸载的版本
 
 # 菜单项配置（可选）
 menu_items:                           # 定义应用菜单入口
-  - location: application             # 菜单位置（支持值：application, application/admin, main/menu）
+  - location: application             # 菜单位置（支持值见下文）
     label:                            # 菜单标签（支持多语言）
       en: App Management
       zh: 应用管理
     url: apps/example/list            # 菜单 URL
     icon: ./icon.png                  # 菜单图标路径
+    # 以下配置可选
+    onlyAdmin: true                   # 仅管理员可见（可选，默认：false）
     transparent: false                # 页面是否使用透明背景（可选，默认：false）
     autoDarkTheme: true               # 是否自动适配深色主题（可选，默认：true）
     keepAlive: true                   # 是否保持应用状态（可选，默认：true）
 ```
 
+#### `menu_items.location` 支持的值：
+- `application` 应用常用菜单
+- `application/admin` 应用管理菜单
+- `main/menu` 主菜单
+
 ### `docker-compose.yml` 配置说明
 
-`docker-compose.yml` 文件定义了应用的容器配置：
+`docker-compose.yml` 是应用版本 **必需** 的配置文件，用于定义应用的容器配置：
 
 ```yaml
 services:
@@ -105,7 +114,7 @@ services:
 
 ### `nginx.conf` 配置说明
 
-`nginx.conf` 文件定义了应用的 Nginx 代理配置：
+`nginx.conf` 文件是可选的，用于定义应用版本的 Nginx 代理配置：
 
 ```nginx
 # 此配置将通过 include 指令包含在主服务器块中
@@ -123,9 +132,19 @@ location /apps/your-app/ {
 }
 ```
 
-## 在 DooTask 中安装
+## 开发应用
 
-DooTask 支持以下几种安装方式：
+### 前端开发
+
+
+
+### 后端开发
+
+
+
+## 安装应用
+
+支持通过以下几种方式将应用安装到 DooTask 中：
 
 ### 1. 本地应用安装
 
