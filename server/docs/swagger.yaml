@@ -159,7 +159,7 @@ definitions:
       message:
         type: string
     type: object
-host: localhost:8080
+host: localhost
 info:
   contact:
     email: support@dootask.com

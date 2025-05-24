@@ -102,6 +102,9 @@ func GetAppLog(appId string, n int) ([]string, error) {
 	logPath := filepath.Join(global.WorkDir, "log", appId+".log")
 	file, err := os.Open(logPath)
 	if err != nil {
+		if os.IsNotExist(err) {
+			return []string{}, nil
+		}
 		return nil, err
 	}
 	defer file.Close()

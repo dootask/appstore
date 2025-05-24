@@ -4,7 +4,7 @@ DooTask 应用商店服务端是一个基于 Golang 和 Gin 框架开发的应�
 
 ## API 接口
 
-API 文档可通过 Swagger UI 访问：http://localhost:8080/swagger/index.html
+API 文档可通过 Swagger UI 访问：http://localhost/swagger/index.html
 
 
 ## 启动服务
