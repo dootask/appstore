@@ -166,6 +166,9 @@ func runServer(*cobra.Command, []string) {
 	// 添加Swagger文档路由
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
+	// 添加健康检查路由
+	r.GET("/health", routeHealth)
+
 	// 启动检测容器状态守护
 	go models.StartCheckContainerStatusDaemon()
 
@@ -964,4 +967,9 @@ func routeAppAsset(c *gin.Context) {
 		return
 	}
 	c.File(filePath)
+}
+
+// routeHealth 健康检查
+func routeHealth(c *gin.Context) {
+	c.String(http.StatusOK, "ok")
 }

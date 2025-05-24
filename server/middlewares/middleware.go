@@ -59,7 +59,7 @@ func BaseMiddleware() gin.HandlerFunc {
 // WebStaticMiddleware 处理前端静态文件
 func WebStaticMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		prePaths := []string{"/api/", "/swagger/"}
+		prePaths := []string{"/api/", "/swagger/", "/health"}
 		if global.WebDir != "" && !utils.HasPrefixInArray(c.Request.URL.Path, prePaths) {
 			// 尝试访问请求的文件
 			filePath := filepath.Join(global.WebDir, c.Request.URL.Path)
