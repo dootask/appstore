@@ -136,11 +136,23 @@ location /apps/your-app/ {
 
 ### 前端开发
 
-
+前端开发方式与开发普通网站类似。建议统一使用 TailwindCSS 进行样式规范，提升界面一致性和开发效率。
+如需与 DooTask 主应用进行交互（如获取用户信息、打开新窗口、请求主服务器接口等），推荐使用官方工具库 [@dootask/tools](https://www.npmjs.com/package/@dootask/tools)。该库提供了丰富的 API，具体用法和更多功能请参考工具库文档。
 
 ### 后端开发
 
+后端开发同样与常规应用开发一致。你可以根据业务需求自由实现后端逻辑，无需特殊限制。
 
+### 应用打包与发布
+
+开发完成后，请将你的应用打包为 Docker 容器，并结合 `docker-compose.yml` 和 `nginx.conf` 进行配置和发布。这样可以确保应用在 DooTask 平台上的标准化部署和运行。
+
+### 参考示例
+
+你可以参考以下开源项目，了解实际的 DooTask 应用开发与发布流程：
+
+- [DooTask 应用商城](https://github.com/dootask/appstore)
+- [DooTask OKR 应用](https://github.com/hitosea/dootask-okr)
 
 ## 安装应用
 

@@ -12,6 +12,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"reflect"
 	"regexp"
 	"slices"
 	"sort"
@@ -120,33 +121,41 @@ func getLocalizedValue(data interface{}, lang string) string {
 	if data == nil {
 		return ""
 	}
-	switch v := data.(type) {
-	case string:
-		return v
-	case map[string]interface{}:
-		if val, ok := v[lang]; ok {
+	switch reflect.TypeOf(data).Kind() {
+	case reflect.String:
+		return data.(string)
+	case reflect.Map:
+		mapData, ok := data.(map[string]interface{})
+		if !ok {
+			return ""
+		}
+		patterns := []string{lang}
+		if slices.Contains([]string{"zh-cht", "zh-hk", "zh-tw"}, lang) {
+			patterns = append(patterns, "TW", "HK")
+		}
+		if strings.HasPrefix(lang, "zh") {
+			patterns = append(patterns, "CN", "ZH")
+		}
+		for key, value := range mapData {
+			mapData[strings.ToLower(key)] = value
+		}
+		for _, pattern := range patterns {
+			lowerPattern := strings.ToLower(pattern)
+			if val, ok := mapData[lowerPattern]; ok {
+				if strVal, okStr := val.(string); okStr {
+					return strVal
+				}
+			}
+		}
+		for _, val := range mapData {
 			if strVal, okStr := val.(string); okStr {
 				return strVal
 			}
 		}
-		for _, val := range v {
-			if strVal, okStr := val.(string); okStr {
-				return strVal
-			}
-		}
-	case map[interface{}]interface{}:
-		if val, ok := v[lang]; ok {
-			if strVal, okStr := val.(string); okStr {
-				return strVal
-			}
-		}
-		for _, val := range v {
-			if strVal, okStr := val.(string); okStr {
-				return strVal
-			}
-		}
+		return ""
+	default:
+		return ""
 	}
-	return ""
 }
 
 // findIcon 查找应用图标文件
@@ -443,11 +452,11 @@ func GetReadme(appId string) string {
 		fmt.Sprintf("README-%s.md", global.Language),
 		fmt.Sprintf("README.%s.md", global.Language),
 	}
-	if global.Language == "zh" {
-		patterns = append(patterns, "README_CN.md", "README-CN.md", "README.CN.md")
+	if slices.Contains([]string{"zh-cht", "zh-hk", "zh-tw"}, global.Language) {
+		patterns = append(patterns, "README_TW.md", "README-TW.md", "README.TW.md", "README_HK.md", "README-HK.md", "README.HK.md")
 	}
-	if global.Language == "zh-cht" {
-		patterns = append(patterns, "README_TW.md", "README-TW.md", "README.TW.md")
+	if strings.HasPrefix(global.Language, "zh") {
+		patterns = append(patterns, "README_CN.md", "README-CN.md", "README.CN.md", "README_ZH.md", "README-ZH.md", "README.ZH.md")
 	}
 	patterns = append(patterns, "README.md")
 

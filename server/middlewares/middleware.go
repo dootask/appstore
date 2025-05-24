@@ -39,17 +39,17 @@ func BaseMiddleware() gin.HandlerFunc {
 		global.Language = global.DefaultLanguage
 		langHeader := c.GetHeader("Language")
 		if langHeader == "" {
-			langHeader = c.GetHeader("Accept-Language")
-		}
-		if langHeader != "" {
-			langs := strings.Split(langHeader, ",")
+			langs := strings.Split(c.GetHeader("Accept-Language"), ",")
 			if len(langs) > 0 {
 				firstLang := strings.Split(langs[0], ";")[0]
 				firstLang = strings.Split(firstLang, "-")[0]
 				if firstLang != "" {
-					global.Language = strings.ToLower(firstLang)
+					langHeader = firstLang
 				}
 			}
+		}
+		if langHeader != "" {
+			global.Language = strings.ToLower(langHeader)
 		}
 
 		c.Next()
