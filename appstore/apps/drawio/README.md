@@ -1,20 +1,20 @@
-# Drawio Diagramming Plugin
+# Drawio Diagram Plugin
 
-## Plugin Overview
+## Overview
 
-The Drawio Plugin enables flowchart creation and editing directly within DooTask. Users can create, view, and manage diagrams without leaving the platform, supporting scenarios such as requirements mapping, system design, and business process modeling—boosting team communication and collaboration efficiency.
+The Drawio Plugin enables diagram creation and editing within DooTask. Users can directly create, view, and manage diagrams on the platform, making it ideal for requirements analysis, system design, business process modeling, and more. This greatly enhances team communication and collaboration.
 
 ## Key Features
 
-* Embedded Drawio editor: Draw and edit diagrams seamlessly within DooTask without switching apps
+* Built-in Drawio editor: Create and edit diagrams directly within DooTask—no need to switch platforms
 * Supports multiple diagram types: Flowcharts, mind maps, UML, network diagrams, and more
-* Visual diagram management: Save charts, view version history, and share with team members
-* User-friendly editing: Smooth drag-and-drop, zoom, and keyboard shortcut support
-* Collaboration-ready: Enables team members to view and co-edit diagrams in real time
+* Visual diagram management: Save diagrams, view version history, and share with others
+* User-friendly: Smooth editing experience with drag-and-drop, zoom, and keyboard shortcuts
+* Collaboration-ready: Team members can view and co-edit diagrams online
 
-## Installation Instructions
+## Installation
 
 1. Find and install this plugin from the DooTask App Store
-2. Once installed, the plugin is automatically activated with no additional steps
-3. Default configuration supports most use cases; advanced settings are available if needed
-4. ⚠️ This plugin has a relatively large image size and may take some time to install—please refer to the installation log for progress updates
+2. The plugin will be enabled automatically after installation—no extra steps required
+3. Default settings are optimized for most scenarios; you can further customize them in the plugin settings if needed
+4. ⚠️ The plugin is large (about 700MB); installation may take some time. Please check the installation log for progress

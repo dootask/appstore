@@ -1,20 +1,20 @@
-# Approval Plugin
+# Approval Workflow Plugin
 
-## Plugin Overview
+## Overview
 
-The Approval Plugin provides DooTask with flexible approval process management, suitable for a wide range of everyday business scenarios. Users can easily initiate approvals, track progress, and handle requests—enhancing collaboration and streamlining workflows.
+The Approval Workflow Plugin provides flexible approval process management for DooTask, suitable for a variety of business scenarios. With this plugin, users can quickly initiate approvals, track progress, and handle requests, improving collaboration efficiency and standardizing workflows.
 
 ## Key Features
 
-* Supports various approval types: Ideal for leave requests, reimbursements, business trips, document stamping, and more
-* Customizable workflows: Configure different approval templates and steps to fit your organization's needs
-* Clear status tracking: View real-time progress and full history for each approval request with full transparency
-* Notification system: Automatically notifies approvers and applicants to ensure timely processing
-* Clean and intuitive UI: User-friendly design, easy to navigate, optimized for both desktop and mobile use
+* Multiple approval types: Supports common business processes such as leave, reimbursement, business trips, and document stamping
+* Customizable workflows: Configure different approval templates and steps to meet diverse organizational needs
+* Clear approval status: View the progress and history of each approval in real time for full transparency
+* Notification system: Automatically notifies relevant approvers and applicants to prevent missed actions
+* Intuitive interface: Simple and user-friendly, suitable for both desktop and mobile devices
 
-## Installation Instructions
+## Installation
 
 1. Find and install this plugin from the DooTask App Store
-2. Once installed, the plugin is automatically activated with no additional steps
-3. Default configuration supports most use cases; advanced settings are available if needed
-4. ⚠️ This plugin has a relatively large image size and may take some time to install—please refer to the installation log for progress updates
+2. The plugin will be enabled automatically after installation—no extra steps required
+3. Default settings are optimized for most scenarios; you can further customize them in the plugin settings if needed
+4. ⚠️ The plugin is large (about 25MB); installation may take some time. Please check the installation log for progress

@@ -1,26 +1,23 @@
 # OnlyOffice Document Editing Plugin
 
-## Plugin Overview
-
-This plugin integrates the OnlyOffice online document editing feature into DooTask. With this plugin, you can directly edit and preview Word, Excel, and PowerPoint documents online within DooTask, enabling seamless collaborative editing.
+## Overview
+This plugin integrates OnlyOffice's online document editing capabilities into DooTask. With it, you can directly edit and preview Word, Excel, PowerPoint, and other documents online, enabling real-time collaborative editing within DooTask.
 
 ## Key Features
+- Online editing for Word, Excel, and PowerPoint documents
+- Online document preview
+- Real-time multi-user collaboration
+- Document version history
+- Document permission management
 
-* Online editing support for Word, Excel, and PowerPoint documents
-* Online document preview
-* Real-time collaborative editing with multiple users
-* Document version history
-* Document permission management
-
-## Installation Instructions
+## Installation
 
 1. Find and install this plugin from the DooTask App Store
-2. Once installed, the plugin is automatically activated with no additional steps
-3. Default configuration supports most use cases; advanced settings are available if needed
-4. ⚠️ This plugin has a relatively large image size and may take some time to install—please refer to the installation log for progress updates
+2. The plugin will be enabled automatically after installation—no extra steps required
+3. Default settings are optimized for most scenarios; you can further customize them in the plugin settings if needed
+4. ⚠️ The plugin is large (about 1.3GB); installation may take some time. Please check the installation log for progress
 
 ## How to Use
-
-1. After installation, upload documents directly within a task or project
-2. Click on a document to start online editing
-3. Supports simultaneous editing by multiple users
+1. After installation, upload documents directly in tasks or projects
+2. Click a document to start online editing
+3. Multiple users can edit the same document simultaneously

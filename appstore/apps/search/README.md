@@ -1,32 +1,33 @@
 # ZincSearch Search Engine Plugin
 
-## Introduction
-ZincSearch is a high-performance full-text search engine plugin optimized for the Dootask system. Developed in Go and based on the bluge indexing library, it serves as a lightweight alternative to Elasticsearch.
+## Overview
+ZincSearch is a high-performance full-text search engine plugin, optimized for the Dootask system. Developed in Go and based on the bluge indexing library, it serves as a lightweight alternative to Elasticsearch.
 
 ## Key Features
-- Lightweight design with minimal resource consumption
-- High-performance full-text search
-- Automatic system message indexing
-- Significantly improved search speed
-- Zero configuration, ready to use after installation
+- Lightweight design with minimal resource usage
+- High-performance full-text search for message content
+- Automatic indexing of system messages
+- Significantly faster search speeds
+- Zero configuration—ready to use after installation
 
 ## Use Cases
-When your Dootask system has a large volume of messages, the default search functionality may become slow. After installing the ZincSearch plugin, the system will automatically index messages, greatly improving search efficiency.
+If your Dootask system contains a large volume of messages, the default search may become slow. By installing the ZincSearch plugin, the system will automatically index messages, greatly improving search efficiency.
 
 ## Technical Advantages
 - Developed in Go for excellent performance
 - Uses bluge as the underlying indexing library
-- Requires fewer system resources compared to Elasticsearch
-- Quick deployment without complex configuration
+- Consumes far fewer resources than Elasticsearch
+- Quick deployment with no complex configuration required
 
-## Usage Recommendations
-Recommended for the following scenarios:
-- Systems with a large number of messages
-- Frequent need to search historical messages
-- High requirements for search response speed
-- Limited system resources requiring a lightweight solution
+## Recommendations
+Install this plugin if:
+- You have a large number of messages
+- You need to frequently search historical messages
+- Fast search response is important
+- System resources are limited and you need a lightweight solution
 
-## Important Notes
-- Initial indexing of messages is required after installation
-- Regular backup of index data is recommended
-- Ensure sufficient system memory for indexing operations
+## Notes
+- After the first installation, wait for the system to complete message indexing
+- Regularly back up your index data
+- Ensure your system has enough memory for indexing
+- ⚠️ The plugin is large (about 23MB); installation may take some time. Please check the installation log for progress
