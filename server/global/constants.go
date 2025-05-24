@@ -4,8 +4,7 @@ import "github.com/go-playground/validator/v10"
 
 // 常量
 const (
-	DefaultPort     = "8080" // 默认端口
-	DefaultLanguage = "en"   // 默认语言
+	DefaultLanguage = "en" // 默认语言
 
 	APIVersion = "v1" // API版本
 
@@ -25,6 +24,7 @@ var (
 	WebDir      string // 前端静态文件目录，用于存储前端静态文件
 
 	BaseUrl  string // 基础URL
+	Port     string // 服务端口
 	Language string // 用户语言
 
 	Validator *validator.Validate // 验证器

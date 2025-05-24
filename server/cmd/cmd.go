@@ -63,6 +63,7 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&global.HostWorkDir, "host-work-dir", "", "宿主机工作目录路径")
 	rootCmd.PersistentFlags().StringVar(&global.EnvFile, "env-file", "", "环境变量文件路径")
 	rootCmd.PersistentFlags().StringVar(&global.WebDir, "web-dir", "", "前端静态文件目录")
+	rootCmd.PersistentFlags().StringVar(&global.Port, "port", "80", "服务端口")
 	rootCmd.PersistentFlags().StringVar(&mode, "mode", "debug", "运行模式 (debug/release/strict)")
 }
 
@@ -173,7 +174,7 @@ func runServer(*cobra.Command, []string) {
 	go models.StartCheckContainerStatusDaemon()
 
 	// 启动服务器
-	err := r.Run(":" + global.DefaultPort)
+	err := r.Run(":" + global.Port)
 	if err != nil {
 		fmt.Printf("启动服务器失败: %v\n", err)
 		os.Exit(1)

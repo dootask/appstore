@@ -22,6 +22,7 @@ go run main.go --work-dir /path/to/workdir
 | --host-work-dir | 指定宿主机工作目录路径                 | 空        |
 | --env-file      | 环境变量文件路径                    | 空        |
 | --web-dir       | 前端静态文件目录                    | 空        |
+| --port          | 服务端口                          | 80       |
 | --mode          | 运行模式 (debug/release/strict) | debug    |
 
 ## 更新文档
