@@ -65,7 +65,7 @@
       "walletFeature": "Fonctionnalité portefeuille"
     },
     "footer": {
-      "copyright": "© {{year}} DooTask.com. Tous droits réservés.",
+      "copyright": "© {{year}} <a>DooTask.com</a>. Tous droits réservés.",
       "illustrativeDesign": "Design illustratif basé sur les images fournies par les utilisateurs."
     },
     "header": {

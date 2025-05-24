@@ -65,7 +65,7 @@
       "walletFeature": "Функция кошелька"
     },
     "footer": {
-      "copyright": "© {{year}} DooTask.com. Все права защищены.",
+      "copyright": "© {{year}} <a>DooTask.com</a>. Все права защищены.",
       "illustrativeDesign": "Иллюстративный дизайн на основе изображений, предоставленных пользователями."
     },
     "header": {

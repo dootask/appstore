@@ -34,11 +34,7 @@ RUN npm install
 COPY . .
 
 # 构建项目
-RUN if [ "$MODE" = "internal" ]; then \
-      VITE_BASE_PATH=/appstore/ npm run build; \
-    else \
-      VITE_BASE_PATH=/ npm run build; \
-    fi
+RUN VITE_BASE_PATH=$([ "$MODE" = "internal" ] && echo "/appstore/" || echo "/") npm run build
 
 # =============================================================
 # =============================================================

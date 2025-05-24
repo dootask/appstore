@@ -65,7 +65,7 @@
       "walletFeature": "钱包功能"
     },
     "footer": {
-      "copyright": "© {{year}} DooTask.com. 保留所有权利。",
+      "copyright": "© {{year}} <a>DooTask.com</a>. 保留所有权利。",
       "illustrativeDesign": "说明性设计基于用户提供的图像。"
     },
     "header": {

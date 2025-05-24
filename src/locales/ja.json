@@ -65,7 +65,7 @@
       "walletFeature": "ウォレット機能"
     },
     "footer": {
-      "copyright": "© {{year}} DooTask.com. All rights reserved.",
+      "copyright": "© {{year}} <a>DooTask.com</a>. All rights reserved.",
       "illustrativeDesign": "ユーザー提供の画像に基づく説明デザイン。"
     },
     "header": {

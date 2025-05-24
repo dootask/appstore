@@ -65,7 +65,7 @@
       "walletFeature": "Fitur Dompet"
     },
     "footer": {
-      "copyright": "© {{year}} DooTask.com. Hak Cipta Dilindungi.",
+      "copyright": "© {{year}} <a>DooTask.com</a>. Hak Cipta Dilindungi.",
       "illustrativeDesign": "Desain ilustratif berdasarkan gambar yang disediakan pengguna."
     },
     "header": {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { ChevronDown, Globe, UserCircle, Zap, Sparkles, ArrowRight, Filter, Sun, Moon, LayoutGrid } from 'lucide-react';
+import { ChevronDown, Globe, UserCircle, Zap, Sparkles, ArrowRight, Filter, Sun, Moon } from 'lucide-react';
 import i18n from '@/i18n';
 import LogoIcon from '@/assets/logo.svg'
 import Dropdown from '@/components/custom/dropdown';
@@ -454,9 +454,14 @@ const Home: React.FC = () => {
       {/* 底部 */}
       <footer className="py-10 mt-16 border-t border-gray-200/80 dark:border-gray-800/80">
         <div className="container mx-auto text-center text-gray-500 dark:text-gray-400 text-sm">
-          <Trans i18nKey="home.footer.copyright" year={new Date().getFullYear()}>
-            © {{year: new Date().getFullYear()}} DooTask.com. All rights reserved. <br />
-          </Trans>
+          <Trans
+            i18nKey="home.footer.copyright"
+            defaults="© {{year: new Date().getFullYear()}} DooTask.com. All rights reserved. "
+            values={{ what: 'world', year: new Date().getFullYear()}}
+            components={{
+              a: <a href="https://www.dootask.com" target="_blank" rel="noopener noreferrer" className="underline"></a>
+            }}
+          />
           {t('home.footer.illustrativeDesign')}
         </div>
       </footer>

@@ -65,7 +65,7 @@
       "walletFeature": "지갑 기능"
     },
     "footer": {
-      "copyright": "© {{year}} DooTask.com. All rights reserved.",
+      "copyright": "© {{year}} <a>DooTask.com</a>. All rights reserved.",
       "illustrativeDesign": "사용자가 제공한 이미지를 기반으로 한 설명 디자인."
     },
     "header": {

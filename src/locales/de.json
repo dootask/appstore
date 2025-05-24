@@ -65,7 +65,7 @@
       "walletFeature": "Wallet-Funktion"
     },
     "footer": {
-      "copyright": "© {{year}} DooTask.com. Alle Rechte vorbehalten.",
+      "copyright": "© {{year}} <a>DooTask.com</a>. Alle Rechte vorbehalten.",
       "illustrativeDesign": "Veranschaulichendes Design basierend auf benutzerbereitgestellten Bildern."
     },
     "header": {
